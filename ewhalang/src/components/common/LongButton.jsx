@@ -1,24 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
-// 버튼 타입 정의
-const ButtonType = {
-  GREEN: {
-    background: 'var(--sub1)',
-    color: 'var(--white)',
-    border: 'none'
-  },
-  GREY: {
-    background: 'var(--grey4)',
-    color: 'var(--white)',
-    border: 'none'
-  },
-  WHITE: {
-    background: 'var(--white)',
-    color: 'var(--sub1)',
-    border: '1px solid var(--sub1)'
-  },
-};
+import ButtonType from './ButtonType';
 
 // 스타일드 컴포넌트로 버튼 스타일 정의
 const StyledButton = styled.button`
