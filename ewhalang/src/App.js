@@ -12,6 +12,7 @@ function App() {
         <Routes>
           {/* 메인 페이지 */}
           <Route exact path="/" element={<MainPage />} />
+
           {/*로그인 페이지 */}
           <Route exact path="/login" element={<Login />} />
         </Routes>
