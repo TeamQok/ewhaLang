@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import Login from "./pages/Login";
 import UserDetailPage from "./pages/UserDetailPage";
+import Onboarding from "./pages/Onboarding";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
 
           {/*회원 상세 페이지 */}
           <Route exact path="/user" element={<UserDetailPage />} />
+          {/* 초기화면 페이지 */}
+          <Route exact path="/onboarding" element={<Onboarding />} />
         </Routes>
       </BrowserRouter>
     </>
