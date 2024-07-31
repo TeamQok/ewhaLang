@@ -3,17 +3,17 @@ import chatGrey from "../../assets/chatGrey.svg";
 import mypageGrey from "../../assets/mypageGrey.svg";
 import userGrey from "../../assets/userGrey.svg";
 
-const BottomBar = () => {
+const BottomBar = ({ onClick }) => {
   return (
     <>
       <Wrapper>
-        <Item>
+        <Item onClick={onClick}>
           <img src={userGrey} />
         </Item>
-        <Item>
+        <Item onClick={onClick}>
           <img src={chatGrey} />
         </Item>
-        <Item>
+        <Item onClick={onClick}>
           <img src={mypageGrey} />
         </Item>
       </Wrapper>
