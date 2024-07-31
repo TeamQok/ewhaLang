@@ -7,12 +7,12 @@ import x from "../../assets/x.svg";
 // props로 back, dot, setting 넣어주면 됨
 // 아무것도 안 넣으면 암 것도 없음
 
-const Topbar = ({ title, left, right }) => {
+const Topbar = ({ title, left, right, onClick }) => {
   return (
     <>
       <Wrapper>
         {left == "back" ? (
-          <Left>
+          <Left onClick={onClick}>
             <img src={goback} alt="뒤로가기" />
           </Left>
         ) : (
@@ -22,15 +22,15 @@ const Topbar = ({ title, left, right }) => {
         <Title>{title}</Title>
 
         {right == "dot" ? (
-          <Right>
+          <Right onClick={onClick}>
             <img src={dots} />
           </Right>
         ) : right == "setting" ? (
-          <Right>
+          <Right onClick={onClick}>
             <img src={setting} />
           </Right>
         ) : right == "x" ? (
-          <Right>
+          <Right onClick={onClick}>
             <img src={x} />
           </Right>
         ) : (
