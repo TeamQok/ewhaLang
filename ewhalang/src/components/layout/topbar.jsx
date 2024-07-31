@@ -2,6 +2,7 @@ import styled from "styled-components";
 import goback from "../../assets/goback.svg";
 import dots from "../../assets/dots.svg";
 import setting from "../../assets/setting.svg";
+import x from "../../assets/x.svg";
 
 // props로 back, dot, setting 넣어주면 됨
 // 아무것도 안 넣으면 암 것도 없음
@@ -27,6 +28,10 @@ const Topbar = ({ title, left, right }) => {
         ) : right == "setting" ? (
           <Right>
             <img src={setting} />
+          </Right>
+        ) : right == "x" ? (
+          <Right>
+            <img src={x} />
           </Right>
         ) : (
           <Right></Right>
