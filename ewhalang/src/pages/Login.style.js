@@ -15,7 +15,7 @@ export const Input = styled.input`
   border: 1px solid var(--Grey-3, #b8b8b8);
   background: var(--White, #fff);
 
-  padding: 8px 24px;
+  padding: 8px 24px 8px 23px;
   box-sizing: border-box;
   outline: none;
 

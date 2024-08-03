@@ -7,9 +7,16 @@ import { ShortButton } from "../components/common/ShortButton";
 import { useState } from "react";
 import Modal from "../components/common/Modal";
 import DropDown from "../components/common/DropDown";
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const goLogin = () => {
+    navigate("/login");
+  };
 
   return (
     <>
@@ -21,6 +28,9 @@ const MainPage = () => {
         onClick={() => setIsModalOpen(true)}
       >
         저장하기
+      </LongButton>
+      <LongButton type={ButtonType.LONG_GREY} onClick={goLogin}>
+        로그인
       </LongButton>
       <ShortButton type={ButtonType.GREEN}>중복확인</ShortButton>
       <Modal
