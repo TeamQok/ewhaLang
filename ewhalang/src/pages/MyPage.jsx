@@ -8,9 +8,13 @@ import UserOptionalInformation from '../components/shared/UserOptionalInformatio
 import { LongButton, ButtonType } from '../components/common/LongButton';
 import EditButton from '../components/pages/EditButton';
 import BottomBar from '../components/layout/BottomBar';
+import Modal from '../components/common/Modal';
 
 const MyPage = () => {
-  // 예시 사용자 데이터
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  
+    // 예시 사용자 데이터
   const user = {
     nickname: "홍길동",
     profilePicture: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
@@ -51,10 +55,36 @@ const MyPage = () => {
         introduction={user.introduction}
         />
         <S.ButtonWrapper>
-            <LongButton type={ButtonType.GREEN}>
+            <LongButton type={ButtonType.GREEN} onClick={() => setIsLogoutModalOpen(true)}>
                 로그아웃
             </LongButton>
         </S.ButtonWrapper>
+        <Modal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        guideText="정말 로그아웃 하시겠습니까?"
+        confirmText="예"
+        cancelText="아니오"
+        onConfirm={() => {
+          setIsLogoutModalOpen(false);
+          setIsConfirmModalOpen(true);
+        }}
+        onCancel={() => {
+          setIsLogoutModalOpen(false);
+        }}
+        isSingleButton={false}
+        showTextInput={false}
+      />
+              <Modal
+        isOpen={isConfirmModalOpen}
+        guideText="로그아웃이 완료되었습니다."
+        confirmText="확인"
+        onConfirm={() => {
+          setIsConfirmModalOpen(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
         </S.ContentWrapper>
         <BottomBar/>
     </S.Wrapper>
