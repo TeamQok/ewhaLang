@@ -5,7 +5,7 @@ const InputBox = ({ title, placeholder }) => {
     <>
       <Title>{title}</Title>
 
-      <Input placeholder={placeholder} />
+      <Input placeholder={placeholder} type="text" />
     </>
   );
 };
@@ -28,9 +28,12 @@ const Input = styled.input`
   border-radius: 10px;
   border: 1px solid var(--Grey-3, #b8b8b8);
   background: var(--White, #fff);
-  width: 345px;
+  width: 100%;
   height: 40px;
   padding: 8px 13px;
   box-sizing: border-box;
   outline: none;
+  &::placeholder {
+    color: var(--grey3);
+  }
 `;

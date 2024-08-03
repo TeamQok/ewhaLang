@@ -20,7 +20,8 @@ function App() {
 
           {/*로그인 페이지 */}
           <Route exact path="/login" element={<Login />} />
-
+          {/* 초기화면 페이지 */}
+          <Route exact path="/onboarding" element={<Onboarding />} />
           {/*회원 상세 페이지 */}
           <Route exact path="/user" element={<UserDetailPage />} />
 
@@ -28,13 +29,15 @@ function App() {
           <Route exact path="/userlist" element={<UserListPage />} />
 
           {/*학생 인증 페이지*/}
-          <Route exact path="/verify" element={<VerificationPage/>}/>
+          <Route exact path="/verify" element={<VerificationPage />} />
 
           {/*채팅 목록 페이지*/}
-          <Route exact path="/chats" element={<ChatListPage/>}/>
-          
-          {/* 초기화면 페이지 */}
-          <Route exact path="/onboarding" element={<Onboarding />} />
+          <Route exact path="/chats" element={<ChatListPage />} />
+
+          {/*회원가입 페이지1 */}
+          <Route exact path="/signup1" element={<Signup1 />} />
+          {/*회원가입 페이지2 */}
+          <Route exact path="/signup2" element={<Signup2 />} />
         </Routes>
       </BrowserRouter>
     </>
