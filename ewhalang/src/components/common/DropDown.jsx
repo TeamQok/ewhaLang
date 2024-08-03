@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import arrowDown from '../../assets/arrowDown.svg';
 
 const DropDownContainer = styled.div`
-  width: ${props => props.isLong ? '345px' : '168px'};
+  width: ${props => props.isLong ? '100%' : '48%'};
   position: relative;
 `;
 

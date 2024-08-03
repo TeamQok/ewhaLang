@@ -4,7 +4,7 @@ import ButtonType from './ButtonType';
 
 // 스타일드 컴포넌트로 버튼 스타일 정의
 const StyledButton = styled.button`
-  width: 345px;
+  width: 100%;
   height: 45px;
   border: none;
   border-radius: 10px;
