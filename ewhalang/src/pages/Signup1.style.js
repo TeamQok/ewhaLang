@@ -21,4 +21,7 @@ export const Container = styled.div`
   position: absolute;
   bottom: 0;
   margin-bottom: 32px;
+  width: 100%;
+  padding-left: 23px;
+  padding-right: 23px;
 `;

@@ -113,7 +113,6 @@ const Signup2 = () => {
         <LongButton type={ButtonType.GREEN}>저장하기</LongButton>
         <div style={{ marginBottom: "44px" }} />
       </S.Wrapper>
-      <BottomBar />
     </>
   );
 };
