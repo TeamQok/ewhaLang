@@ -38,5 +38,5 @@ export const ButtonWrapper = styled.div`
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 9px 0px 32px;
+    padding: 13px 24px 32px;
 `;
