@@ -33,7 +33,7 @@ const DropDownListContainer = styled.div`
   position: absolute;
   width: 100%;
   z-index: 100;
-  border: 1px solid var(--grey4);
+  border: 1px solid var(--grey3);
   border-radius: 12px;
   background-color: white;
   overflow-y: auto;
