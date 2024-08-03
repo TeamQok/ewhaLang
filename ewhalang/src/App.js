@@ -9,6 +9,7 @@ import UserListPage from "./pages/UserListPage";
 import Onboarding from "./pages/Onboarding";
 import VerificationPage from "./pages/VerificationPage";
 import ChatListPage from "./pages/ChatListPage";
+import MyPage from "./pages/MyPage";
 
 function App() {
   return (
@@ -22,6 +23,10 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           {/* 초기화면 페이지 */}
           <Route exact path="/onboarding" element={<Onboarding />} />
+
+          {/*마이 페이지 */}
+          <Route exact path="/mypage" element={<MyPage />} />
+
           {/*회원 상세 페이지 */}
           <Route exact path="/user" element={<UserDetailPage />} />
 
@@ -33,11 +38,6 @@ function App() {
 
           {/*채팅 목록 페이지*/}
           <Route exact path="/chats" element={<ChatListPage />} />
-
-          {/*회원가입 페이지1 */}
-          <Route exact path="/signup1" element={<Signup1 />} />
-          {/*회원가입 페이지2 */}
-          <Route exact path="/signup2" element={<Signup2 />} />
         </Routes>
       </BrowserRouter>
     </>
