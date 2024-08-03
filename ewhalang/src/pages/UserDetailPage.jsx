@@ -7,9 +7,12 @@ import UserRequiredInformation from "../components/shared/UserRequiredInformatio
 import UserOptionalInformation from "../components/shared/UserOptionalInformation";
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import ShortDropDown from "../components/shared/ShortDropDown";
+import Modal from "../components/common/Modal";
 
 const UserDetailPage = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
 
   // 예시 사용자 데이터
   const user = {
@@ -29,15 +32,18 @@ const UserDetailPage = () => {
     introduction: "안녕하세요! 저는 소프트웨어 개발자입니다.",
   };
 
-  const options = ["차단하기", "신고하기"];
+  const options = ["신고하기"];
 
   const handleDotClick = () => {
     setIsDropDownOpen(!isDropDownOpen);
   };
 
   const handleSelect = (option) => {
-    console.log("Selected option:", option);
     setIsDropDownOpen(false);
+
+    if (option === "신고하기") {
+      setIsReportModalOpen(true);
+    }
   };
 
   return (
@@ -66,13 +72,34 @@ const UserDetailPage = () => {
           introduction={user.introduction}
         />
         <S.ButtonWrapper>
-          <LongButton type={ButtonType.GREEN}>로그아웃</LongButton>
+          <LongButton type={ButtonType.GREEN}>채팅하기</LongButton>
         </S.ButtonWrapper>
       </S.ContentWrapper>
       <ShortDropDown
         options={options}
         onSelect={handleSelect}
         isOpen={isDropDownOpen}
+      />
+      <Modal
+        isOpen={isReportModalOpen}
+        guideText="신고 사유를 작성해주세요."
+        confirmText="작성완료"
+        onConfirm={() => {
+          setIsReportModalOpen(false);
+          setIsReportConfirmOpen(true);
+        }}
+        isSingleButton={true}
+        showTextInput={true}
+      />
+      <Modal
+        isOpen={isReportConfirmOpen}
+        guideText="신고를 완료했습니다."
+        confirmText="확인"
+        onConfirm={() => {
+          setIsReportConfirmOpen(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
       />
     </S.Wrapper>
   );
