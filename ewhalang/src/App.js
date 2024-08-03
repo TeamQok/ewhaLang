@@ -13,6 +13,7 @@ import FindEmail from "./pages/FindEmail";
 import FindPw from "./pages/FindPw";
 import FindContainer from "./pages/FindContainer";
 import ReSettingPw from "./pages/ReSettingPw";
+import MyPage from "./pages/MyPage";
 
 function App() {
   return (
@@ -26,6 +27,10 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           {/* 초기화면 페이지 */}
           <Route exact path="/onboarding" element={<Onboarding />} />
+
+          {/*마이 페이지 */}
+          <Route exact path="/mypage" element={<MyPage />} />
+
           {/*회원 상세 페이지 */}
           <Route exact path="/user" element={<UserDetailPage />} />
 
