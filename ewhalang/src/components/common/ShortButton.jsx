@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import ButtonType from './ButtonType'; // ButtonType을 import
 
 const StyledButton = styled.button`
-  width: 20%; // ShortButton의 width
+  width: 17vw; // ShortButton의 width
   height: 40px; // ShortButton의 height
   border: none;
   border-radius: 10px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   justify-content: center;
