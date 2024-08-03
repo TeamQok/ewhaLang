@@ -1,13 +1,16 @@
 import * as S from "./UserDetailPage.style";
-import React from "react";
+import React, { useState } from "react";
 import Topbar from "../components/layout/Topbar";
 import UserImage from "../components/shared/UserImage";
 import UserCoreInformation from "../components/shared/UserCoreInformation";
 import UserRequiredInformation from "../components/shared/UserRequiredInformation";
 import UserOptionalInformation from "../components/shared/UserOptionalInformation";
 import { LongButton, ButtonType } from "../components/common/LongButton";
+import ShortDropDown from "../components/shared/ShortDropDown";
 
 const UserDetailPage = () => {
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+
   // 예시 사용자 데이터
   const user = {
     nickname: "홍길동",
@@ -26,10 +29,26 @@ const UserDetailPage = () => {
     introduction: "안녕하세요! 저는 소프트웨어 개발자입니다.",
   };
 
+  const options = ["차단하기", "신고하기"];
+
+  const handleDotClick = () => {
+    setIsDropDownOpen(!isDropDownOpen);
+  };
+
+  const handleSelect = (option) => {
+    console.log("Selected option:", option);
+    setIsDropDownOpen(false);
+  };
+
   return (
     <S.Wrapper>
       <S.ContentWrapper>
-        <Topbar title={user.nickname} left={"back"} right="dot" />
+        <Topbar
+          title={user.nickname}
+          left={"back"}
+          right="dot"
+          rightonClick={handleDotClick}
+        />
         <S.ImageContainer>
           <UserImage profilePicture={user.profilePicture} alt={user.nickname} />
         </S.ImageContainer>
@@ -46,10 +65,15 @@ const UserDetailPage = () => {
           hobby={user.hobby}
           introduction={user.introduction}
         />
+        <S.ButtonWrapper>
+          <LongButton type={ButtonType.GREEN}>로그아웃</LongButton>
+        </S.ButtonWrapper>
       </S.ContentWrapper>
-      <S.ButtonWrapper>
-        <LongButton type={ButtonType.GREEN}>로그아웃</LongButton>
-      </S.ButtonWrapper>
+      <ShortDropDown
+        options={options}
+        onSelect={handleSelect}
+        isOpen={isDropDownOpen}
+      />
     </S.Wrapper>
   );
 };
