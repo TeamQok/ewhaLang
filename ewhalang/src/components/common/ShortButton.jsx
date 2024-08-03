@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import ButtonType from './ButtonType'; // ButtonType을 import
 
 const StyledButton = styled.button`
-  width: 68px; // ShortButton의 width
+  width: 20%; // ShortButton의 width
   height: 40px; // ShortButton의 height
   border: none;
   border-radius: 10px;
