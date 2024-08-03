@@ -64,6 +64,15 @@ const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  box-sizing: border-box;
+  padding-left: 14px;
+  padding-right: 14px;
+  border-bottom: 1px solid var(--Grey-4, #e0e0e0);
+  width: 100%;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
 `;
 
 const Right = styled.div`
