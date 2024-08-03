@@ -1,4 +1,4 @@
-import * as S from './UserDetailPage.style'
+import * as S from './MyPage.style'
 import React, { useState } from 'react';
 import Topbar from '../components/layout/Topbar';
 import UserImage from '../components/shared/UserImage';
@@ -6,12 +6,15 @@ import UserCoreInformation from '../components/shared/UserCoreInformation';
 import UserRequiredInformation from '../components/shared/UserRequiredInformation';
 import UserOptionalInformation from '../components/shared/UserOptionalInformation';
 import { LongButton, ButtonType } from '../components/common/LongButton';
-import ShortDropDown from '../components/shared/ShortDropDown';
+import EditButton from '../components/pages/EditButton';
+import BottomBar from '../components/layout/BottomBar';
+import Modal from '../components/common/Modal';
 
-const UserDetailPage = () => {
-    const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-
-  // 예시 사용자 데이터
+const MyPage = () => {
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  
+    // 예시 사용자 데이터
   const user = {
     nickname: "홍길동",
     profilePicture: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
@@ -28,21 +31,13 @@ const UserDetailPage = () => {
     introduction: "안녕하세요! 저는 소프트웨어 개발자입니다."
   };
 
-  const options = ['차단하기', '신고하기'];
-
-  const handleDotClick = () => {
-    setIsDropDownOpen(!isDropDownOpen);
-  };
-
-  const handleSelect = (option) => {
-    console.log('Selected option:', option);
-    setIsDropDownOpen(false);
-  };
-
   return (
     <S.Wrapper>
         <S.ContentWrapper>
-        <Topbar title={user.nickname} left={"back"} right="dot" rightonClick={handleDotClick} />
+        <Topbar title={"마이페이지"} right="setting"/>
+        <S.EditButtonWrapper>
+          <EditButton />
+        </S.EditButtonWrapper>
         <S.ImageContainer>
             <UserImage profilePicture={user.profilePicture} alt={user.nickname} />
         </S.ImageContainer>
@@ -60,14 +55,40 @@ const UserDetailPage = () => {
         introduction={user.introduction}
         />
         <S.ButtonWrapper>
-            <LongButton type={ButtonType.GREEN}>
+            <LongButton type={ButtonType.GREEN} onClick={() => setIsLogoutModalOpen(true)}>
                 로그아웃
             </LongButton>
         </S.ButtonWrapper>
+        <Modal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        guideText="정말 로그아웃 하시겠습니까?"
+        confirmText="예"
+        cancelText="아니오"
+        onConfirm={() => {
+          setIsLogoutModalOpen(false);
+          setIsConfirmModalOpen(true);
+        }}
+        onCancel={() => {
+          setIsLogoutModalOpen(false);
+        }}
+        isSingleButton={false}
+        showTextInput={false}
+      />
+              <Modal
+        isOpen={isConfirmModalOpen}
+        guideText="로그아웃이 완료되었습니다."
+        confirmText="확인"
+        onConfirm={() => {
+          setIsConfirmModalOpen(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
         </S.ContentWrapper>
-        <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
+        <BottomBar/>
     </S.Wrapper>
   );
 };
 
-export default UserDetailPage;
+export default MyPage;

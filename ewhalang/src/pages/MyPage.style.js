@@ -18,19 +18,19 @@ export const ImageContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin: 19px 0px;
+  margin: 20px 0px 8px;
 `;
 
 export const Divider = styled.div`
-  height: 1px;
-  background-color: var(--grey4);
-  margin: 32px 24px;
+height: 1px;
+  background-color: var(--white);
+  margin: 10px 24px;
 `;
 
 export const BoldDivider = styled.div`
-  height: 7px;
-  background-color: var(--grey5);
-  margin: 32px 0px;
+  height: 1px;
+  background-color: var(--grey4);
+  margin: 20px 24px;
 `;
 
 export const ButtonWrapper = styled.div`
@@ -38,5 +38,11 @@ export const ButtonWrapper = styled.div`
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 13px 24px 32px;
+    padding: 13px 24px 0px;
+`;
+
+export const EditButtonWrapper = styled.div`
+  position: absolute;
+  top: 64px;
+  right: 24px;
 `;
