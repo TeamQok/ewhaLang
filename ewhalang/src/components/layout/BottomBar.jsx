@@ -72,9 +72,12 @@ const Wrapper = styled.div`
   justify-content: center;
   text-align: center;
   width: 100%;
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  margin-bottom: 10px;
+  padding-bottom: 30px;
+  border-top: 0.5px solid var(--Grey-3, #b8b8b8);
+  background: var(--White, #fff);
+  background-color: white;
 `;
 
 const Item = styled.div`
