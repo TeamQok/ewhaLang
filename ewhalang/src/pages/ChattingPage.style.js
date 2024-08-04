@@ -13,6 +13,13 @@ export const ContentWrapper = styled.div`
   overflow: hidden;
 `;
 
+export const Title = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+`
+
 export const MessageListContainer = styled.div`
   flex: 1;
   overflow-y: auto;
