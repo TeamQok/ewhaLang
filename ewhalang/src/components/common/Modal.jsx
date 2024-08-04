@@ -19,7 +19,7 @@ const ModalBackground = styled.div`
 
 // 모달 컨테이너 스타일
 const ModalContainer = styled.div`
-  width: 67vw;
+  width: 68vw;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -27,7 +27,7 @@ const ModalContainer = styled.div`
 
 // 컨텐츠 래퍼 스타일
 const ContentWrapper = styled.div`
-  padding: 28px 40px;
+  padding: 30px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,7 +39,7 @@ const ContentWrapper = styled.div`
 const GuideText = styled.div`
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 28px;
+  margin-bottom: ${props => props.showTextInput ? '12px' : '28px'};
 `;
 
 // 버튼 컨테이너 스타일
@@ -48,6 +48,16 @@ const ButtonContainer = styled.div`
   justify-content: center;
   gap: ${props => props.isSingleButton ? '0' : '12px'};
 `;
+
+const StyledInput = styled.input`
+  width: 46vw;
+  height: 130px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+`;
+
 
 // Modal 컴포넌트
 const Modal = ({ 
@@ -67,9 +77,9 @@ const Modal = ({
     <ModalBackground onClick={onClose}>
       <ModalContainer onClick={e => e.stopPropagation()}>
         <ContentWrapper>
-          <GuideText>{guideText}</GuideText>
+          <GuideText showTextInput={showTextInput}>{guideText}</GuideText>
           {showTextInput && (
-            <input type="text" placeholder="입력해주세요" />
+            <StyledInput type="text" />
           )}
           <ButtonContainer isSingleButton={isSingleButton}>
             <ShortButton type={ButtonType.GREEN} onClick={onConfirm}>
