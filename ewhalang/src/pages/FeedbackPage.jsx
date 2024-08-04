@@ -1,5 +1,6 @@
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import Modal from "../components/common/Modal";
+import BottomBar from "../components/layout/BottomBar";
 import Topbar from "../components/layout/Topbar";
 import * as S from "./FeedbackPage.style";
 import { useState } from "react";
@@ -33,6 +34,7 @@ const FeedbackPage = () => {
           showTextInput={false}
         />
       </S.Wrapper>
+      <BottomBar isOnMypage={true} />
     </>
   );
 };

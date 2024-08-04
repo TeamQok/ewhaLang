@@ -41,7 +41,7 @@ const GuideText = styled.div`
   font-size: 14px;
   font-weight: 600;
 
-  margin-bottom: ${props => props.showTextInput ? '12px' : '28px'};
+  margin-bottom: ${(props) => (props.showTextInput ? "12px" : "28px")};
 `;
 
 // 버튼 컨테이너 스타일
@@ -59,16 +59,6 @@ const StyledInput = styled.input`
   border-radius: 10px;
   box-sizing: border-box;
 `;
-
-const StyledInput = styled.input`
-  width: 46vw;
-  height: 130px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-sizing: border-box;
-`;
-
 
 // Modal 컴포넌트
 const Modal = ({
@@ -88,11 +78,8 @@ const Modal = ({
     <ModalBackground onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ContentWrapper>
-
           <GuideText showTextInput={showTextInput}>{guideText}</GuideText>
-          {showTextInput && (
-            <StyledInput type="text" />
-          )}
+          {showTextInput && <StyledInput type="text" />}
 
           <ButtonContainer isSingleButton={isSingleButton}>
             <ShortButton type={ButtonType.GREEN} onClick={onConfirm}>
