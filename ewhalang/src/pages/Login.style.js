@@ -20,12 +20,19 @@ export const Input = styled.input`
   outline: none;
 
   /* Body 14R */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: 24px; /* 171.429% */
   margin-bottom: 12px;
+
+  &::placeholder {
+    color: var(--grey3);
+    font-size: 14px;
+    font-family: var(--korean);
+    font-weight: 400;
+  }
 `;
 
 export const Container = styled.div`

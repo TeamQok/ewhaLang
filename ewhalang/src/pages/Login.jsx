@@ -15,6 +15,14 @@ const Login = () => {
     navigate("/");
   };
 
+  const goFindEmail = () => {
+    navigate("/find");
+  };
+
+  const goFindPw = () => {
+    navigate("/find", { state: { view: "pw" } });
+  };
+
   return (
     <S.Wrapper>
       <img
@@ -28,9 +36,9 @@ const Login = () => {
         로그인
       </LongButton>
       <S.Container>
-        <S.Option>이메일찾기</S.Option>
+        <S.Option onClick={goFindEmail}>이메일찾기</S.Option>
         <S.Bar>|</S.Bar>
-        <S.Option>비밀번호 찾기</S.Option>
+        <S.Option onClick={goFindPw}>비밀번호 찾기</S.Option>
         <S.Bar>|</S.Bar>
         <S.Option color="#33936D" onClick={goSignin}>
           회원가입
