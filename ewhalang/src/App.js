@@ -29,6 +29,7 @@ function App() {
           {/* 초기화면 페이지 */}
           <Route exact path="/onboarding" element={<Onboarding />} />
 
+
           {/*마이 페이지 */}
           <Route exact path="/mypage" element={<MyPage />} />
 
@@ -37,6 +38,7 @@ function App() {
 
           {/*채팅 목록 페이지*/}
           <Route exact path="/chats" element={<ChatListPage />} />
+
 
           {/*회원가입 페이지1 */}
           <Route exact path="/signup1" element={<Signup1 />} />
@@ -57,6 +59,7 @@ function App() {
 
           {/*채팅 페이지*/}
           <Route exact path="/chat" element={<ChattingPage />} />
+
         </Routes>
       </BrowserRouter>
     </>
