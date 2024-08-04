@@ -9,6 +9,7 @@ import UserListPage from "./pages/UserListPage";
 import Onboarding from "./pages/Onboarding";
 import VerificationPage from "./pages/VerificationPage";
 import ChatListPage from "./pages/ChatListPage";
+import ChattingPage from "./pages/ChattingPage";
 import MyPage from "./pages/MyPage";
 
 function App() {
@@ -38,6 +39,10 @@ function App() {
 
           {/*채팅 목록 페이지*/}
           <Route exact path="/chats" element={<ChatListPage />} />
+
+          {/*채팅 페이지*/}
+          <Route exact path="/chat" element={<ChattingPage />} />
+
         </Routes>
       </BrowserRouter>
     </>
