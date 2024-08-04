@@ -1,20 +1,18 @@
-
-import * as S from './UserDetailPage.style'
-import React, { useState } from 'react';
-import Topbar from '../components/layout/Topbar';
-import UserImage from '../components/shared/UserImage';
-import UserCoreInformation from '../components/shared/UserCoreInformation';
-import UserRequiredInformation from '../components/shared/UserRequiredInformation';
-import UserOptionalInformation from '../components/shared/UserOptionalInformation';
-import { LongButton, ButtonType } from '../components/common/LongButton';
-import ShortDropDown from '../components/shared/ShortDropDown';
-import Modal from '../components/common/Modal';
+import * as S from "./UserDetailPage.style";
+import React, { useState } from "react";
+import Topbar from "../components/layout/Topbar";
+import UserImage from "../components/shared/UserImage";
+import UserCoreInformation from "../components/shared/UserCoreInformation";
+import UserRequiredInformation from "../components/shared/UserRequiredInformation";
+import UserOptionalInformation from "../components/shared/UserOptionalInformation";
+import { LongButton, ButtonType } from "../components/common/LongButton";
+import ShortDropDown from "../components/shared/ShortDropDown";
+import Modal from "../components/common/Modal";
 
 const UserDetailPage = () => {
-    const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-    const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
-
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
 
   // 예시 사용자 데이터
   const user = {
@@ -48,25 +46,15 @@ const UserDetailPage = () => {
     }
   };
 
-  const options = ['신고하기'];
-
-  const handleDotClick = () => {
-    setIsDropDownOpen(!isDropDownOpen);
-  };
-
-  const handleSelect = (option) => {
-    setIsDropDownOpen(false);
-
-    if(option === '신고하기'){
-      setIsReportModalOpen(true);
-    }
-  };
-
   return (
     <S.Wrapper>
-
-        <S.ContentWrapper>
-        <Topbar title={user.nickname} left={"back"} right="dot" rightonClick={handleDotClick} />
+      <S.ContentWrapper>
+        <Topbar
+          title={user.nickname}
+          left={"back"}
+          right="dot"
+          rightonClick={handleDotClick}
+        />
 
         <S.ImageContainer>
           <UserImage profilePicture={user.profilePicture} alt={user.nickname} />
@@ -85,15 +73,15 @@ const UserDetailPage = () => {
           introduction={user.introduction}
         />
         <S.ButtonWrapper>
-
-            <LongButton type={ButtonType.GREEN}>
-                채팅하기
-            </LongButton>
+          <LongButton type={ButtonType.GREEN}>채팅하기</LongButton>
         </S.ButtonWrapper>
-        </S.ContentWrapper>
-        <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
-        <Modal
-
+      </S.ContentWrapper>
+      <ShortDropDown
+        options={options}
+        onSelect={handleSelect}
+        isOpen={isDropDownOpen}
+      />
+      <Modal
         isOpen={isReportModalOpen}
         guideText="신고 사유를 작성해주세요."
         confirmText="작성완료"

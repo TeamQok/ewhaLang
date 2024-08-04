@@ -15,6 +15,10 @@ import FindContainer from "./pages/FindContainer";
 import ReSettingPw from "./pages/ReSettingPw";
 import ChattingPage from "./pages/ChattingPage";
 import MyPage from "./pages/MyPage";
+import Setting from "./pages/Setting";
+import LangSettingPage from "./pages/LangSettingPage";
+import AccountManagePage from "./pages/AccountManagePage";
+import FeedbackPage from "./pages/FeedbackPage";
 
 function App() {
   return (
@@ -29,7 +33,6 @@ function App() {
           {/* 초기화면 페이지 */}
           <Route exact path="/onboarding" element={<Onboarding />} />
 
-
           {/*마이 페이지 */}
           <Route exact path="/mypage" element={<MyPage />} />
 
@@ -38,7 +41,6 @@ function App() {
 
           {/*채팅 목록 페이지*/}
           <Route exact path="/chats" element={<ChatListPage />} />
-
 
           {/*회원가입 페이지1 */}
           <Route exact path="/signup1" element={<Signup1 />} />
@@ -60,6 +62,17 @@ function App() {
           {/*채팅 페이지*/}
           <Route exact path="/chat" element={<ChattingPage />} />
 
+          {/*설정 페이지*/}
+          <Route exact path="/setting" element={<Setting />} />
+
+          {/*언어 설정 페이지*/}
+          <Route exact path="/langsetting" element={<LangSettingPage />} />
+
+          {/*언어 설정 페이지*/}
+          <Route exact path="/accountmanage" element={<AccountManagePage />} />
+
+          {/*언어 설정 페이지*/}
+          <Route exact path="/feedback" element={<FeedbackPage />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -9,9 +9,6 @@ import { LongButton, ButtonType } from "../components/common/LongButton";
 import Modal from "../components/common/Modal";
 
 const FindEmail = () => {
-  const [email, setEmail] = useState(true);
-  const [pw, setPw] = useState(false);
-  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
