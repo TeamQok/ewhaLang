@@ -13,6 +13,7 @@ import FindEmail from "./pages/FindEmail";
 import FindPw from "./pages/FindPw";
 import FindContainer from "./pages/FindContainer";
 import ReSettingPw from "./pages/ReSettingPw";
+import ChattingPage from "./pages/ChattingPage";
 import MyPage from "./pages/MyPage";
 
 function App() {
@@ -53,6 +54,9 @@ function App() {
 
           {/* 비번 재설정 */}
           <Route exact path="/repw" element={<ReSettingPw />} />
+
+          {/*채팅 페이지*/}
+          <Route exact path="/chat" element={<ChattingPage />} />
         </Routes>
       </BrowserRouter>
     </>
