@@ -17,7 +17,7 @@ const UserOptionalInformation = ({ hobby, introduction }) => {
 };
 
 const InformationSection = styled.div`
-  margin: 0 24px 24px;
+  margin: 0 24px 20px;
 `;
 
 const InfoItem = ({ label, value }) => {
