@@ -35,5 +35,7 @@ const Input = styled.input`
   outline: none;
   &::placeholder {
     color: var(--grey3);
+    font-size: 14px;
+    font-family: var(--korean);
   }
 `;
