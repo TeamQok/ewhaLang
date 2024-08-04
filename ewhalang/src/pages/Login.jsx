@@ -2,8 +2,27 @@ import * as S from "./Login.style";
 import logo from "../assets/x-logo.svg";
 import InputBox from "../components/common/InputBox";
 import { LongButton, ButtonType } from "../components/common/LongButton";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const goSignin = () => {
+    navigate("/signup1");
+  };
+
+  const goMain = () => {
+    navigate("/");
+  };
+
+  const goFindEmail = () => {
+    navigate("/find");
+  };
+
+  const goFindPw = () => {
+    navigate("/find", { state: { view: "pw" } });
+  };
+
   return (
     <S.Wrapper>
       <img
@@ -13,13 +32,17 @@ const Login = () => {
       <S.Input placeholder="이메일 입력" />
       <S.Input placeholder="비밀번호 입력" />
       <div style={{ marginTop: "12px" }}></div>
-      <LongButton type={ButtonType.GREEN}>로그인</LongButton>
+      <LongButton type={ButtonType.GREEN} onClick={goMain}>
+        로그인
+      </LongButton>
       <S.Container>
-        <S.Option>이메일찾기</S.Option>
+        <S.Option onClick={goFindEmail}>이메일찾기</S.Option>
         <S.Bar>|</S.Bar>
-        <S.Option>비밀번호 찾기</S.Option>
+        <S.Option onClick={goFindPw}>비밀번호 찾기</S.Option>
         <S.Bar>|</S.Bar>
-        <S.Option color="#33936D">회원가입</S.Option>
+        <S.Option color="#33936D" onClick={goSignin}>
+          회원가입
+        </S.Option>
       </S.Container>
     </S.Wrapper>
   );

@@ -1,3 +1,4 @@
+
 import * as S from './UserDetailPage.style'
 import React, { useState } from 'react';
 import Topbar from '../components/layout/Topbar';
@@ -14,10 +15,12 @@ const UserDetailPage = () => {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
 
+
   // 예시 사용자 데이터
   const user = {
     nickname: "홍길동",
-    profilePicture: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
+    profilePicture:
+      "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
     country: "대한민국",
     gender: "남성",
     birthdate: "1990",
@@ -25,10 +28,24 @@ const UserDetailPage = () => {
     languages: [
       { language: "한국어", level: "원어민" },
       { language: "영어", level: "중급" },
-      { language: "일본어", level: "초급" }
+      { language: "일본어", level: "초급" },
     ],
     hobby: "독서, 여행",
-    introduction: "안녕하세요! 저는 소프트웨어 개발자입니다."
+    introduction: "안녕하세요! 저는 소프트웨어 개발자입니다.",
+  };
+
+  const options = ["신고하기"];
+
+  const handleDotClick = () => {
+    setIsDropDownOpen(!isDropDownOpen);
+  };
+
+  const handleSelect = (option) => {
+    setIsDropDownOpen(false);
+
+    if (option === "신고하기") {
+      setIsReportModalOpen(true);
+    }
   };
 
   const options = ['신고하기'];
@@ -47,25 +64,28 @@ const UserDetailPage = () => {
 
   return (
     <S.Wrapper>
+
         <S.ContentWrapper>
         <Topbar title={user.nickname} left={"back"} right="dot" rightonClick={handleDotClick} />
+
         <S.ImageContainer>
-            <UserImage profilePicture={user.profilePicture} alt={user.nickname} />
+          <UserImage profilePicture={user.profilePicture} alt={user.nickname} />
         </S.ImageContainer>
         <UserCoreInformation nickname={user.nickname} country={user.country} />
         <S.Divider />
         <UserRequiredInformation
-        gender={user.gender}
-        birthdate={user.birthdate}
-        major={user.major}
-        languages={user.languages}
+          gender={user.gender}
+          birthdate={user.birthdate}
+          major={user.major}
+          languages={user.languages}
         />
-        <S.BoldDivider/>
+        <S.BoldDivider />
         <UserOptionalInformation
-        hobby={user.hobby}
-        introduction={user.introduction}
+          hobby={user.hobby}
+          introduction={user.introduction}
         />
         <S.ButtonWrapper>
+
             <LongButton type={ButtonType.GREEN}>
                 채팅하기
             </LongButton>
@@ -73,6 +93,7 @@ const UserDetailPage = () => {
         </S.ContentWrapper>
         <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
         <Modal
+
         isOpen={isReportModalOpen}
         guideText="신고 사유를 작성해주세요."
         confirmText="작성완료"
