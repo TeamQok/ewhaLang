@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import { ShortButton } from './ShortButton';
-import ButtonType from './ButtonType';
+import React from "react";
+import styled from "styled-components";
+import { ShortButton } from "./ShortButton";
+import ButtonType from "./ButtonType";
 
 // 모달 배경 스타일
 const ModalBackground = styled.div`
@@ -14,6 +14,7 @@ const ModalBackground = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 `;
 
 // 모달 컨테이너 스타일
@@ -40,31 +41,29 @@ const GuideText = styled.p`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: ${props => props.isSingleButton ? '0' : '12px'};
+  gap: ${(props) => (props.isSingleButton ? "0" : "12px")};
 `;
 
 // Modal 컴포넌트
-const Modal = ({ 
-  isOpen, 
-  onClose, 
-  guideText, 
-  confirmText = '확인', 
-  cancelText = '취소', 
-  onConfirm, 
+const Modal = ({
+  isOpen,
+  onClose,
+  guideText,
+  confirmText = "확인",
+  cancelText = "취소",
+  onConfirm,
   onCancel,
   isSingleButton = false,
-  showTextInput = false
+  showTextInput = false,
 }) => {
   if (!isOpen) return null;
 
   return (
     <ModalBackground onClick={onClose}>
-      <ModalContainer onClick={e => e.stopPropagation()}>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ContentWrapper>
-          <GuideText>{guideText}</GuideText>
-          {showTextInput && (
-            <input type="text" placeholder="입력해주세요" />
-          )}
+          <GuideText style={{ whiteSpace: "pre-line" }}>{guideText}</GuideText>
+          {showTextInput && <input type="text" placeholder="입력해주세요" />}
           <ButtonContainer isSingleButton={isSingleButton}>
             <ShortButton type={ButtonType.GREEN} onClick={onConfirm}>
               {confirmText}
