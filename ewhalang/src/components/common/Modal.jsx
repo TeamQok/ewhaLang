@@ -19,7 +19,7 @@ const ModalBackground = styled.div`
 
 // 모달 컨테이너 스타일
 const ModalContainer = styled.div`
-  width: 67vw;
+  width: 68vw;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
