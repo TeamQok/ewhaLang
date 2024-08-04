@@ -4,9 +4,11 @@ import profile from "../assets/profile.svg";
 import InputBox from "../components/common/InputBox";
 import DropDown from "../components/common/DropDown";
 import { LongButton, ButtonType } from "../components/common/LongButton";
-import BottomBar from "../components/layout/BottomBar";
+import { useState } from "react";
+import Modal from "../components/common/Modal";
 
 const Signup2 = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
       <Topbar title={"회원가입"} right={"x"} left={"back"} />
@@ -110,9 +112,28 @@ const Signup2 = () => {
         <S.Introduce />
         <div style={{ marginBottom: "25px" }} />
 
-        <LongButton type={ButtonType.GREEN}>저장하기</LongButton>
+        <LongButton
+          type={ButtonType.GREEN}
+          onClick={() => setIsModalOpen(true)}
+        >
+          저장하기
+        </LongButton>
         <div style={{ marginBottom: "44px" }} />
       </S.Wrapper>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        guideText="회원가입이 완료되었습니다!"
+        confirmText="확인"
+        onConfirm={() => {
+          setIsModalOpen(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
     </>
   );
 };

@@ -15,7 +15,7 @@ export const ProfileWrapper = styled.div`
 
 export const Info = styled.div`
   color: var(--Grey-2, #a8a8a8);
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
