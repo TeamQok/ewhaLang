@@ -187,7 +187,7 @@ const FilterComponent = () => {
 };
 
 const FilterWrapper = styled.div`
-  padding: 10px 20px;
+  padding: 10px 20px 16px 20px;
   overflow-x: auto;
   white-space: nowrap;
   width: 100%;

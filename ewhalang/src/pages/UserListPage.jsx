@@ -7,12 +7,14 @@ import users from '../_mock/userMockData';
 import Topbar from '../components/layout/Topbar';
 import BottomBar from '../components/layout/BottomBar';
 import FilterComponent from '../components/pages/FilterComponent';
+import LanguageLevelInfo from '../components/pages/LanguageLevelInfo';
 
 const UserListPage = () => {
   return (
     <Wrapper>
       <Topbar title={"이화랑 친구 찾기"}/>
       <FilterComponent />
+      <LanguageLevelInfo/>
       <ContentsWrapper>
         {users.map((user, index) => (
           <UserListInformation key={index} user={user} />
@@ -32,9 +34,9 @@ const Wrapper = styled.div`
 
 const ContentsWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, calc((100vw - 49px) / 2));
+  grid-template-columns: repeat(2, calc((100vw - 57px) / 2));
   gap: 9px;
-  padding: 20px;
+  padding: 16px 24px;
   flex-grow: 1;
 `;
 
