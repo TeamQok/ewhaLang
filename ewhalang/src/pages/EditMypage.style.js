@@ -4,6 +4,7 @@ export const Wrapper = styled.div`
   padding-left: 24px;
   padding-right: 24px;
   padding-top: 20px;
+  padding-bottom: 20px;
 `;
 
 export const ProfileWrapper = styled.div`

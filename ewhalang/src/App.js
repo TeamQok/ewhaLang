@@ -19,6 +19,7 @@ import Setting from "./pages/Setting";
 import LangSettingPage from "./pages/LangSettingPage";
 import AccountManagePage from "./pages/AccountManagePage";
 import FeedbackPage from "./pages/FeedbackPage";
+import EditMypage from "./pages/EditMypage";
 
 function App() {
   return (
@@ -73,6 +74,9 @@ function App() {
 
           {/*언어 설정 페이지*/}
           <Route exact path="/feedback" element={<FeedbackPage />} />
+
+          {/*마이페이지 수정 페이지*/}
+          <Route exact path="/editmypage" element={<EditMypage />} />
         </Routes>
       </BrowserRouter>
     </>
