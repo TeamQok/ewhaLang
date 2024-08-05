@@ -10,6 +10,12 @@ const ButtonType = {
     color: "var(--white)",
     border: "none",
   },
+  PALE_GREEN: {
+    background: "var(--sub3)",
+    color: "var(--sub1)",
+    border: "none",
+  },
+
   LONG_GREY_BLACK: {
     background: "var(--grey4)",
     color: "var(--grey1)",
