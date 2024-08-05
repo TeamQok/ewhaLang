@@ -11,7 +11,9 @@ const Popup = ({ isOpen, onClose, title, children, fullScreen }) => (
           <img src={closeIcon} alt="Close" />
         </CloseButton>
       </PopupHeader>
+      <PopupBody>
       {children}
+      </PopupBody>
     </PopupContent>
   </PopupWrapper>
 );
@@ -33,10 +35,12 @@ const PopupContent = styled.div`
   left: 0;
   right: 0;
   background-color: white;
+  z-index: 1;
   padding: 20px;
-  border-radius: 20px 20px 0 0;
+  border-radius: ${props => props.fullScreen ? '0' : '20px 20px 0 0'};
   max-height: ${props => props.fullScreen ? '100%' : '90%'};
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(100%)'};
   transition: transform 0.3s ease-out;
 `;
@@ -46,8 +50,15 @@ const PopupHeader = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-  height: 44px; // 헤더의 높이를 지정
+  padding: 20px;
+  height: 44px;
+  background-color: white;
+  z-index: 10;
+`;
+
+const PopupBody = styled.div`
+  flex: 1;
+  overflow-y: auto;
 `;
 
 const Title = styled.p`
