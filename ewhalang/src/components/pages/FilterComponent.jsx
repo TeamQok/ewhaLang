@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import FilterButton from './FilterButton';
 import SelectionPopup from './SelectionPopup';
+import BulletSelectionPopup from './BulletSelectionPopup';
+import RangePopup from './RangePopup';
 import Popup from './Popup';
 import filterIcon from '../../assets/filter.svg';
 import arrowDownIcon from '../../assets/filterArrowDown.svg';
@@ -21,14 +23,18 @@ const countries = [
   '스웨덴', '스위스', '벨기에', '오스트리아'
 ];
 
+const genderOptions = ['전체', '여성', '남성'];
+
 const FilterComponent = () => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [isFullScreenFilterOpen, setIsFullScreenFilterOpen] = useState(false);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
+  const [selectedGender, setSelectedGender] = useState('전체');
   const [isAllLanguagesSelected, setIsAllLanguagesSelected] = useState(false);
   const [isAllCountriesSelected, setIsAllCountriesSelected] = useState(false);
   const [countrySearchTerm, setCountrySearchTerm] = useState('');
+  const [birthYearRange, setBirthYearRange] = useState({ start: 1996, end: 2005 });
 
   useEffect(() => {
     setIsAllLanguagesSelected(selectedLanguages.length === languages.length);
@@ -98,9 +104,17 @@ const FilterComponent = () => {
     }
   };
 
+  const toggleGender = (gender) => {
+    setSelectedGender(gender);
+  };
+
   const filteredCountries = countries.filter(country => 
     country.toLowerCase().includes(countrySearchTerm.toLowerCase())
   );
+
+  const handleBirthYearRangeChange = (start, end) => {
+    setBirthYearRange({ start, end });
+  };
 
   return (
     <>
@@ -134,6 +148,27 @@ const FilterComponent = () => {
         searchTerm={countrySearchTerm}
         setSearchTerm={setCountrySearchTerm}
         showSearch={true}
+      />
+      <BulletSelectionPopup 
+        isOpen={activeFilter === '성별'}
+        onClose={closeFilter}
+        title="성별 선택"
+        options={genderOptions}
+        selectedOption={selectedGender}
+        toggleOption={toggleGender}
+      />
+      <RangePopup 
+        isOpen={activeFilter === '출생년도'}
+        onClose={closeFilter}
+        title="출생년도 선택"
+        initialStart={birthYearRange.start}
+        initialEnd={birthYearRange.end}
+        minValue={1996}
+        maxValue={2005}
+        step={1}
+        formatLabel={(year) => `${year}년생`}
+        formatDisplayItem={(year) => `${year.toString().slice(2)}년생`}
+        onApply={handleBirthYearRangeChange}
       />
       <Popup
         isOpen={isFullScreenFilterOpen}
