@@ -7,7 +7,7 @@ const Levels = [
   { level: '기초', color: 'var(--sub3)' },
   { level: '중급', color: 'var(--sub2)' },
   { level: '상급', color: '#86E8C7' },
-  { level: '원어민', color: 'var(--sub1)' },
+  { level: '원어민', color: '#40C79A' },
 ];
 
 const LanguageLevelInfo = () => {
