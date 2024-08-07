@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
-const InputBox = ({ title, placeholder }) => {
+const InputBox = ({ title, placeholder, onChange }) => {
   return (
     <>
       <Title>{title}</Title>
 
-      <Input placeholder={placeholder} type="text" />
+      <Input placeholder={placeholder} type="text" onChange={onChange} />
     </>
   );
 };
