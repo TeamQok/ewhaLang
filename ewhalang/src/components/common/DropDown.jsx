@@ -10,7 +10,7 @@ const DropDownContainer = styled.div`
 const DropDownHeader = styled.div`
   height: 40px;
   padding: 10px;
-  border: 1px solid var(--grey4);
+  border: 1px solid var(--grey3);
   background-color: white;
   border-radius: 12px;
   font-size: 14px;
