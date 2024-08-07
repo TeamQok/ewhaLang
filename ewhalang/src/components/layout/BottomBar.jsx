@@ -16,7 +16,7 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
 
   const goFriends = () => {
     // 나중에 라우팅 주소 정해지면 넣어주세요.
-    navigate("/");
+    navigate("/users");
     setFriend(true);
     setMypage(false);
     setChat(false);
@@ -24,7 +24,7 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
 
   const goChat = () => {
     // 나중에 라우팅 주소 정해지면 넣어주세요.
-    navigate("/");
+    navigate("/chats");
     setChat(true);
     setFriend(false);
     setMypage(false);
