@@ -7,12 +7,20 @@ import chatMockData from '../../_mock/chatMockData'
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
+  const loggedInUserId = 'user1';
   // const currentUser = auth.currentUser;
 
   useEffect(() => {
+    // 로그인 유저가 참여하고 있는 채팅만 필터링
+    const filteredChatList = chatMockData.filter(chat =>
+      chat.participants.some(participant => participant.userId === loggedInUserId)
+    );
+
     // 최신순으로 정렬
-    const sortedChatList = chatMockData.sort((a, b) => b.lastMessage.createdAt - a.lastMessage.createdAt);
-        setChatList(sortedChatList);
+    const sortedChatList = filteredChatList.sort((a, b) => 
+      new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)
+    );
+    setChatList(sortedChatList);
 
     // 아래의 Firebase 관련 코드는 주석 처리
     /*
@@ -59,16 +67,14 @@ const ChatList = () => {
 
     fetchChatList();
     */
-    }, []);
+    }, [loggedInUserId]);
 
   return (
-    <S.Wrapper>
-      <S.ListContainer>
-        {chatList.map((chat) => (
-          <ChatBox key={chat.channelId} chat={chat} />
-        ))}
-      </S.ListContainer>
-    </S.Wrapper>
+    <S.ListContainer>
+    {chatList.map((chat) => (
+      <ChatBox key={chat.channelId} chat={chat} loggedInUserId={loggedInUserId} />
+    ))}
+  </S.ListContainer>
   );
 };
 
