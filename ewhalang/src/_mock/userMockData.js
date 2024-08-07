@@ -8,8 +8,8 @@ const users = [
       major: "컴퓨터 공학",
       languages: [
         { language: "한국어", level: "원어민" },
-        { language: "영어", level: "중" },
-        { language: "일본어", level: "하" }
+        { language: "영어", level: "중급" },
+        { language: "일본어", level: "기초" }
       ]
     },
     {
@@ -21,7 +21,7 @@ const users = [
       major: "경영학",
       languages: [
         { language: "한국어", level: "원어민" },
-        { language: "영어", level: "상" }
+        { language: "영어", level: "상급" }
       ]
     },
     {
@@ -33,8 +33,8 @@ const users = [
       major: "심리학",
       languages: [
         { language: "영어", level: "원어민" },
-        { language: "스페인어", level: "중" },
-        { language: "한국어", level: "하" }
+        { language: "스페인어", level: "중급" },
+        { language: "한국어", level: "기초" }
       ]
     },
     {
@@ -46,8 +46,8 @@ const users = [
       major: "국제관계학",
       languages: [
         { language: "일본어", level: "원어민" },
-        { language: "영어", level: "상" },
-        { language: "중국어", level: "중" }
+        { language: "영어", level: "상급" },
+        { language: "중국어", level: "중급" }
       ]
     },
     {
@@ -59,8 +59,8 @@ const users = [
       major: "예술사",
       languages: [
         { language: "스페인어", level: "원어민" },
-        { language: "영어", level: "중" },
-        { language: "프랑스어", level: "하" }
+        { language: "영어", level: "중급" },
+        { language: "프랑스어", level: "기초" }
       ]
     },
     {
@@ -72,8 +72,8 @@ const users = [
       major: "생명공학",
       languages: [
         { language: "한국어", level: "원어민" },
-        { language: "영어", level: "상" },
-        { language: "중국어", level: "중" }
+        { language: "영어", level: "상급" },
+        { language: "중국어", level: "중급" }
       ]
     },
     {
@@ -85,8 +85,8 @@ const users = [
       major: "물리학",
       languages: [
         { language: "러시아어", level: "원어민" },
-        { language: "영어", level: "중" },
-        { language: "독일어", level: "하" }
+        { language: "영어", level: "중급" },
+        { language: "독일어", level: "기초" }
       ]
     }
   ];

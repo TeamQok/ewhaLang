@@ -6,6 +6,7 @@ import MainPage from "./pages/MainPage";
 import Login from "./pages/Login";
 import UserDetailPage from "./pages/UserDetailPage";
 import Onboarding from "./pages/Onboarding";
+import UserListPage from "./pages/UserListPage";
 import ChatListPage from "./pages/ChatListPage";
 import Signup2 from "./pages/Signup2";
 import Signup1 from "./pages/Signup1";
@@ -39,6 +40,9 @@ function App() {
 
           {/*회원 상세 페이지 */}
           <Route exact path="/user" element={<UserDetailPage />} />
+
+          {/*회원 상세 페이지 */}
+          <Route exact path="/users" element={<UserListPage />} />
 
           {/*채팅 목록 페이지*/}
           <Route exact path="/chats" element={<ChatListPage />} />

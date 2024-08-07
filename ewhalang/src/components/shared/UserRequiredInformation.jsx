@@ -150,15 +150,13 @@ const LanguageTag = styled.span`
   background-color: ${({ level }) => {
     switch (level) {
       case '원어민':
+        return '#40C79A';
+      case '상급':
         return '#86E8C7';
-      case '상':
-        return 'var(--sub1)';
-      case '중':
+      case '중급':
         return 'var(--sub2)';
-      case '하':
-        return 'var(--sub3)';
       default:
-        return 'var(--sub4)';
+        return 'var(--sub3)';
     }
   }};
   color: var(--main);
