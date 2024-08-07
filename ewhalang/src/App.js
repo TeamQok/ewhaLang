@@ -47,6 +47,9 @@ function App() {
           {/*채팅 목록 페이지*/}
           <Route exact path="/chats" element={<ChatListPage />} />
 
+          {/*채팅 페이지*/}
+          <Route exact path="/chats/:chatId" element={<ChattingPage />} />
+
           {/*회원가입 페이지1 */}
           <Route exact path="/signup1" element={<Signup1 />} />
           {/*회원가입 페이지2 */}
@@ -63,9 +66,6 @@ function App() {
 
           {/* 비번 재설정 */}
           <Route exact path="/repw" element={<ReSettingPw />} />
-
-          {/*채팅 페이지*/}
-          <Route exact path="/chat" element={<ChattingPage />} />
 
           {/*설정 페이지*/}
           <Route exact path="/setting" element={<Setting />} />

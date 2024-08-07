@@ -1,17 +1,17 @@
 import React from 'react';
 import Message from './Message';
 
-const MessageList = ({ messages, currentUserId, userProfileImage }) => {
+const MessageList = ({ messages, currentUserId, userProfileImage }) => {  
   return (
     <div style={{ overflow: 'hidden' }}>
       {messages.map((msg) => (
         <Message
-          key={msg.id}
-          text={msg.text}
-          userId={msg.userId}
+          key={msg.messageId}
+          content={msg.content}
+          senderId={msg.senderId}
           currentUserId={currentUserId}
-          createdAt={msg.createdAt}
-          isUnread={msg.isUnread}
+          timestamp={msg.timestamp}
+          isRead={msg.isRead}
           userProfileImage={userProfileImage}
         />
       ))}

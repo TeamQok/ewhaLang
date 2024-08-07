@@ -1,11 +1,14 @@
 // ChatBox.jsx
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as S from './ChatList.style';
 import UserImage from '../shared/UserImage';
 
-const ChatBox = ({ chat }) => {
-    const formatTime = (date) => {
+const ChatBox = ({ chat, loggedInUserId }) => {
+  const navigate = useNavigate();
+    const formatTime = (timestamp) => {
+      const date = new Date(timestamp);
         return new Intl.DateTimeFormat('ko-KR', {
           hour: 'numeric',
           minute: 'numeric',
@@ -13,20 +16,32 @@ const ChatBox = ({ chat }) => {
         }).format(date);
       };
 
+  const otherUser = chat.participants.find(p => p.userId !== loggedInUserId);
+  const unreadCount = chat.unreadCounts[loggedInUserId] || 0;
+
+  const handleClick = () => {
+    navigate(`/chats/${chat.chatId}`);
+};
+  
   return (
-    <S.ChatItemWrapper>
-        <UserImage profilePicture={chat.otherUser.profilePicture} alt={chat.otherUser.nickname} width={68} height={68}/>
+    <S.ChatItemWrapper onClick={handleClick}>
+        <UserImage profilePicture={otherUser.profilePicture} alt={otherUser.nickname} width={68} height={68}/>
       <S.ChatInfo>
         <S.UserInfoWrapper>
-          <S.Nickname>{chat.otherUser.nickname}</S.Nickname>
+          <S.Nickname>{otherUser.nickname}</S.Nickname>
           <S.Separator>|</S.Separator>
-          <S.Country>{chat.otherUser.country}</S.Country>
+          <S.Country>{otherUser.country}</S.Country>
         </S.UserInfoWrapper>
-        <S.LastMessage>{chat.lastMessage.text}</S.LastMessage>
+        <S.LastMessage>{chat.lastMessage.content}</S.LastMessage>
       </S.ChatInfo>
-      <S.ChatTime>
-        {formatTime(chat.lastMessage.createdAt)}
-      </S.ChatTime>
+      <S.ChatTimeAndUnreadWrapper>
+        <S.ChatTime>
+          {formatTime(chat.lastMessage.timestamp)}
+        </S.ChatTime>
+        {unreadCount > 0 && (
+          <S.UnreadCount>{unreadCount}</S.UnreadCount>
+        )}
+      </S.ChatTimeAndUnreadWrapper>
     </S.ChatItemWrapper>
   );
 };
