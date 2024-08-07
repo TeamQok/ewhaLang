@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import { ShortButton } from './ShortButton';
-import ButtonType from './ButtonType';
+import React from "react";
+import styled from "styled-components";
+import { ShortButton } from "./ShortButton";
+import ButtonType from "./ButtonType";
 
 // 모달 배경 스타일
 const ModalBackground = styled.div`
@@ -15,6 +15,7 @@ const ModalBackground = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 `;
 
 // 모달 컨테이너 스타일
@@ -39,14 +40,15 @@ const ContentWrapper = styled.div`
 const GuideText = styled.div`
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: ${props => props.showTextInput ? '12px' : '28px'};
+
+  margin-bottom: ${(props) => (props.showTextInput ? "12px" : "28px")};
 `;
 
 // 버튼 컨테이너 스타일
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: ${props => props.isSingleButton ? '0' : '12px'};
+  gap: ${(props) => (props.isSingleButton ? "0" : "12px")};
 `;
 
 const StyledInput = styled.input`
@@ -58,29 +60,27 @@ const StyledInput = styled.input`
   box-sizing: border-box;
 `;
 
-
 // Modal 컴포넌트
-const Modal = ({ 
-  isOpen, 
-  onClose, 
-  guideText, 
-  confirmText = '확인', 
-  cancelText = '취소', 
-  onConfirm, 
+const Modal = ({
+  isOpen,
+  onClose,
+  guideText,
+  confirmText = "확인",
+  cancelText = "취소",
+  onConfirm,
   onCancel,
   isSingleButton = false,
-  showTextInput = false
+  showTextInput = false,
 }) => {
   if (!isOpen) return null;
 
   return (
     <ModalBackground onClick={onClose}>
-      <ModalContainer onClick={e => e.stopPropagation()}>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ContentWrapper>
           <GuideText showTextInput={showTextInput}>{guideText}</GuideText>
-          {showTextInput && (
-            <StyledInput type="text" />
-          )}
+          {showTextInput && <StyledInput type="text" />}
+
           <ButtonContainer isSingleButton={isSingleButton}>
             <ShortButton type={ButtonType.GREEN} onClick={onConfirm}>
               {confirmText}

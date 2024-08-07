@@ -32,7 +32,7 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
 
   const goMypage = () => {
     // 나중에 라우팅 주소 정해지면 넣어주세요.
-    navigate("/");
+    navigate("/mypage");
     setMypage(true);
     setChat(false);
     setFriend(false);

@@ -5,12 +5,21 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import Login from "./pages/Login";
 import UserDetailPage from "./pages/UserDetailPage";
-import UserListPage from "./pages/UserListPage";
 import Onboarding from "./pages/Onboarding";
-import VerificationPage from "./pages/VerificationPage";
 import ChatListPage from "./pages/ChatListPage";
+import Signup2 from "./pages/Signup2";
+import Signup1 from "./pages/Signup1";
+import FindEmail from "./pages/FindEmail";
+import FindPw from "./pages/FindPw";
+import FindContainer from "./pages/FindContainer";
+import ReSettingPw from "./pages/ReSettingPw";
 import ChattingPage from "./pages/ChattingPage";
 import MyPage from "./pages/MyPage";
+import Setting from "./pages/Setting";
+import LangSettingPage from "./pages/LangSettingPage";
+import AccountManagePage from "./pages/AccountManagePage";
+import FeedbackPage from "./pages/FeedbackPage";
+import EditMypage from "./pages/EditMypage";
 
 function App() {
   return (
@@ -31,18 +40,43 @@ function App() {
           {/*회원 상세 페이지 */}
           <Route exact path="/user" element={<UserDetailPage />} />
 
-          {/*회원 목록 페이지 */}
-          <Route exact path="/userlist" element={<UserListPage />} />
-
-          {/*학생 인증 페이지*/}
-          <Route exact path="/verify" element={<VerificationPage />} />
-
           {/*채팅 목록 페이지*/}
           <Route exact path="/chats" element={<ChatListPage />} />
+
+          {/*회원가입 페이지1 */}
+          <Route exact path="/signup1" element={<Signup1 />} />
+          {/*회원가입 페이지2 */}
+          <Route exact path="/signup2" element={<Signup2 />} />
+
+          {/* 계정 찾기 */}
+          <Route exact path="/find" element={<FindContainer />} />
+
+          {/* 이메일 찾기 */}
+          <Route exact path="/findemail" element={<FindEmail />} />
+
+          {/* 비번찾기 */}
+          <Route exact path="/findpw" element={<FindPw />} />
+
+          {/* 비번 재설정 */}
+          <Route exact path="/repw" element={<ReSettingPw />} />
 
           {/*채팅 페이지*/}
           <Route exact path="/chat" element={<ChattingPage />} />
 
+          {/*설정 페이지*/}
+          <Route exact path="/setting" element={<Setting />} />
+
+          {/*언어 설정 페이지*/}
+          <Route exact path="/langsetting" element={<LangSettingPage />} />
+
+          {/*언어 설정 페이지*/}
+          <Route exact path="/accountmanage" element={<AccountManagePage />} />
+
+          {/*언어 설정 페이지*/}
+          <Route exact path="/feedback" element={<FeedbackPage />} />
+
+          {/*마이페이지 수정 페이지*/}
+          <Route exact path="/editmypage" element={<EditMypage />} />
         </Routes>
       </BrowserRouter>
     </>
