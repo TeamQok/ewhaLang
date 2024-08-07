@@ -3,7 +3,7 @@ import styled from "styled-components";
 import closeIcon from "../../assets/closeIcon.svg";
 
 const Popup = ({ isOpen, onClose, title, children, fullScreen }) => (
-  <PopupWrapper isOpen={isOpen}>
+  <PopupWrapper isOpen={isOpen} title={title}>
     <PopupContent isOpen={isOpen} fullScreen={fullScreen}>
       <PopupHeader>
         <Title>{title}</Title>
@@ -24,7 +24,7 @@ const PopupWrapper = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: ${(props) => (props.title === "전체 필터 설정" ? 1000 : 1001)};
 `;
 
 const PopupContent = styled.div`

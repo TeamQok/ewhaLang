@@ -27,9 +27,10 @@ const SelectionPopup = ({
   isAllSelected,
   searchTerm,
   setSearchTerm,
-  showSearch
+  showSearch,
+  fullScreen
 }) => (
-  <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={false}>
+  <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
     <StickyContainer>
       {showSearch && (
         <SearchInputWrapper>

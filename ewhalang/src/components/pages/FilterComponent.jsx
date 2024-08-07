@@ -65,6 +65,7 @@ const genderOptions = ["전체", "여성", "남성"];
 const FilterComponent = () => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [isFullScreenFilterOpen, setIsFullScreenFilterOpen] = useState(false);
+  const [isFullScreenSubFilter, setIsFullScreenSubFilter] = useState(false);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedGender, setSelectedGender] = useState("전체");
@@ -96,12 +97,19 @@ const FilterComponent = () => {
     };
   }, [activeFilter, isFullScreenFilterOpen]);
 
+  useEffect(() => {
+    setIsFullScreenSubFilter(isFullScreenFilterOpen);
+  }, [isFullScreenFilterOpen]);
+
   const openFilter = (filter) => {
     setActiveFilter(filter);
+    setIsFullScreenSubFilter(isFullScreenFilterOpen);
+    console.log(isFullScreenSubFilter);
   };
 
   const closeFilter = () => {
     setActiveFilter(null);
+    setIsFullScreenSubFilter(false);
   };
 
   const openFullScreenFilter = () => {
@@ -195,6 +203,7 @@ const FilterComponent = () => {
         toggleAllItems={toggleAllLanguages}
         isAllSelected={isAllLanguagesSelected}
         showSearch={false}
+        fullScreen={isFullScreenSubFilter}
       />
       <SelectionPopup
         isOpen={activeFilter === "국적"}
@@ -208,6 +217,7 @@ const FilterComponent = () => {
         searchTerm={countrySearchTerm}
         setSearchTerm={setCountrySearchTerm}
         showSearch={true}
+        fullScreen={isFullScreenSubFilter}
       />
       <BulletSelectionPopup
         isOpen={activeFilter === "성별"}
@@ -216,6 +226,7 @@ const FilterComponent = () => {
         options={genderOptions}
         selectedOption={selectedGender}
         toggleOption={toggleGender}
+        fullScreen={isFullScreenSubFilter}
       />
       <RangePopup
         isOpen={activeFilter === "출생년도"}
@@ -229,6 +240,7 @@ const FilterComponent = () => {
         formatLabel={(year) => `${year}년생`}
         formatDisplayItem={(year) => `${year.toString().slice(2)}년생`}
         onApply={handleBirthYearRangeChange}
+        fullScreen={isFullScreenSubFilter}
       />
       <Popup
         isOpen={isFullScreenFilterOpen}
