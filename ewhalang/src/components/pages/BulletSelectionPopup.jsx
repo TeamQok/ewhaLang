@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import Popup from './Popup';
 import { LongButton, ButtonType } from '../common/LongButton';
 
-const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption, toggleOption }) => {
+const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption, toggleOption, fullScreen }) => {
   return (
-    <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={false}>
+    <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
       <OptionList>
         {options.map((option) => (
           <OptionItem key={option} onClick={() => toggleOption(option)} isSelected={selectedOption === option}>
@@ -24,7 +24,7 @@ const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption,
 };
 
 const OptionList = styled.div`
-  margin-bottom: 13px;
+  margin: 13px 0 60px 0;
 `;
 
 const OptionItem = styled.div`
@@ -44,7 +44,8 @@ const Bullet = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-  position: sticky;
+  position: fixed;
+  width: calc(100% - 48px);
   bottom: 0;
   background-color: white;
   padding: 20px 0;

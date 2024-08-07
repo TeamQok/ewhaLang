@@ -15,7 +15,8 @@ const RangePopup = ({
   step,
   formatLabel,
   formatDisplayItem,
-  onApply 
+  onApply,
+  fullScreen
 }) => {
   const [values, setValues] = React.useState([initialStart, initialEnd]);
 
@@ -25,7 +26,7 @@ const RangePopup = ({
   };
 
   return (
-    <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={false}>
+    <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
       <RangeWrapper>
         <Range
           values={values}
@@ -118,7 +119,7 @@ const ItemDisplay = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 70px;
 `;
 
 const Item = styled.div`
@@ -130,7 +131,8 @@ const Item = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-  position: sticky;
+  position: fixed;
+  width: calc(100% - 48px);
   bottom: 0;
   background-color: white;
   padding: 20px 0;

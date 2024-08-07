@@ -7,6 +7,7 @@ import RangePopup from './RangePopup';
 import Popup from './Popup';
 import filterIcon from '../../assets/filter.svg';
 import arrowDownIcon from '../../assets/filterArrowDown.svg';
+import arrowRightIcon from '../../assets/filterArrowRight.svg';
 
 const languages = [
   '한국어', '영어', '일본어', '중국어', '프랑스어', '스페인어', 
@@ -28,6 +29,7 @@ const genderOptions = ['전체', '여성', '남성'];
 const FilterComponent = () => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [isFullScreenFilterOpen, setIsFullScreenFilterOpen] = useState(false);
+  const [isFullScreenSubFilter, setIsFullScreenSubFilter] = useState(false);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedGender, setSelectedGender] = useState('전체');
@@ -56,12 +58,19 @@ const FilterComponent = () => {
     };
   }, [activeFilter, isFullScreenFilterOpen]);
 
+  useEffect(() => {
+    setIsFullScreenSubFilter(isFullScreenFilterOpen);
+  }, [isFullScreenFilterOpen]);
+
   const openFilter = (filter) => {
     setActiveFilter(filter);
+    setIsFullScreenSubFilter(isFullScreenFilterOpen);
+    console.log(isFullScreenSubFilter);
   };
 
   const closeFilter = () => {
     setActiveFilter(null);
+    setIsFullScreenSubFilter(false);
   };
 
   const openFullScreenFilter = () => {
@@ -135,6 +144,7 @@ const FilterComponent = () => {
         toggleAllItems={toggleAllLanguages}
         isAllSelected={isAllLanguagesSelected}
         showSearch={false}
+        fullScreen={isFullScreenSubFilter}
       />
       <SelectionPopup 
         isOpen={activeFilter === '국적'}
@@ -148,6 +158,7 @@ const FilterComponent = () => {
         searchTerm={countrySearchTerm}
         setSearchTerm={setCountrySearchTerm}
         showSearch={true}
+        fullScreen={isFullScreenSubFilter}
       />
       <BulletSelectionPopup 
         isOpen={activeFilter === '성별'}
@@ -156,6 +167,7 @@ const FilterComponent = () => {
         options={genderOptions}
         selectedOption={selectedGender}
         toggleOption={toggleGender}
+        fullScreen={isFullScreenSubFilter}
       />
       <RangePopup 
         isOpen={activeFilter === '출생년도'}
@@ -169,6 +181,7 @@ const FilterComponent = () => {
         formatLabel={(year) => `${year}년생`}
         formatDisplayItem={(year) => `${year.toString().slice(2)}년생`}
         onApply={handleBirthYearRangeChange}
+        fullScreen={isFullScreenSubFilter}
       />
       <Popup
         isOpen={isFullScreenFilterOpen}
@@ -177,10 +190,10 @@ const FilterComponent = () => {
         fullScreen={true}
       >
         {/* 전체 필터 설정 내용 */}
-        <FilterButton text="언어" icon={arrowDownIcon} onClick={() => openFilter('언어')} />
-        <FilterButton text="국적" icon={arrowDownIcon} onClick={() => openFilter('국적')} />
-        <FilterButton text="성별" icon={arrowDownIcon} onClick={() => openFilter('성별')} />
-        <FilterButton text="출생년도" icon={arrowDownIcon} onClick={() => openFilter('출생년도')} />
+        <FilterButton text="언어" icon={arrowRightIcon} onClick={() => openFilter('언어')} isAllScreen={true} />
+        <FilterButton text="국적" icon={arrowRightIcon} onClick={() => openFilter('국적')} isAllScreen={true} />
+        <FilterButton text="성별" icon={arrowRightIcon} onClick={() => openFilter('성별')} isAllScreen={true} />
+        <FilterButton text="출생년도" icon={arrowRightIcon} onClick={() => openFilter('출생년도')} isAllScreen={true} />
       </Popup>
     </>
   );
