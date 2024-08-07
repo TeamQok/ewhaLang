@@ -8,7 +8,7 @@ const ChatListPage = () => {
         <Wrapper>
             <Topbar title="채팅 목록"/>
             <ChatList/>
-            <BottomBar/>
+            <BottomBar isOnChat={true}/>
         </Wrapper>
     )
 }
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     font-weight: 600;
-    min-height: 100vh;
+    overflow: hidden;
 `
 
 
