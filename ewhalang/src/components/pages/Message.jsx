@@ -37,11 +37,15 @@ const MessageInfo = styled.div`
   min-width: 12.5vw;
 `;
 
+const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProfileImage }) => {
+  const isCurrentUser = senderId === currentUserId;
 
-const Message = ({ text, userId, currentUserId, createdAt, isUnread, userProfileImage }) => {
-  const isCurrentUser = userId === currentUserId;
-
-  const formatTime = (date) => {
+  const formatTime = (timestamp) => {
+    if (!timestamp || isNaN(Date.parse(timestamp))) {
+      console.error('Invalid timestamp:', timestamp);
+      return '';
+    }
+    const date = new Date(timestamp);
     return new Intl.DateTimeFormat('ko-KR', {
       hour: 'numeric',
       minute: 'numeric',
@@ -51,16 +55,16 @@ const Message = ({ text, userId, currentUserId, createdAt, isUnread, userProfile
 
   return (
     <MessageContainer isCurrentUser={isCurrentUser}>
-    {!isCurrentUser && <UserImage profilePicture={userProfileImage} alt="User profile" width={40} height={40}/>}
-    <MessageContent isCurrentUser={isCurrentUser}>
-    <MessageBubble isCurrentUser={isCurrentUser}>
-        {text}
-      </MessageBubble>
-      <MessageInfo isCurrentUser={isCurrentUser}>
-          {formatTime(createdAt)}
-          {isUnread && <span style={{ color: 'var(--sub1)' }}>1</span>}
-      </MessageInfo>
-    </MessageContent>
+      {!isCurrentUser && <UserImage profilePhoto={userProfileImage} alt="User profile" width={40} height={40}/>}
+      <MessageContent isCurrentUser={isCurrentUser}>
+        <MessageBubble isCurrentUser={isCurrentUser}>
+          {content}
+        </MessageBubble>
+        <MessageInfo isCurrentUser={isCurrentUser}>
+          {formatTime(timestamp)}
+          {!isRead && isCurrentUser && <span style={{ color: 'var(--sub1)' }}>1</span>}
+        </MessageInfo>
+      </MessageContent>
     </MessageContainer>
   );
 };

@@ -20,7 +20,7 @@ const UserListPage = () => {
           <UserListInformation key={index} user={user} />
         ))}
       </ContentsWrapper>
-      <BottomBar/>
+      <BottomBar isOnFriend={true}/>
     </Wrapper>
   );
 };

@@ -1,108 +1,212 @@
 const chatMockData = [
-    {
-      channelId: '1',
-      otherUser: {
-        uid: 'user1',
-        nickname: 'John Doe',
-        country: '미국',
-        profilePicture: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
-      },
+  {
+      chatId: '1',
+      participants: [
+          {
+              userId: 'user1',
+              nickname: 'John Doe',
+              profilePhoto: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+              country: '미국',
+          },
+          {
+              userId: 'user2',
+              nickname: 'Jane Smith',
+              profilePhoto: 'https://example.com/profile2.jpg',
+              country: '영국',
+          },
+      ],
       lastMessage: {
-        text: 'Hello, how are you?',
-        createdAt: new Date('2024-08-02T10:30:00'),
+          content: 'Hello, how are you?',
+          timestamp: '2024-08-02T10:30:00.000Z',
+          senderId: 'user1',
       },
-    },
-    {
-      channelId: '2',
-      otherUser: {
-        uid: 'user2',
-        nickname: 'Jane Smith',
-        country: '영국',
-        profilePicture: 'https://example.com/profile2.jpg',
+      unreadCounts: {
+          user1: 2,
+          user2: 1,
       },
+  },
+  {
+      chatId: '2',
+      participants: [
+          {
+              userId: 'user2',
+              nickname: 'Jane Smith',
+              profilePhoto: 'https://example.com/profile2.jpg',
+              country: '영국',
+          },
+          {
+              userId: 'user3',
+              nickname: 'Kim Lee',
+              profilePhoto: 'https://example.com/profile3.jpg',
+              country: '대한민국',
+          },
+      ],
       lastMessage: {
-        text: 'Are you free this weekend?',
-        createdAt: new Date('2024-08-01T18:45:00'),
+          content: 'Are you free this weekend?',
+          timestamp: '2024-08-01T18:45:00.000Z',
+          senderId: 'user3',
       },
-    },
-    {
-      channelId: '3',
-      otherUser: {
-        uid: 'user3',
-        nickname: 'Kim Lee',
-        country: '대한민국',
-        profilePicture: 'https://example.com/profile3.jpg',
+      unreadCounts: {
+          user2: 2,
+          user3: 0,
       },
+  },
+  {
+      chatId: '3',
+      participants: [
+          {
+              userId: 'user3',
+              nickname: 'Kim Lee',
+              profilePhoto: 'https://example.com/profile3.jpg',
+              country: '대한민국',
+          },
+          {
+              userId: 'user4',
+              nickname: 'Maria Garcia',
+              profilePhoto: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+              country: '스페인',
+          },
+      ],
       lastMessage: {
-        text: '안녕하세요! 오늘 날씨가 좋네요.',
-        createdAt: new Date('2024-08-02T09:15:00'),
+          content: '안녕하세요! 오늘 날씨가 좋네요.',
+          timestamp: '2024-08-02T09:15:00.000Z',
+          senderId: 'user3',
       },
-    },
-    {
-      channelId: '4',
-      otherUser: {
-        uid: 'user4',
-        nickname: 'Maria Garcia',
-        country: '스페인',
-        profilePicture: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+      unreadCounts: {
+          user3: 0,
+          user4: 1,
       },
+  },
+  {
+      chatId: '4',
+      participants: [
+          {
+              userId: 'user4',
+              nickname: 'Maria Garcia',
+              profilePhoto: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+              country: '스페인',
+          },
+          {
+              userId: 'user5',
+              nickname: 'Yuki Tanaka',
+              profilePhoto: 'https://example.com/profile5.jpg',
+              country: '일본',
+          },
+      ],
       lastMessage: {
-        text: '¡Hola! ¿Cómo estás?',
-        createdAt: new Date('2024-08-03T14:20:00'),
+          content: '¡Hola! ¿Cómo estás?',
+          timestamp: '2024-08-03T14:20:00.000Z',
+          senderId: 'user4',
       },
-    },
-    {
-      channelId: '5',
-      otherUser: {
-        uid: 'user5',
-        nickname: 'Yuki Tanaka',
-        country: '일본',
-        profilePicture: 'https://example.com/profile5.jpg',
+      unreadCounts: {
+          user4: 0,
+          user5: 1,
       },
+  },
+  {
+      chatId: '5',
+      participants: [
+          {
+              userId: 'user5',
+              nickname: 'Yuki Tanaka',
+              profilePhoto: 'https://example.com/profile5.jpg',
+              country: '일본',
+          },
+          {
+              userId: 'user6',
+              nickname: 'Pierre Dubois',
+              profilePhoto: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+              country: '프랑스',
+          },
+      ],
       lastMessage: {
-        text: 'こんにちは！元気ですか？',
-        createdAt: new Date('2024-08-03T08:50:00'),
+          content: 'こんにちは！元気ですか？',
+          timestamp: '2024-08-03T08:50:00.000Z',
+          senderId: 'user5',
       },
-    },
-    {
-      channelId: '6',
-      otherUser: {
-        uid: 'user6',
-        nickname: 'Pierre Dubois',
-        country: '프랑스',
-        profilePicture: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+      unreadCounts: {
+          user5: 0,
+          user6: 1,
       },
+  },
+  {
+      chatId: '6',
+      participants: [
+          {
+              userId: 'user6',
+              nickname: 'Pierre Dubois',
+              profilePhoto: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+              country: '프랑스',
+          },
+          {
+              userId: 'user7',
+              nickname: 'Olivia Chen',
+              profilePhoto: 'https://example.com/profile7.jpg',
+              country: '중국',
+          },
+      ],
       lastMessage: {
-        text: 'Bonjour! Comment allez-vous?',
-        createdAt: new Date('2024-08-02T22:10:00'),
+          content: 'Bonjour! Comment allez-vous?',
+          timestamp: '2024-08-02T22:10:00.000Z',
+          senderId: 'user6',
       },
-    },
-    {
-      channelId: '7',
-      otherUser: {
-        uid: 'user7',
-        nickname: 'Olivia Chen',
-        country: '중국',
-        profilePicture: 'https://example.com/profile7.jpg',
+      unreadCounts: {
+          user6: 0,
+          user7: 1,
       },
+  },
+  {
+      chatId: '7',
+      participants: [
+          {
+              userId: 'user7',
+              nickname: 'Olivia Chen',
+              profilePhoto: 'https://example.com/profile7.jpg',
+              country: '중국',
+          },
+          {
+              userId: 'user8',
+              nickname: 'Hans Müller',
+              profilePhoto: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+              country: '독일',
+          },
+      ],
       lastMessage: {
-        text: '你好！最近怎么样？',
-        createdAt: new Date('2024-08-03T11:05:00'),
+          content: '你好！最近怎么样？',
+          timestamp: '2024-08-03T11:05:00.000Z',
+          senderId: 'user7',
       },
-    },
-    {
-      channelId: '8',
-      otherUser: {
-        uid: 'user8',
-        nickname: 'Hans Müller',
-        country: '독일',
-        profilePicture: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+      unreadCounts: {
+          user7: 0,
+          user8: 1,
       },
+  },
+  {
+      chatId: '8',
+      participants: [
+          {
+              userId: 'user8',
+              nickname: 'Hans Müller',
+              profilePhoto: 'https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160',
+              country: '독일',
+          },
+          {
+              userId: 'user9',
+              nickname: 'Current User',
+              profilePhoto: 'https://example.com/current-user.jpg',
+              country: '미국',
+          },
+      ],
       lastMessage: {
-        text: 'Guten Tag! Wie geht es Ihnen?',
-        createdAt: new Date('2024-08-03T16:40:00'),
+          content: 'Guten Tag! Wie geht es Ihnen?',
+          timestamp: '2024-08-03T16:40:00.000Z',
+          senderId: 'user8',
       },
-    },
-  ];
+      unreadCounts: {
+          user8: 0,
+          user9: 1,
+      },
+  },
+];
 
 export default chatMockData;
