@@ -39,21 +39,21 @@ const messageMockData = {
       messageId: '106',
       senderId: 'user2',
       content: '시내 중심가에 있는 스타벅스 어떠세요?',
-      timestamp: '2024-08-01T10:25:00.000Z',
+      timestamp: '2024-08-02T10:25:00.000Z',
       isRead: true
     },
     {
       messageId: '107',
       senderId: 'user1',
       content: '좋아요. 그럼 거기서 봬요!',
-      timestamp: '2024-08-01T10:30:00.000Z',
+      timestamp: '2024-08-03T10:30:00.000Z',
       isRead: true
     },
     {
       messageId: '108',
       senderId: 'user2',
       content: '네, 그때 뵙겠습니다!',
-      timestamp: '2024-08-01T10:35:00.000Z',
+      timestamp: '2024-08-04T10:35:00.000Z',
       isRead: true
     }
   ],
