@@ -26,12 +26,14 @@ const countries = [
 
 const genderOptions = ['전체', '여성', '남성'];
 
+
 const FilterComponent = () => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [isFullScreenFilterOpen, setIsFullScreenFilterOpen] = useState(false);
   const [isFullScreenSubFilter, setIsFullScreenSubFilter] = useState(false);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
+
   const [selectedGender, setSelectedGender] = useState('전체');
   const [isAllLanguagesSelected, setIsAllLanguagesSelected] = useState(false);
   const [isAllCountriesSelected, setIsAllCountriesSelected] = useState(false);
@@ -48,6 +50,7 @@ const FilterComponent = () => {
 
   useEffect(() => {
     if (activeFilter !== null || isFullScreenFilterOpen) {
+
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -82,17 +85,21 @@ const FilterComponent = () => {
   };
 
   const toggleLanguage = (language) => {
+
     setSelectedLanguages(prev => 
       prev.includes(language) 
         ? prev.filter(lang => lang !== language)
+
         : [...prev, language]
     );
   };
 
   const toggleCountry = (country) => {
+
     setSelectedCountries(prev => 
       prev.includes(country) 
         ? prev.filter(c => c !== country)
+
         : [...prev, country]
     );
   };
@@ -118,6 +125,7 @@ const FilterComponent = () => {
   };
 
   const filteredCountries = countries.filter(country => 
+
     country.toLowerCase().includes(countrySearchTerm.toLowerCase())
   );
 
@@ -128,6 +136,7 @@ const FilterComponent = () => {
   return (
     <>
       <FilterWrapper>
+
         <FilterButton text="필터" icon={filterIcon} onClick={openFullScreenFilter} />
         <FilterButton text="언어" icon={arrowDownIcon} onClick={() => openFilter('언어')} />
         <FilterButton text="국적" icon={arrowDownIcon} onClick={() => openFilter('국적')} />
@@ -136,6 +145,7 @@ const FilterComponent = () => {
       </FilterWrapper>
       <SelectionPopup 
         isOpen={activeFilter === '언어'}
+
         onClose={closeFilter}
         title="언어 선택"
         items={languages}
@@ -146,8 +156,10 @@ const FilterComponent = () => {
         showSearch={false}
         fullScreen={isFullScreenSubFilter}
       />
+
       <SelectionPopup 
         isOpen={activeFilter === '국적'}
+
         onClose={closeFilter}
         title="국적 선택"
         items={filteredCountries}
@@ -160,8 +172,10 @@ const FilterComponent = () => {
         showSearch={true}
         fullScreen={isFullScreenSubFilter}
       />
+
       <BulletSelectionPopup 
         isOpen={activeFilter === '성별'}
+
         onClose={closeFilter}
         title="성별 선택"
         options={genderOptions}
@@ -169,8 +183,10 @@ const FilterComponent = () => {
         toggleOption={toggleGender}
         fullScreen={isFullScreenSubFilter}
       />
+
       <RangePopup 
         isOpen={activeFilter === '출생년도'}
+
         onClose={closeFilter}
         title="출생년도 선택"
         initialStart={birthYearRange.start}
@@ -190,10 +206,12 @@ const FilterComponent = () => {
         fullScreen={true}
       >
         {/* 전체 필터 설정 내용 */}
+
         <FilterButton text="언어" icon={arrowRightIcon} onClick={() => openFilter('언어')} isAllScreen={true} />
         <FilterButton text="국적" icon={arrowRightIcon} onClick={() => openFilter('국적')} isAllScreen={true} />
         <FilterButton text="성별" icon={arrowRightIcon} onClick={() => openFilter('성별')} isAllScreen={true} />
         <FilterButton text="출생년도" icon={arrowRightIcon} onClick={() => openFilter('출생년도')} isAllScreen={true} />
+
       </Popup>
     </>
   );
