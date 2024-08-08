@@ -1,6 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import closeIcon from "../../assets/closeIcon.svg";
+
+import React from 'react';
+import styled from 'styled-components';
+import closeIcon from '../../assets/closeIcon.svg';
+
 
 const Popup = ({ isOpen, onClose, title, children, fullScreen }) => (
   <PopupWrapper isOpen={isOpen} title={title}>
@@ -11,20 +13,28 @@ const Popup = ({ isOpen, onClose, title, children, fullScreen }) => (
           <img src={closeIcon} alt="Close" />
         </CloseButton>
       </PopupHeader>
-      <PopupBody>{children}</PopupBody>
+
+      <PopupBody>
+      {children}
+      </PopupBody>
+
     </PopupContent>
   </PopupWrapper>
 );
 
 const PopupWrapper = styled.div`
-  display: ${(props) => (props.isOpen ? "block" : "none")};
+
+  display: ${props => props.isOpen ? 'block' : 'none'};
+
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: ${(props) => (props.title === "전체 필터 설정" ? 1000 : 1001)};
+
+  z-index: ${(props) => (props.title === '전체 필터 설정' ? 1000 : 1001)};
+
 `;
 
 const PopupContent = styled.div`
@@ -35,12 +45,13 @@ const PopupContent = styled.div`
   background-color: white;
   z-index: 1;
   padding: 20px;
-  border-radius: ${(props) => (props.fullScreen ? "0" : "20px 20px 0 0")};
-  max-height: ${(props) => (props.fullScreen ? "100%" : "90%")};
+
+  border-radius: ${props => props.fullScreen ? '0' : '20px 20px 0 0'};
+  max-height: ${props => props.fullScreen ? '100%' : '90%'};
+  height: ${props => props.fullScreen ? '100vh' : ''};
   display: flex;
   flex-direction: column;
-  transform: ${(props) =>
-    props.isOpen ? "translateY(0)" : "translateY(100%)"};
+  transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(100%)'};
   transition: transform 0.3s ease-out;
 `;
 
@@ -74,7 +85,6 @@ const CloseButton = styled.button`
   border: none;
   padding: 0;
   cursor: pointer;
-
   img {
     width: 24px;
     height: 24px;

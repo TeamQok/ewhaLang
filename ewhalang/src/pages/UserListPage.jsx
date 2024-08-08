@@ -1,26 +1,30 @@
-// src/pages/UserListPage.js
 
-import React from "react";
-import styled from "styled-components";
-import UserListInformation from "../components/pages/UserListInformation";
-import users from "../_mock/userMockData";
-import Topbar from "../components/layout/Topbar";
-import BottomBar from "../components/layout/BottomBar";
-import FilterComponent from "../components/pages/FilterComponent";
-import LanguageLevelInfo from "../components/pages/LanguageLevelInfo";
+import React from 'react';
+import styled from 'styled-components';
+import UserListInformation from '../components/pages/UserListInformation';
+import users from '../_mock/userMockData';
+import Topbar from '../components/layout/Topbar';
+import BottomBar from '../components/layout/BottomBar';
+import FilterComponent from '../components/pages/FilterComponent';
+import LanguageLevelInfo from '../components/pages/LanguageLevelInfo';
+
 
 const UserListPage = () => {
   return (
     <Wrapper>
-      <Topbar title={"이화랑 친구 찾기"} />
+
+      <Topbar title={"이화랑 친구 찾기"}/>
       <FilterComponent />
-      <LanguageLevelInfo />
+      <LanguageLevelInfo/>
+
       <ContentsWrapper>
         {users.map((user, index) => (
           <UserListInformation key={index} user={user} />
         ))}
       </ContentsWrapper>
-      <BottomBar />
+
+      <BottomBar isOnFriend={true}/>
+
     </Wrapper>
   );
 };
@@ -41,3 +45,4 @@ const ContentsWrapper = styled.div`
 `;
 
 export default UserListPage;
+
