@@ -10,6 +10,7 @@ import ShortDropDown from "../components/shared/ShortDropDown";
 import Modal from "../components/common/Modal";
 import { useParams } from 'react-router-dom';
 import userMockData from '../_mock/userMockData';
+import { useNavigate } from "react-router-dom";
 
 const UserDetailPage = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
@@ -17,6 +18,13 @@ const UserDetailPage = () => {
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
   const { userId } = useParams();
   const user = userMockData.find(user => user.userId === userId);
+  const navigate = useNavigate();
+
+  //API 연결시 채팅 추가 후 반환받은 id값으로 교체할 예정
+  const chatId = '1';
+  const handleClick = () => {
+    navigate(`/chats/${chatId}`);
+  }
 
   if (!user){
     return <div>사용자를 찾을 수 없습니다.</div>
@@ -63,7 +71,7 @@ const UserDetailPage = () => {
           introduction={user.introduction}
         />
         <S.ButtonWrapper>
-          <LongButton type={ButtonType.GREEN}>채팅하기</LongButton>
+          <LongButton type={ButtonType.GREEN} onClick={handleClick}>채팅하기</LongButton>
         </S.ButtonWrapper>
       </S.ContentWrapper>
       <ShortDropDown
