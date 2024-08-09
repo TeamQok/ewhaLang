@@ -8,29 +8,19 @@ import UserOptionalInformation from "../components/shared/UserOptionalInformatio
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import ShortDropDown from "../components/shared/ShortDropDown";
 import Modal from "../components/common/Modal";
+import { useParams } from 'react-router-dom';
+import userMockData from '../_mock/userMockData';
 
 const UserDetailPage = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
+  const { userId } = useParams();
+  const user = userMockData.find(user => user.userId === userId);
 
-  // 예시 사용자 데이터
-  const user = {
-    nickname: "홍길동",
-    profilePicture:
-      "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
-    country: "대한민국",
-    gender: "남성",
-    birthdate: "1990",
-    major: "컴퓨터 공학",
-    languages: [
-      { language: "한국어", level: "원어민" },
-      { language: "영어", level: "중급" },
-      { language: "일본어", level: "초급" },
-    ],
-    hobby: "독서, 여행",
-    introduction: "안녕하세요! 저는 소프트웨어 개발자입니다.",
-  };
+  if (!user){
+    return <div>사용자를 찾을 수 없습니다.</div>
+  }
 
   const options = ["신고하기"];
 

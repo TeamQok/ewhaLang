@@ -3,10 +3,15 @@ import styled from 'styled-components';
 import UserImage from '../shared/UserImage';
 import UserCoreInformation from '../shared/UserCoreInformation';
 import UserRequiredInformation from '../shared/UserRequiredInformation';
+import { useNavigate } from 'react-router-dom';
 
 const UserListInformation = ({ user }) => {
-    return (
-      <UserListItem>
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/users/${user.userId}`);
+  }
+  return (
+      <UserListItem onClick={handleClick}>
         <UserImage profilePicture={user.profilePicture} alt={user.nickname} width={65} height={65} />
         <UserCoreInformation nickname={user.nickname} country={user.country} layout="list" />
         <UserRequiredInformation
@@ -30,6 +35,7 @@ const UserListInformation = ({ user }) => {
     border: 0.5px solid var(--grey3);
     border-radius: 10px;
     box-sizing: border-box;
+    cursor: pointer;
   `;
   
   export default UserListInformation;
