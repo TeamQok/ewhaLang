@@ -12,7 +12,9 @@ const users = [
       { language: "영어", level: "중급" },
       { language: "일본어", level: "기초" }
     ],
-    chatIds: ['1', '2', '3']
+    chatIds: ['1', '2', '3'],
+    email: "john.doe@ewhain.net",
+    isValidated: true
   },
   {
     userId: "user2",
@@ -26,7 +28,9 @@ const users = [
       { language: "한국어", level: "원어민" },
       { language: "영어", level: "상급" }
     ],
-    chatIds: ['1', '4']
+    chatIds: ['1', '4'],
+    email: "jane.smith@ewha.ac.kr",
+    isValidated: false
   },
   {
     userId: "user3",
@@ -41,7 +45,9 @@ const users = [
       { language: "스페인어", level: "중급" },
       { language: "한국어", level: "기초" }
     ],
-    chatIds: ['2', '5']
+    chatIds: ['2', '5'],
+    email: "kim.lee@ewhain.net",
+    isValidated: true
   },
   {
     userId: "user4",
@@ -56,7 +62,9 @@ const users = [
       { language: "영어", level: "상급" },
       { language: "중국어", level: "중급" }
     ],
-    chatIds: ['3', '6']
+    chatIds: ['3', '6'],
+    email: "maria.garcia@ewha.ac.kr",
+    isValidated: false
   },
   {
     userId: "user5",
@@ -71,7 +79,9 @@ const users = [
       { language: "영어", level: "중급" },
       { language: "프랑스어", level: "기초" }
     ],
-    chatIds: ['4', '7']
+    chatIds: ['4', '7'],
+    email: "yuki.tanaka@ewhain.net",
+    isValidated: true
   },
   {
     userId: "user6",
@@ -86,7 +96,9 @@ const users = [
       { language: "영어", level: "상급" },
       { language: "중국어", level: "중급" }
     ],
-    chatIds: ['5', '8']
+    chatIds: ['5', '8'],
+    email: "pierre.dubois@ewha.ac.kr",
+    isValidated: false
   },
   {
     userId: "user7",
@@ -101,7 +113,9 @@ const users = [
       { language: "영어", level: "중급" },
       { language: "독일어", level: "기초" }
     ],
-    chatIds: ['6', '7', '8']
+    chatIds: ['6', '7', '8'],
+    email: "olivia.chen@ewhain.net",
+    isValidated: true
   }
 ];
 
