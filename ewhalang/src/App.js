@@ -39,7 +39,7 @@ function App() {
           <Route exact path="/mypage" element={<MyPage />} />
 
           {/*회원 상세 페이지 */}
-          <Route exact path="/user" element={<UserDetailPage />} />
+          <Route exact path="/users/:userId" element={<UserDetailPage />} />
 
           {/*회원 상세 페이지 */}
           <Route exact path="/users" element={<UserListPage />} />
