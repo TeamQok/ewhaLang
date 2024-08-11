@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Range, getTrackBackground } from 'react-range';
 import Popup from './Popup';
@@ -8,17 +8,20 @@ const RangePopup = ({
   isOpen, 
   onClose, 
   title,
-  initialStart,
-  initialEnd,
   minValue,
   maxValue,
   step,
   formatLabel,
   formatDisplayItem,
   onApply,
-  fullScreen
+  fullScreen,
+  birthdateRange
 }) => {
-  const [values, setValues] = React.useState([initialStart, initialEnd]);
+  const [values, setValues] = React.useState([birthdateRange.start, birthdateRange.end]);
+
+  useEffect(() => {
+    setValues([birthdateRange.start, birthdateRange.end]);
+  }, [birthdateRange]);
 
   const handleApply = () => {
     onApply(values[0], values[1]);
