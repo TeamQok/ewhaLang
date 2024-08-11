@@ -9,7 +9,7 @@ const users = [
     major: "컴퓨터 공학",
     languages: [
       { language: "한국어", level: "원어민" },
-      { language: "영어", level: "중급" },
+      { language: "영어", level: "상급" },
       { language: "일본어", level: "기초" }
     ],
     chatIds: ['1', '2', '3'],
