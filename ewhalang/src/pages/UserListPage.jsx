@@ -51,6 +51,8 @@ const UserListPage = () => {
     }));
   };
 
+  console.log(filteredUsers);
+
   return (
     <Wrapper>
       <Topbar title={"이화랑 친구 찾기"} />
@@ -61,6 +63,7 @@ const UserListPage = () => {
       <LanguageLevelInfo />
 
       <ContentsWrapper>
+        {filteredUsers.map((user, index) => (
         {filteredUsers.map((user, index) => (
           <UserListInformation key={index} user={user} />
         ))}

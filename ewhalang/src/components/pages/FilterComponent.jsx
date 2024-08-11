@@ -112,7 +112,14 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     onFilterChange(appliedFilters);
   }, [appliedFilters]);
 
+  useEffect(() => {
+    onFilterChange(appliedFilters);
+  }, [appliedFilters]);
+
   const openFilter = (filter) => {
+    if (!isFullScreenFilterOpen) {
+      setCurrentFilters(appliedFilters); // 개별 필터를 열 때도 현재 필터를 적용된 필터로 설정
+    }
     if (!isFullScreenFilterOpen) {
       setCurrentFilters(appliedFilters); // 개별 필터를 열 때도 현재 필터를 적용된 필터로 설정
     }
@@ -127,11 +134,14 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
   const openFullScreenFilter = () => {
     setCurrentFilters(appliedFilters);
+    setCurrentFilters(appliedFilters);
     setIsFullScreenFilterOpen(true);
   };
 
   const closeFullScreenFilter = () => {
     setIsFullScreenFilterOpen(false);
+    // 필터 설정이 완료되지 않고 팝업이 닫힐 때 현재 필터를 적용된 필터로 되돌림
+    setCurrentFilters(appliedFilters);
     // 필터 설정이 완료되지 않고 팝업이 닫힐 때 현재 필터를 적용된 필터로 되돌림
     setCurrentFilters(appliedFilters);
   };
@@ -305,6 +315,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         title="언어 선택"
         items={languages}
         selectedItems={currentFilters.languages}
+        selectedItems={currentFilters.languages}
         toggleItem={toggleLanguage}
         toggleAllItems={toggleAllLanguages}
         isAllSelected={isAllLanguagesSelected}
@@ -320,6 +331,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         onClose={closeFilter}
         title="국적 선택"
         items={filteredCountries}
+        selectedItems={currentFilters.countries}
         selectedItems={currentFilters.countries}
         toggleItem={toggleCountry}
         toggleAllItems={toggleAllCountries}
@@ -339,6 +351,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         title="성별 선택"
         options={genderOptions}
         selectedOption={currentFilters.gender}
+        selectedOption={currentFilters.gender}
         toggleOption={toggleGender}
         fullScreen={isFullScreenSubFilter}
         onApply={(selectedGen) => handleFilterApply("gender", selectedGen)}
@@ -357,6 +370,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
           handleFilterApply("birthdateRange", { start, end })
         }
         fullScreen={isFullScreenSubFilter}
+        birthdateRange={currentFilters.birthdateRange}
         birthdateRange={currentFilters.birthdateRange}
       />
       <Popup
