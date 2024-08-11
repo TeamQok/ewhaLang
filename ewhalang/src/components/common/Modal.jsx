@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { ShortButton } from "./ShortButton";
 import ButtonType from "./ButtonType";
@@ -72,6 +72,7 @@ const Modal = ({
   isSingleButton = false,
   showTextInput = false,
 }) => {
+  const [inputValue, setInputValue] = useState("");
   if (!isOpen) return null;
 
   return (
@@ -79,10 +80,11 @@ const Modal = ({
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ContentWrapper>
           <GuideText showTextInput={showTextInput}>{guideText}</GuideText>
-          {showTextInput && <StyledInput type="text" />}
+          {showTextInput && <StyledInput type="text" value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)} />}
 
           <ButtonContainer isSingleButton={isSingleButton}>
-            <ShortButton type={ButtonType.GREEN} onClick={onConfirm}>
+            <ShortButton type={ButtonType.GREEN} onClick={()=>onConfirm(inputValue)}>
               {confirmText}
             </ShortButton>
             {!isSingleButton && (
