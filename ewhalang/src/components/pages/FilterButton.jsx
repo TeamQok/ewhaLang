@@ -1,16 +1,20 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-const FilterButton = ({ text, icon, onClick, isAllScreen }) => (
+const FilterButton = ({ text, icon, onClick, isAllScreen, selectedText }) => (
   <StyledFilterButton onClick={onClick} isAllScreen={isAllScreen}>
     <LeftContent>
       <span>{text}</span>
     </LeftContent>
     <RightContent>
-      {isAllScreen && <AllText>전체</AllText>}
-      <ImageWrapper isAllScreen={isAllScreen}>
-        <img src={icon} alt={text} />
-      </ImageWrapper>
+      {isAllScreen && <AllText>{selectedText || '전체'}</AllText>}
+      {(!isAllScreen && selectedText) ? (
+        <SelectedText>{selectedText}</SelectedText>
+      ) : (
+        <ImageWrapper isAllScreen={isAllScreen}>
+          <img src={icon} alt={text} />
+        </ImageWrapper>
+      )}
     </RightContent>
   </StyledFilterButton>
 );
@@ -71,6 +75,12 @@ const ImageWrapper = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   margin-left: 8px;
+`;
+
+const SelectedText = styled.span`
+  color: var(--sub1);
+  font-size: 11px;
+  margin-left: 4px;
 `;
 
 export default FilterButton;

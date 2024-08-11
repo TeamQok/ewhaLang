@@ -28,44 +28,53 @@ const SelectionPopup = ({
   searchTerm,
   setSearchTerm,
   showSearch,
-  fullScreen
-}) => (
-  <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
-    <StickyContainer>
-      {showSearch && (
-        <SearchInputWrapper>
-          <SearchInput 
-            placeholder={`나라를 검색하세요.`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <img src={searchIcon} alt="Search" />
-        </SearchInputWrapper>
-      )}
-      <AllSelectWrapper onClick={toggleAllItems} isSelected={isAllSelected}>
-        <SelectIconWrapper>
-          <AllSelectIcon isSelected={isAllSelected}/>
-        </SelectIconWrapper>
-        <span>{isAllSelected ? "전체 선택 해제" : "전체 선택"}</span>
-      </AllSelectWrapper>
-    </StickyContainer>
-    <ItemList>
-      {items.map((item) => (
-        <Item key={item} onClick={() => toggleItem(item)} isSelected={selectedItems.includes(item)}>
+  fullScreen,
+  onApply
+}) => {
+
+  const handleApply = () => {
+    onApply(selectedItems);
+    onClose();
+  };
+
+  return (
+    <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
+      <StickyContainer>
+        {showSearch && (
+          <SearchInputWrapper>
+            <SearchInput 
+              placeholder={`나라를 검색하세요.`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <img src={searchIcon} alt="Search" />
+          </SearchInputWrapper>
+        )}
+        <AllSelectWrapper onClick={toggleAllItems} isSelected={isAllSelected}>
           <SelectIconWrapper>
-            <SelectIcon isSelected={selectedItems.includes(item)}/>
+            <AllSelectIcon isSelected={isAllSelected}/>
           </SelectIconWrapper>
-          <span>{item}</span>
-        </Item>
-      ))}
-    </ItemList>
-    <ButtonWrapper>
-      <LongButton type={ButtonType.GREEN} onClick={onClose}>
-        선택 완료
-      </LongButton>
-    </ButtonWrapper>
-  </Popup>
-);
+          <span>{isAllSelected ? "전체 선택 해제" : "전체 선택"}</span>
+        </AllSelectWrapper>
+      </StickyContainer>
+      <ItemList>
+        {items.map((item) => (
+          <Item key={item} onClick={() => toggleItem(item)} isSelected={selectedItems.includes(item)}>
+            <SelectIconWrapper>
+              <SelectIcon isSelected={selectedItems.includes(item)}/>
+            </SelectIconWrapper>
+            <span>{item}</span>
+          </Item>
+        ))}
+      </ItemList>
+      <ButtonWrapper>
+        <LongButton type={ButtonType.GREEN} onClick={handleApply}>
+          선택 완료
+        </LongButton>
+      </ButtonWrapper>
+    </Popup>
+  );
+}
 
 const StickyContainer = styled.div`
   position: sticky;
