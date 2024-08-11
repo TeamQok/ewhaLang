@@ -20,7 +20,7 @@ const ChatBox = ({ chat, loggedInUserId }) => {
   const unreadCount = chat.unreadCounts[loggedInUserId] || 0;
 
   const handleClick = () => {
-    navigate(`/chats/${chat.chatId}`);
+    navigate(`/chats/${chat.channelId}`);
 };
   
   return (
