@@ -1,5 +1,8 @@
 import * as S from "./UserDetailPage.style";
 import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { collection, addDoc } from "firebase/firestore";
+import { firestore } from "../firebase";
 import Topbar from "../components/layout/Topbar";
 import UserImage from "../components/shared/UserImage";
 import UserCoreInformation from "../components/shared/UserCoreInformation";
@@ -8,9 +11,7 @@ import UserOptionalInformation from "../components/shared/UserOptionalInformatio
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import ShortDropDown from "../components/shared/ShortDropDown";
 import Modal from "../components/common/Modal";
-import { useParams } from 'react-router-dom';
 import userMockData from '../_mock/userMockData';
-import { useNavigate } from "react-router-dom";
 
 const UserDetailPage = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
@@ -20,12 +21,35 @@ const UserDetailPage = () => {
   const user = userMockData.find(user => user.userId === userId);
   const navigate = useNavigate();
 
-  //API 연결시 채팅 추가 후 반환받은 id값으로 교체할 예정
-  const chatId = '1';
-  const handleClick = () => {
-    navigate(`/chats/${chatId}`);
-  }
+  const currentUser = {
+    userId: "user1", //현재 로그인한 유저
+    nickname: "John Doe",
+    profilePhoto: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
+    country: "미국"
+  };
 
+  const handleClick = async () => {
+    try {
+      // Firestore에 새로운 채팅 추가
+      const chatRef = await addDoc(collection(firestore, "chats"), {
+        participants: [currentUser, user],
+        lastMessage: {
+          content: '',
+          timestamp: '',
+          senderId: ''
+        },
+        unreadCounts: {
+          [currentUser.userId]: 0,
+          [user.userId]: 0
+        }
+      });
+
+      // 채팅 페이지로 이동
+      navigate(`/chats/${chatRef.id}`);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
   if (!user){
     return <div>사용자를 찾을 수 없습니다.</div>
   }
