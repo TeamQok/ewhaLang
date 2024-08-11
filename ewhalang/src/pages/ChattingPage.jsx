@@ -128,6 +128,17 @@ const ChattingPage = () => {
     }
   };
 
+  // 채팅방 나가기 기능
+  const leaveChat = async (chatId, currentUserId) => {
+    try {
+      await updateDoc(doc(firestore, "chats", chatId), {
+        isDeleted: true
+      });
+    } catch (error) {
+      console.error("Error leaving chat:", error);
+    }
+};
+
   return (
     <S.Wrapper>
       <S.ContentWrapper>
@@ -166,7 +177,7 @@ const ChattingPage = () => {
       />
       <Modal
         isOpen={isChatOutModalOpen}
-        guideText="채팅방을 정말 나가시겠습니까?"
+        guideText="채팅방을 나가면 채팅 목록 및 대화 내용이 삭제되고 복구할 수 없어요. 채팅방에서 정말 나가시겠습니까?"
         confirmText="예"
         cancelText="아니오"
         onConfirm={() => {
@@ -185,6 +196,7 @@ const ChattingPage = () => {
         confirmText="확인"
         onConfirm={() => {
           setIsChatOutConfirmOpen(false);
+          leaveChat(chatId, currentUserId)
           navigate('/chats');
         }}
         isSingleButton={true}
