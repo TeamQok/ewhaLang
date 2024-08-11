@@ -49,8 +49,6 @@ const UserListPage = () => {
     }));
   };
 
-  console.log(filteredUsers);
-
   return (
     <Wrapper>
       <Topbar title={"이화랑 친구 찾기"} />
@@ -84,6 +82,9 @@ const ContentsWrapper = styled.div`
   gap: 9px;
   padding: 16px 24px;
   flex-grow: 1;
+  justify-content: center;
+  align-content: flex-start;
+  min-height: calc(100vh - 60px);
 `;
 
 export default UserListPage;

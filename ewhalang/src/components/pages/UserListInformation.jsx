@@ -31,7 +31,7 @@ const UserListInformation = ({ user }) => {
     align-items: center;
     padding: 16px 10px;
     min-width: 168px;
-    min-height: 169px;
+    height: 169px;
     border: 0.5px solid var(--grey3);
     border-radius: 10px;
     box-sizing: border-box;

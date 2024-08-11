@@ -407,10 +407,11 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
 const FilterWrapper = styled.div`
   padding: 10px 20px 16px 20px;
-  overflow-x: auto;
+  overflow-x: hidden;
   white-space: nowrap;
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
 `;
 
 const ResetButton = styled.button`
