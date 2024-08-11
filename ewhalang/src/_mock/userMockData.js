@@ -5,7 +5,7 @@ const users = [
     profilePhoto: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
     country: "미국",
     gender: "남성",
-    birthdate: "1990",
+    birthdate: "1996",
     major: "컴퓨터 공학",
     languages: [
       { language: "한국어", level: "원어민" },
@@ -22,7 +22,7 @@ const users = [
     profilePhoto: "https://example.com/profile2.jpg",
     country: "영국",
     gender: "남성",
-    birthdate: "1992",
+    birthdate: "1997",
     major: "경영학",
     languages: [
       { language: "한국어", level: "원어민" },
@@ -38,7 +38,7 @@ const users = [
     profilePhoto: "https://example.com/profile3.jpg",
     country: "대한민국",
     gender: "여성",
-    birthdate: "1995",
+    birthdate: "1998",
     major: "심리학",
     languages: [
       { language: "영어", level: "원어민" },
@@ -55,7 +55,7 @@ const users = [
     profilePhoto: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
     country: "스페인",
     gender: "남성",
-    birthdate: "1988",
+    birthdate: "1999",
     major: "국제관계학",
     languages: [
       { language: "일본어", level: "원어민" },
@@ -72,7 +72,7 @@ const users = [
     profilePhoto: "https://example.com/profile5.jpg",
     country: "일본",
     gender: "여성",
-    birthdate: "1993",
+    birthdate: "2000",
     major: "예술사",
     languages: [
       { language: "스페인어", level: "원어민" },
@@ -89,7 +89,7 @@ const users = [
     profilePhoto: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
     country: "프랑스",
     gender: "여성",
-    birthdate: "1991",
+    birthdate: "2002",
     major: "생명공학",
     languages: [
       { language: "한국어", level: "원어민" },
@@ -106,7 +106,7 @@ const users = [
     profilePhoto: "https://example.com/profile7.jpg",
     country: "중국",
     gender: "남성",
-    birthdate: "1987",
+    birthdate: "2004",
     major: "물리학",
     languages: [
       { language: "러시아어", level: "원어민" },

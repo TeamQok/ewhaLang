@@ -25,9 +25,9 @@ const UserListPage = () => {
       
       const countryMatch = filterCriteria.countries.length === 0 || 
         filterCriteria.countries.includes(user.country);
-      
+
       const genderMatch = filterCriteria.gender === '전체' || user.gender === filterCriteria.gender;
-      
+  
       const birthYearMatch = parseInt(user.birthdate) >= filterCriteria.birthdateRange.start && 
         parseInt(user.birthdate) <= filterCriteria.birthdateRange.end;
 
@@ -43,8 +43,6 @@ const UserListPage = () => {
       ...newFilterCriteria
     }));
   };
-
-  console.log(filteredUsers);
 
   return (
     <Wrapper>
@@ -77,6 +75,9 @@ const ContentsWrapper = styled.div`
   gap: 9px;
   padding: 16px 24px;
   flex-grow: 1;
+  justify-content: center;
+  align-content: flex-start;
+  min-height: calc(100vh - 60px);
 `;
 
 export default UserListPage;
