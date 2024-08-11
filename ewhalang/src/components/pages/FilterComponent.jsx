@@ -53,6 +53,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
   useEffect(() => {
     if (activeFilter !== null || isFullScreenFilterOpen) {
+
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -133,6 +134,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   };
 
   const filteredCountries = countries.filter(country => 
+
     country.toLowerCase().includes(countrySearchTerm.toLowerCase())
   );
 
@@ -252,6 +254,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
       </FilterWrapper>
       <SelectionPopup 
         isOpen={activeFilter === '언어'}
+
         onClose={closeFilter}
         title="언어 선택"
         items={languages}
@@ -263,8 +266,10 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         fullScreen={isFullScreenSubFilter}
         onApply={(selectedLanguages) => handleFilterApply('languages', selectedLanguages)}
       />
+
       <SelectionPopup 
         isOpen={activeFilter === '국적'}
+
         onClose={closeFilter}
         title="국적 선택"
         items={filteredCountries}
@@ -278,8 +283,10 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         fullScreen={isFullScreenSubFilter}
         onApply={(selectedCountries) => handleFilterApply('countries', selectedCountries)}
       />
+
       <BulletSelectionPopup 
         isOpen={activeFilter === '성별'}
+
         onClose={closeFilter}
         title="성별 선택"
         options={genderOptions}
@@ -288,8 +295,10 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         fullScreen={isFullScreenSubFilter}
         onApply={(selectedGen) => handleFilterApply('gender', selectedGen)}
       />
+
       <RangePopup 
         isOpen={activeFilter === '출생년도'}
+
         onClose={closeFilter}
         title="출생년도 선택"
         minValue={1996}

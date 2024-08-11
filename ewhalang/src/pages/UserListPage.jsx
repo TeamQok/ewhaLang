@@ -7,6 +7,7 @@ import BottomBar from '../components/layout/BottomBar';
 import FilterComponent from '../components/pages/FilterComponent';
 import LanguageLevelInfo from '../components/pages/LanguageLevelInfo';
 
+
 const UserListPage = () => {
   const [filteredUsers, setFilteredUsers] = useState(users);
   const [filterCriteria, setFilterCriteria] = useState({
@@ -46,18 +47,22 @@ const UserListPage = () => {
 
   return (
     <Wrapper>
+
       <Topbar title={"이화랑 친구 찾기"}/>
       <FilterComponent 
         onFilterChange={handleFilterChange}
         initialFilterCriteria={filterCriteria}
       />
       <LanguageLevelInfo/>
+
       <ContentsWrapper>
         {filteredUsers.map((user, index) => (
           <UserListInformation key={index} user={user} />
         ))}
       </ContentsWrapper>
+
       <BottomBar isOnFriend={true}/>
+
     </Wrapper>
   );
 };
@@ -81,3 +86,4 @@ const ContentsWrapper = styled.div`
 `;
 
 export default UserListPage;
+
