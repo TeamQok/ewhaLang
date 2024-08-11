@@ -68,6 +68,22 @@ const UserDetailPage = () => {
     }
   };
 
+  const handleReportConfirm = async (reportReason) => {
+    try {
+      // Add report reason to Firestore
+      await addDoc(collection(firestore, "reports"), {
+        reporterId: currentUser.userId,
+        reportedUserId: user.userId,
+        reason: reportReason,
+        timestamp: new Date().toISOString(),
+      });
+      setIsReportModalOpen(false);
+      setIsReportConfirmOpen(true);
+    } catch (error) {
+      console.error("Error adding report: ", error);
+    }
+  };
+
   return (
     <S.Wrapper>
       <S.ContentWrapper>
@@ -107,10 +123,7 @@ const UserDetailPage = () => {
         isOpen={isReportModalOpen}
         guideText="신고 사유를 작성해주세요."
         confirmText="작성완료"
-        onConfirm={() => {
-          setIsReportModalOpen(false);
-          setIsReportConfirmOpen(true);
-        }}
+        onConfirm={handleReportConfirm}
         isSingleButton={true}
         showTextInput={true}
       />
