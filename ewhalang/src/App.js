@@ -21,6 +21,7 @@ import LangSettingPage from "./pages/LangSettingPage";
 import AccountManagePage from "./pages/AccountManagePage";
 import FeedbackPage from "./pages/FeedbackPage";
 import EditMypage from "./pages/EditMypage";
+import VerificationPage from "./pages/VerificationPage";
 
 function App() {
   return (
@@ -39,7 +40,7 @@ function App() {
           <Route exact path="/mypage" element={<MyPage />} />
 
           {/*회원 상세 페이지 */}
-          <Route exact path="/user" element={<UserDetailPage />} />
+          <Route exact path="/users/:userId" element={<UserDetailPage />} />
 
           {/*회원 상세 페이지 */}
           <Route exact path="/users" element={<UserListPage />} />
@@ -54,6 +55,9 @@ function App() {
           <Route exact path="/signup1" element={<Signup1 />} />
           {/*회원가입 페이지2 */}
           <Route exact path="/signup2" element={<Signup2 />} />
+
+          {/* 학생 인증 */}
+          <Route exact path="/verify" element={<VerificationPage />} />
 
           {/* 계정 찾기 */}
           <Route exact path="/find" element={<FindContainer />} />

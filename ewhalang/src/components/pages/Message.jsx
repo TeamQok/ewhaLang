@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import UserImage from '../shared/UserImage';
+import { useNavigate } from 'react-router-dom';
 
 const MessageContainer = styled.div`
   display: flex;
@@ -39,6 +40,7 @@ const MessageInfo = styled.div`
 
 const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProfileImage }) => {
   const isCurrentUser = senderId === currentUserId;
+  const navigate = useNavigate();
 
   const formatTime = (timestamp) => {
     if (!timestamp || isNaN(Date.parse(timestamp))) {
@@ -53,9 +55,13 @@ const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProf
     }).format(date);
   };
 
+  const handleImageClick = () => {
+    navigate(`/users/${senderId}`);
+  }
+
   return (
     <MessageContainer isCurrentUser={isCurrentUser}>
-      {!isCurrentUser && <UserImage profilePhoto={userProfileImage} alt="User profile" width={40} height={40}/>}
+      {!isCurrentUser && <UserImage profilePhoto={userProfileImage} alt="User profile" width={40} height={40} onClick={handleImageClick}/>}
       <MessageContent isCurrentUser={isCurrentUser}>
         <MessageBubble isCurrentUser={isCurrentUser}>
           {content}

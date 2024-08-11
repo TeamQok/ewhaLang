@@ -3,7 +3,12 @@ import styled from 'styled-components';
 import Popup from './Popup';
 import { LongButton, ButtonType } from '../common/LongButton';
 
-const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption, toggleOption, fullScreen }) => {
+const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption, toggleOption, fullScreen, onApply }) => {
+  const handleApply = () => {
+    onApply(selectedOption);
+    onClose();
+  };
+  
   return (
     <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
       <OptionList>
@@ -15,7 +20,7 @@ const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption,
         ))}
       </OptionList>
       <ButtonWrapper>
-        <LongButton type={ButtonType.GREEN} onClick={onClose}>
+        <LongButton type={ButtonType.GREEN} onClick={handleApply}>
           선택 완료
         </LongButton>
       </ButtonWrapper>
