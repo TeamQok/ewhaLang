@@ -51,8 +51,6 @@ const UserListPage = () => {
     }));
   };
 
-  console.log(filteredUsers);
-
   return (
     <Wrapper>
       <Topbar title={"이화랑 친구 찾기"} />
