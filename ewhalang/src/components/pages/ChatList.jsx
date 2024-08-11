@@ -3,18 +3,18 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebase';
 import ChatBox from './ChatBox';
 import * as S from './ChatList.style';
-import chatMockData from '../../_mock/chatMockData'
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
-  const loggedInUserId = 'user3';
+  const loggedInUserId = 'user1';
 
   useEffect(() => {
     const fetchChatList = async () => {
       try {
         // Firestore에서 모든 채팅 문서 가져오기
         const chatsRef = collection(firestore, 'chats');
-        const querySnapshot = await getDocs(chatsRef);
+        const q = query(chatsRef, where('isDeleted', '==', false));
+        const querySnapshot = await getDocs(q);
 
         const chats = querySnapshot.docs.map(doc => {
           const data = doc.data();
