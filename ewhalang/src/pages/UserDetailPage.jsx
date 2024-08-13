@@ -1,7 +1,7 @@
 import * as S from "./UserDetailPage.style";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { firestore } from "../firebase";
 import Topbar from "../components/layout/Topbar";
 import UserImage from "../components/shared/UserImage";
@@ -20,9 +20,9 @@ const UserDetailPage = () => {
   const { userId } = useParams();
   const user = userMockData.find(user => user.userId === userId);
   const navigate = useNavigate();
+  const loggedInUserId = 'user1';
 
-  const currentUser = {
-    userId: "user1", //현재 로그인한 유저
+  const loggedUserInfo = {
     nickname: "John Doe",
     profilePhoto: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
     country: "미국"
@@ -30,26 +30,61 @@ const UserDetailPage = () => {
 
   const handleClick = async () => {
     try {
-      // Firestore에 새로운 채팅 추가
-      const chatRef = await addDoc(collection(firestore, "chats"), {
-        participants: [currentUser, user],
-        lastMessage: {
-          content: '',
-          timestamp: '',
-          senderId: ''
-        },
-        unreadCounts: {
-          [currentUser.userId]: 0,
-          [user.userId]: 0
+      // user에서 필요한 정보만 추출
+      const userInfo = {
+        userId: user.userId,
+        nickname: user.nickname,
+        profilePhoto: user.profilePhoto,
+        country: user.country
+      };
+
+      // 기존 채팅 검색
+      const chatsRef = collection(firestore, "chats");
+      const q = query(
+        chatsRef,
+        where("participantsId", "array-contains", loggedInUserId)
+      );
+      const querySnapshot = await getDocs(q);
+  
+      let existingChatId = null;
+
+      querySnapshot.forEach((doc) => {
+        const chatData = doc.data();
+        if (chatData.participantsId.includes(user.userId)) {
+          existingChatId = doc.id;
         }
       });
 
-      // 채팅 페이지로 이동
-      navigate(`/chats/${chatRef.id}`);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
-  };
+      if (existingChatId) {
+        // 기존 채팅이 있으면 해당 채팅으로 이동
+        navigate(`/chats/${existingChatId}`);
+      } else {
+        // 기존 채팅이 없으면 새 채팅 생성
+        const newChatRef = await addDoc(chatsRef, {
+          participantsId: [loggedInUserId, user.userId],
+          participantsInfo: {
+            [loggedInUserId]: loggedUserInfo,
+            [user.userId]: userInfo
+          },
+          lastMessage: {
+            content: '',
+            timestamp: '',
+            senderId: ''
+          },
+          unreadCounts: {
+            [loggedInUserId]: 0,
+            [user.userId]: 0
+          }
+        });  
+
+        // 채팅 페이지로 이동
+        navigate(`/chats/${newChatRef.id}`);
+        }
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
+    };
+  
   if (!user){
     return <div>사용자를 찾을 수 없습니다.</div>
   }
@@ -72,7 +107,7 @@ const UserDetailPage = () => {
     try {
       // Add report reason to Firestore
       await addDoc(collection(firestore, "reports"), {
-        reporterId: currentUser.userId,
+        reporterId: loggedInUserId,
         reportedUserId: user.userId,
         reason: reportReason,
         timestamp: new Date().toISOString(),
