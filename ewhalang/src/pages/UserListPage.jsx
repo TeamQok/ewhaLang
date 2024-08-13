@@ -16,6 +16,8 @@ const UserListPage = () => {
     birthdateRange: { start: 1996, end: 2005 },
   });
 
+  const loggedInUserId = "user1";
+
   useEffect(() => {
     const filtered = users.filter((user) => {
       const languageMatch =
