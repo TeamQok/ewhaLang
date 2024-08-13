@@ -3,16 +3,11 @@ import styled from 'styled-components';
 import Popup from './Popup';
 import { LongButton, ButtonType } from '../common/LongButton';
 import searchIcon from '../../assets/searchIcon.svg';
+import resetIcon from '../../assets/reset.svg';
 
 const SelectIcon = ({ isSelected }) => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M13.3327 4L5.99935 11.3333L2.66602 8" stroke={isSelected ? "var(--sub1)" : "var(--grey1)"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const AllSelectIcon = ({ isSelected }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6.24935 10.0003L8.74935 12.5003L13.7493 7.50033M18.3327 10.0003C18.3327 14.6027 14.6017 18.3337 9.99935 18.3337C5.39698 18.3337 1.66602 14.6027 1.66602 10.0003C1.66602 5.39795 5.39698 1.66699 9.99935 1.66699C14.6017 1.66699 18.3327 5.39795 18.3327 10.0003Z" stroke={isSelected ? "var(--sub1)" : "var(--grey1)"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -23,13 +18,13 @@ const SelectionPopup = ({
   items,
   selectedItems,
   toggleItem,
-  toggleAllItems,
-  isAllSelected,
   searchTerm,
   setSearchTerm,
   showSearch,
   fullScreen,
-  onApply
+  onApply,
+  onReset,
+  isAllScreen
 }) => {
 
   const handleApply = () => {
@@ -50,12 +45,6 @@ const SelectionPopup = ({
             <img src={searchIcon} alt="Search" />
           </SearchInputWrapper>
         )}
-        <AllSelectWrapper onClick={toggleAllItems} isSelected={isAllSelected}>
-          <SelectIconWrapper>
-            <AllSelectIcon isSelected={isAllSelected}/>
-          </SelectIconWrapper>
-          <span>{isAllSelected ? "전체 선택 해제" : "전체 선택"}</span>
-        </AllSelectWrapper>
       </StickyContainer>
       <ItemList>
         {items.map((item) => (
@@ -68,6 +57,12 @@ const SelectionPopup = ({
         ))}
       </ItemList>
       <ButtonWrapper>
+        {!isAllScreen && (
+          <ResetButton onClick={onReset}>
+            <img src={resetIcon} alt="Reset" />
+            <span>초기화</span>
+          </ResetButton>
+        )}
         <LongButton type={ButtonType.GREEN} onClick={handleApply}>
           선택 완료
         </LongButton>
@@ -109,21 +104,6 @@ const SearchInput = styled.input`
   }
 `;
 
-const AllSelectWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  color: var(--grey1);
-  height: 48px;
-  cursor: pointer;
-  color: ${props => props.isSelected ? 'var(--sub1)' : 'var(--grey1)'};
-  img {
-    width: 20px;
-    height: 20px;
-    margin-right: 8px;
-  }
-  margin-bottom: 13px;
-`;
-
 const ItemList = styled.div`
   margin-bottom: 20px;
 `;
@@ -145,6 +125,30 @@ const ButtonWrapper = styled.div`
   bottom: 0;
   background-color: white;
   padding: 20px 0;
+  display: flex;
+  gap: 10px;
+`;
+
+const ResetButton = styled.button`
+  min-width: 45px;
+  min-height: 45px;
+  border: 0.5px solid var(--grey3);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: transparent;
+  img {
+    width: 16px;
+    height: 16px;
+  }
+  span {
+    padding-top: 2px;
+    font-size: 11px;
+    width: 29px;
+  }
 `;
 
 const SelectIconWrapper = styled.div`
