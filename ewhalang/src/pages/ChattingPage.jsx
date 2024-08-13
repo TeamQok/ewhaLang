@@ -14,8 +14,8 @@ const ChattingPage = () => {
   const { chatId } = useParams();
   const [messages, setMessages] = useState([]);
   const [chatData, setChatData] = useState(null);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
-  const currentUserId = 'user3'; // 현재 로그인한 사용자 ID
+  const [loading, setLoading] = useState(true);
+  const currentUserId = 'user1'; // 현재 로그인한 사용자 ID
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
@@ -28,34 +28,28 @@ const ChattingPage = () => {
     const fetchChatData = async () => {
       if (chatId) {
         try {
-          // Firestore에서 채팅 데이터 가져오기
           const chatDoc = await getDoc(doc(firestore, "chats", chatId));
           if (chatDoc.exists()) {
             const data = chatDoc.data();
             setChatData(data);
 
-            // Firestore에서 메시지 데이터 가져오기
             const messagesSnapshot = await getDocs(collection(firestore, `chats/${chatId}/messages`));
             if (!messagesSnapshot.empty) {
               const batch = writeBatch(firestore);
               const messagesData = messagesSnapshot.docs.map(doc => {
                 const messageData = doc.data();
-                // 상대방이 보낸 메시지의 isRead를 true로 변경
                 if (messageData.senderId !== currentUserId && !messageData.isRead) {
                   batch.update(doc.ref, { isRead: true });
                 }
                 return messageData;
               });
-              // 배치 업데이트 실행
               await batch.commit();
 
-              // 메시지를 시간 기준 오름차순으로 정렬
               messagesData.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
               setMessages(messagesData);
 
-              // unreadCount를 0으로 초기화
               await updateDoc(doc(firestore, "chats", chatId), {
-              [`unreadCounts.${currentUserId}`]: 0
+                [`unreadCounts.${currentUserId}`]: 0
               });
             } else {
               setMessages([]);
@@ -75,14 +69,15 @@ const ChattingPage = () => {
   }, [chatId]);
 
   if (loading) {
-    return <div>Loading...</div>; // 로딩 중일 때 표시할 컴포넌트
+    return <div>Loading...</div>;
   }
 
   if (!chatData) {
-    return <div>Chat not found.</div>; // 채팅 데이터를 찾을 수 없을 때 표시할 컴포넌트
+    return <div>Chat not found.</div>;
   }
 
-  const otherUser = chatData.participants.find(p => p.userId !== currentUserId);
+  const otherUserId = chatData.participantsId.find(id => id !== currentUserId);
+  const otherUser = chatData.participantsInfo[otherUserId];
 
   const handleSendMessage = async (text) => {
     const newMessage = {
@@ -94,18 +89,13 @@ const ChattingPage = () => {
     };
 
     try {
-      // Firestore의 messages 서브컬렉션에 메시지 추가
       await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
 
-      // 상대방의 unreadCount 증가
-      // Firestore의 chats 컬렉션의 lastMessage 업데이트
-      const otherUserId = otherUser.userId;
       await updateDoc(doc(firestore, "chats", chatId), {
         [`unreadCounts.${otherUserId}`]: increment(1),
         lastMessage: newMessage
       });
   
-      // 로컬 상태 업데이트
       setMessages([...messages, newMessage]);
     } catch (error) {
       console.error("Error sending message: ", error);
@@ -128,7 +118,6 @@ const ChattingPage = () => {
     }
   };
 
-  // 채팅방 나가기 기능
   const leaveChat = async (chatId, currentUserId) => {
     try {
       await updateDoc(doc(firestore, "chats", chatId), {
@@ -137,7 +126,7 @@ const ChattingPage = () => {
     } catch (error) {
       console.error("Error leaving chat:", error);
     }
-};
+  };
 
   return (
     <S.Wrapper>
@@ -203,8 +192,8 @@ const ChattingPage = () => {
         showTextInput={false}
       />
       <S.InputAreaContainer>
-          <InputArea onSendMessage={handleSendMessage} />
-        </S.InputAreaContainer>
+        <InputArea onSendMessage={handleSendMessage} />
+      </S.InputAreaContainer>
     </S.Wrapper>
   );
 };
