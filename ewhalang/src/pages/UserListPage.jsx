@@ -17,8 +17,13 @@ const UserListPage = () => {
     birthdateRange: { start: 1996, end: 2005 }
   });
 
+  const loggedInUserId = 'user1';
+
   useEffect(() => {
     const filtered = users.filter(user => {
+      //로그인한 사용자 제외
+      if(user.userId === loggedInUserId) return false;
+
       const languageMatch = filterCriteria.languages.length === 0 || 
         filterCriteria.languages.some(lang => 
           user.languages.some(language => language.language === lang)
