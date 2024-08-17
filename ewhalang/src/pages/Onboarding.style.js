@@ -53,3 +53,8 @@ export const Setting = styled.div`
   width: 100%;
   margin-bottom: 16px;
 `;
+
+export const SettingLang = styled.div`
+  display: flex;
+  align-items: center;
+`;
