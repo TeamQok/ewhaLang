@@ -7,7 +7,7 @@ export const Wrapper = styled.div`
   position: relative; /* 자식 컴포넌트의 기준점 */
 `;
 export const Info = styled.div`
-  color: var(--Grey-2, #a8a8a8);
+  color: ${(props) => (props.err ? "red" : "var(--grey2)")};
   font-family: Pretendard;
   font-size: 11px;
   font-style: normal;
