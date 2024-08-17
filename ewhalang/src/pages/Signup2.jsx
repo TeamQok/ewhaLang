@@ -80,6 +80,8 @@ const Signup2 = () => {
     ) {
       const user = auth.currentUser;
       const uid = user?.uid;
+      const email = user?.email;
+      const usingLanguage = sessionStorage.getItem("usingLang");
 
       const docRef = await setDoc(doc(firestore, "users", uid), {
         uid,
@@ -92,6 +94,8 @@ const Signup2 = () => {
         languages,
         hobby,
         introduction,
+        email,
+        usingLanguage,
         lastConnectDate: new Date().toISOString(), // 현재 시간 저장
       });
 
