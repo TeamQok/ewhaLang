@@ -8,6 +8,42 @@ import FilterComponent from '../components/pages/FilterComponent';
 import LanguageLevelInfo from '../components/pages/LanguageLevelInfo';
 
 
+  const loggedInUserId = "user1";
+
+  useEffect(() => {
+    const filtered = users.filter((user) => {
+      const languageMatch =
+        filterCriteria.languages.length === 0 ||
+        filterCriteria.languages.some((lang) =>
+          user.languages.some((language) => language.language === lang)
+        );
+
+      const countryMatch =
+        filterCriteria.countries.length === 0 ||
+        filterCriteria.countries.includes(user.country);
+
+      const genderMatch =
+        filterCriteria.gender === "전체" ||
+        user.gender === filterCriteria.gender;
+
+      const birthYearMatch =
+        parseInt(user.birthdate) >= filterCriteria.birthdateRange.start &&
+        parseInt(user.birthdate) <= filterCriteria.birthdateRange.end;
+
+      return languageMatch && countryMatch && genderMatch && birthYearMatch;
+    });
+
+    setFilteredUsers(filtered);
+  }, [filterCriteria]);
+
+  const handleFilterChange = (newFilterCriteria) => {
+    setFilterCriteria((prevCriteria) => ({
+      ...prevCriteria,
+      ...newFilterCriteria,
+    }));
+  };
+
+
 const UserListPage = () => {
   const [filteredUsers, setFilteredUsers] = useState(users);
   const [filterCriteria, setFilterCriteria] = useState({
@@ -60,14 +96,14 @@ const UserListPage = () => {
       />
       <LanguageLevelInfo/>
 
+
       <ContentsWrapper>
         {filteredUsers.map((user, index) => (
           <UserListInformation key={index} user={user} />
         ))}
       </ContentsWrapper>
 
-      <BottomBar isOnFriend={true}/>
-
+      <BottomBar isOnFriend={true} />
     </Wrapper>
   );
 };
@@ -91,4 +127,3 @@ const ContentsWrapper = styled.div`
 `;
 
 export default UserListPage;
-

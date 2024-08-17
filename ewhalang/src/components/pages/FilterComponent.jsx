@@ -11,22 +11,60 @@ import arrowRightIcon from '../../assets/filterArrowRight.svg';
 import resetIcon from '../../assets/reset.svg';
 import { LongButton } from '../common/LongButton';
 
+
 const languages = [
-  '한국어', '영어', '일본어', '중국어', '프랑스어', '스페인어', 
-  '독일어', '이탈리아어', '러시아어', '포르투갈어', '아랍어', 
-  '힌디어', '베트남어', '태국어', '터키어', '폴란드어', 
-  '네덜란드어', '스웨덴어', '그리스어', '체코어', '헝가리어', 
-  '핀란드어', '덴마크어', '노르웨이어', '히브리어'
+  "한국어",
+  "영어",
+  "일본어",
+  "중국어",
+  "프랑스어",
+  "스페인어",
+  "독일어",
+  "이탈리아어",
+  "러시아어",
+  "포르투갈어",
+  "아랍어",
+  "힌디어",
+  "베트남어",
+  "태국어",
+  "터키어",
+  "폴란드어",
+  "네덜란드어",
+  "스웨덴어",
+  "그리스어",
+  "체코어",
+  "헝가리어",
+  "핀란드어",
+  "덴마크어",
+  "노르웨이어",
+  "히브리어",
 ];
 
 const countries = [
-  '대한민국', '미국', '일본', '중국', '프랑스', '스페인', 
-  '영국', '독일', '이탈리아', '캐나다', '호주', '인도', 
-  '브라질', '멕시코', '남아프리카 공화국', '러시아', '네덜란드', 
-  '스웨덴', '스위스', '벨기에', '오스트리아'
+  "대한민국",
+  "미국",
+  "일본",
+  "중국",
+  "프랑스",
+  "스페인",
+  "영국",
+  "독일",
+  "이탈리아",
+  "캐나다",
+  "호주",
+  "인도",
+  "브라질",
+  "멕시코",
+  "남아프리카 공화국",
+  "러시아",
+  "네덜란드",
+  "스웨덴",
+  "스위스",
+  "벨기에",
+  "오스트리아",
 ];
 
-const genderOptions = ['전체', '여성', '남성'];
+const genderOptions = ["전체", "여성", "남성"];
 
 const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const [activeFilter, setActiveFilter] = useState(null);
@@ -49,18 +87,18 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
   useEffect(() => {
     setIsAllCountriesSelected(currentFilters.countries.length === countries.length);
+
   }, [currentFilters.countries]);
 
   useEffect(() => {
     if (activeFilter !== null || isFullScreenFilterOpen) {
-
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [activeFilter, isFullScreenFilterOpen]);
 
@@ -72,10 +110,13 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     onFilterChange(appliedFilters);
   }, [appliedFilters]);
 
+
   const openFilter = (filter) => {
     if (!isFullScreenFilterOpen) {
       setCurrentFilters(appliedFilters); // 개별 필터를 열 때도 현재 필터를 적용된 필터로 설정
     }
+
+
     setActiveFilter(filter);
     setIsFullScreenSubFilter(isFullScreenFilterOpen);
   };
@@ -88,6 +129,8 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
   const openFullScreenFilter = () => {
     setCurrentFilters(appliedFilters);
+
+
     setIsFullScreenFilterOpen(true);
   };
 
@@ -95,6 +138,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     setIsFullScreenFilterOpen(false);
     // 필터 설정이 완료되지 않고 팝업이 닫힐 때 현재 필터를 적용된 필터로 되돌림
     setCurrentFilters(appliedFilters);
+
   };
 
   const toggleLanguage = (language) => {
@@ -103,61 +147,75 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
       languages: prev.languages.includes(language) 
         ? prev.languages.filter(lang => lang !== language)
         : [...prev.languages, language]
+
     }));
   };
 
   const toggleCountry = (country) => {
+
     setCurrentFilters(prev => ({
       ...prev,
       countries: prev.countries.includes(country) 
         ? prev.countries.filter(c => c !== country)
         : [...prev.countries, country]
+
     }));
   };
 
   const toggleAllLanguages = () => {
+
     setCurrentFilters(prev => ({
       ...prev,
       languages: isAllLanguagesSelected ? [] : [...languages]
+
     }));
   };
 
   const toggleAllCountries = () => {
+
     setCurrentFilters(prev => ({
       ...prev,
       countries: isAllCountriesSelected ? [] : [...countries]
+
     }));
   };
 
   const toggleGender = (gender) => {
+
     setCurrentFilters(prev => ({ ...prev, gender }));
+
   };
 
-  const filteredCountries = countries.filter(country => 
-
+  const filteredCountries = countries.filter((country) =>
     country.toLowerCase().includes(countrySearchTerm.toLowerCase())
   );
 
   const handleBirthdateRangeChange = (start, end) => {
+
     setCurrentFilters(prev => ({ ...prev, birthdateRange: { start, end } }));
+
   };
 
   // 현재 선택 중인 필터를 보여주는 메소드들
   const getCurrentLanguagesText = () => {
     const { languages } = currentFilters;
     if (languages.length === 1) return languages[0];
+
     if (languages.length > 1) return `${languages[0]} 외 ${languages.length - 1}`;
+
     return null;
   };
 
   const getCurrentCountriesText = () => {
     const { countries } = currentFilters;
     if (countries.length === 1) return countries[0];
+
     if (countries.length > 1) return `${countries[0]} 외 ${countries.length - 1}`;
     return null;
   };
 
   const getCurrentGenderText = () => currentFilters.gender !== '전체' ? currentFilters.gender : null;
+
 
   const getCurrentBirthdateRangeText = () => {
     const { start, end } = currentFilters.birthdateRange;
@@ -171,18 +229,22 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const getAppliedLanguagesText = () => {
     const { languages } = appliedFilters;
     if (languages.length === 1) return languages[0];
+
     if (languages.length > 1) return `${languages[0]} 외 ${languages.length - 1}`;
+
     return null;
   };
 
   const getAppliedCountriesText = () => {
     const { countries } = appliedFilters;
     if (countries.length === 1) return countries[0];
+
     if (countries.length > 1) return `${countries[0]} 외 ${countries.length - 1}`;
     return null;
   };
 
   const getAppliedGenderText = () => appliedFilters.gender !== '전체' ? appliedFilters.gender : null;
+
 
   const getAppliedBirthdateRangeText = () => {
     const { start, end } = appliedFilters.birthdateRange;
@@ -196,8 +258,10 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     const resetFilters = {
       languages: [],
       countries: [],
+
       gender: '전체',
       birthdateRange: { start: 1996, end: 2005 }
+
     };
     setCurrentFilters(resetFilters);
     if (!isFullScreenFilterOpen) {
@@ -213,6 +277,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     if (!isFullScreenFilterOpen) {
       // 전체 필터 설정이 아닌 경우, 즉시 적용
       setAppliedFilters(prev => ({ ...prev, [filterType]: newValue }));
+
       onFilterChange({ ...appliedFilters, [filterType]: newValue });
     }
     closeFilter();
@@ -225,6 +290,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
   return (
     <>
+
     <FilterWrapper>
         <FilterButton text="필터" icon={filterIcon} onClick={openFullScreenFilter} />
         <FilterButton 
@@ -249,12 +315,12 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
           text="출생년도" 
           icon={arrowDownIcon} 
           onClick={() => openFilter('출생년도')} 
+
           selectedText={getAppliedBirthdateRangeText()}
         />
       </FilterWrapper>
-      <SelectionPopup 
-        isOpen={activeFilter === '언어'}
-
+      <SelectionPopup
+        isOpen={activeFilter === "언어"}
         onClose={closeFilter}
         title="언어 선택"
         items={languages}
@@ -264,12 +330,13 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         isAllSelected={isAllLanguagesSelected}
         showSearch={false}
         fullScreen={isFullScreenSubFilter}
+
         onApply={(selectedLanguages) => handleFilterApply('languages', selectedLanguages)}
+
       />
 
-      <SelectionPopup 
-        isOpen={activeFilter === '국적'}
-
+      <SelectionPopup
+        isOpen={activeFilter === "국적"}
         onClose={closeFilter}
         title="국적 선택"
         items={filteredCountries}
@@ -281,24 +348,26 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         setSearchTerm={setCountrySearchTerm}
         showSearch={true}
         fullScreen={isFullScreenSubFilter}
+
         onApply={(selectedCountries) => handleFilterApply('countries', selectedCountries)}
+
       />
 
-      <BulletSelectionPopup 
-        isOpen={activeFilter === '성별'}
-
+      <BulletSelectionPopup
+        isOpen={activeFilter === "성별"}
         onClose={closeFilter}
         title="성별 선택"
         options={genderOptions}
         selectedOption={currentFilters.gender}
         toggleOption={toggleGender}
         fullScreen={isFullScreenSubFilter}
+
         onApply={(selectedGen) => handleFilterApply('gender', selectedGen)}
+
       />
 
-      <RangePopup 
-        isOpen={activeFilter === '출생년도'}
-
+      <RangePopup
+        isOpen={activeFilter === "출생년도"}
         onClose={closeFilter}
         title="출생년도 선택"
         minValue={1996}
@@ -306,7 +375,9 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         step={1}
         formatLabel={(year) => `${year}년생`}
         formatDisplayItem={(year) => `${year.toString().slice(2)}년생`}
+
         onApply={(start, end) => handleFilterApply('birthdateRange', { start, end })}
+
         fullScreen={isFullScreenSubFilter}
         birthdateRange={currentFilters.birthdateRange}
       />
@@ -316,6 +387,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         title="전체 필터 설정"
         fullScreen={true}
       >
+
  <FilterButton 
           text="언어" 
           icon={arrowRightIcon} 
@@ -344,6 +416,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
           isAllScreen={true} 
           selectedText={getCurrentBirthdateRangeText()} 
         />        <AllScreenButtonWrapper>
+
           <ResetButton onClick={resetFilters}>
             <img src={resetIcon} alt="reset" />
             <span>초기화</span>
@@ -386,6 +459,7 @@ const ResetButton = styled.button`
     font-size: 11px;
     width: 29px;
   }
+
 `;
 
 const AllScreenButtonWrapper = styled.div`
