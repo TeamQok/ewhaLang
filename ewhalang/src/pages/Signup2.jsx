@@ -7,8 +7,8 @@ import { LongButton, ButtonType } from "../components/common/LongButton";
 import { useState } from "react";
 import Modal from "../components/common/Modal";
 import camera from "../assets/camera.svg";
-import { collection, addDoc } from "firebase/firestore";
-import { firestore } from "../firebase";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { firestore, auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
 const Signup2 = () => {
@@ -70,7 +70,11 @@ const Signup2 = () => {
   // 저장하기 버튼 눌렀을 때
   const onClickSignin = async () => {
     if (name && nickname && country && gender && major && languages) {
-      const docRef = await addDoc(collection(firestore, "users"), {
+      const user = auth.currentUser;
+      const uid = user?.uid;
+
+      const docRef = await setDoc(doc(firestore, "users", uid), {
+        uid,
         name,
         nickname,
         country,
@@ -79,9 +83,10 @@ const Signup2 = () => {
         languages,
         hobby,
         introduction,
+        lastConnectDate: new Date().toISOString(), // 현재 시간 저장
       });
 
-      console.log("Document written with ID: ", docRef.id);
+      console.log("Document written with ID: ", uid);
       setIsModalOpen(true);
     } else {
       setIsModalOpen2(true);

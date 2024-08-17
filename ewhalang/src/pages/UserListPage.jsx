@@ -62,7 +62,6 @@ const UserListPage = () => {
 
       <ContentsWrapper>
         {filteredUsers.map((user, index) => (
-        {filteredUsers.map((user, index) => (
           <UserListInformation key={index} user={user} />
         ))}
       </ContentsWrapper>

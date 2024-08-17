@@ -315,7 +315,6 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         title="언어 선택"
         items={languages}
         selectedItems={currentFilters.languages}
-        selectedItems={currentFilters.languages}
         toggleItem={toggleLanguage}
         toggleAllItems={toggleAllLanguages}
         isAllSelected={isAllLanguagesSelected}
@@ -331,7 +330,6 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         onClose={closeFilter}
         title="국적 선택"
         items={filteredCountries}
-        selectedItems={currentFilters.countries}
         selectedItems={currentFilters.countries}
         toggleItem={toggleCountry}
         toggleAllItems={toggleAllCountries}
@@ -351,7 +349,6 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         title="성별 선택"
         options={genderOptions}
         selectedOption={currentFilters.gender}
-        selectedOption={currentFilters.gender}
         toggleOption={toggleGender}
         fullScreen={isFullScreenSubFilter}
         onApply={(selectedGen) => handleFilterApply("gender", selectedGen)}
@@ -370,7 +367,6 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
           handleFilterApply("birthdateRange", { start, end })
         }
         fullScreen={isFullScreenSubFilter}
-        birthdateRange={currentFilters.birthdateRange}
         birthdateRange={currentFilters.birthdateRange}
       />
       <Popup
