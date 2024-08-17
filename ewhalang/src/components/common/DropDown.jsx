@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import arrowDown from '../../assets/arrowDown.svg';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import arrowDown from "../../assets/arrowDown.svg";
 
 const DropDownContainer = styled.div`
-  width: ${props => props.isLong ? '100%' : '48%'};
+  width: ${(props) => (props.isLong ? "100%" : "48%")};
   position: relative;
 `;
 
@@ -14,7 +14,7 @@ const DropDownHeader = styled.div`
   background-color: white;
   border-radius: 12px;
   font-size: 14px;
-  color: ${props => props.isPlaceholder ? 'var(--grey3)' : 'var(--black)'};
+  color: ${(props) => (props.isPlaceholder ? "var(--grey3)" : "var(--black)")};
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -74,17 +74,27 @@ const ListItemText = styled.span`
 `;
 
 const ArrowIcon = styled.img`
-    width: 12px;
-    height: 12px;
-`
+  width: 12px;
+  height: 12px;
+`;
 
-const DropDown = ({ options, isLong = false, onSelect, placeholder = "Select an option" }) => {
+const DropDown = ({
+  options,
+  isLong = false,
+  onSelect,
+  placeholder = "Select an option",
+  evalue,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(evalue);
+
+  useEffect(() => {
+    setSelectedOption(evalue);
+  }, [evalue]);
 
   const toggling = () => setIsOpen(!isOpen);
 
-  const onOptionClicked = value => () => {
+  const onOptionClicked = (value) => () => {
     setSelectedOption(value);
     setIsOpen(false);
     onSelect(value);
@@ -94,12 +104,12 @@ const DropDown = ({ options, isLong = false, onSelect, placeholder = "Select an 
     <DropDownContainer isLong={isLong}>
       <DropDownHeader onClick={toggling} isPlaceholder={!selectedOption}>
         <HeaderText>{selectedOption || placeholder}</HeaderText>
-        <ArrowIcon src={arrowDown} alt="arrow down"/>
-        </DropDownHeader>
+        <ArrowIcon src={arrowDown} alt="arrow down" />
+      </DropDownHeader>
       {isOpen && (
         <DropDownListContainer>
           <DropDownList>
-            {options.map(option => (
+            {options.map((option) => (
               <ListItem onClick={onOptionClicked(option)} key={option}>
                 <ListItemText>{option}</ListItemText>
               </ListItem>
