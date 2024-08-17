@@ -69,7 +69,15 @@ const Signup2 = () => {
 
   // 저장하기 버튼 눌렀을 때
   const onClickSignin = async () => {
-    if (name && nickname && country && gender && major && languages) {
+    if (
+      name &&
+      nickname &&
+      country &&
+      gender &&
+      major &&
+      languages &&
+      birthdate
+    ) {
       const user = auth.currentUser;
       const uid = user?.uid;
 
@@ -78,6 +86,7 @@ const Signup2 = () => {
         name,
         nickname,
         country,
+        birthdate,
         gender,
         major,
         languages,
@@ -133,7 +142,29 @@ const Signup2 = () => {
         <DropDown
           isLong={true}
           placeholder="국적을 선택해주세요."
-          options={["한국", "중국", "일본"]}
+          options={[
+            "대한민국",
+            "미국",
+            "일본",
+            "중국",
+            "프랑스",
+            "스페인",
+            "영국",
+            "독일",
+            "이탈리아",
+            "캐나다",
+            "호주",
+            "인도",
+            "브라질",
+            "멕시코",
+            "남아프리카 공화국",
+            "러시아",
+            "네덜란드",
+            "스웨덴",
+            "스위스",
+            "벨기에",
+            "오스트리아",
+          ]}
           onSelect={(selectedOption) => {
             console.log(`Selected: ${selectedOption}`);
             setCountry(selectedOption);
@@ -179,15 +210,27 @@ const Signup2 = () => {
                 "영어",
                 "일본어",
                 "중국어",
-                "스페인어",
                 "프랑스어",
+                "스페인어",
                 "독일어",
-                "러시아어",
-                "아랍어",
-                "말레이시아어",
-                "독일어",
+                "이탈리아어",
                 "러시아어",
                 "포르투갈어",
+                "아랍어",
+                "힌디어",
+                "베트남어",
+                "태국어",
+                "터키어",
+                "폴란드어",
+                "네덜란드어",
+                "스웨덴어",
+                "그리스어",
+                "체코어",
+                "헝가리어",
+                "핀란드어",
+                "덴마크어",
+                "노르웨이어",
+                "히브리어",
               ]}
               onSelect={(selectedOption) => {
                 console.log(`Selected: ${selectedOption}`);

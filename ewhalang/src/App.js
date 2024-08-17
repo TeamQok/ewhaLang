@@ -10,8 +10,6 @@ import UserListPage from "./pages/UserListPage";
 import ChatListPage from "./pages/ChatListPage";
 import Signup2 from "./pages/Signup2";
 import Signup1 from "./pages/Signup1";
-import FindEmail from "./pages/FindEmail";
-import FindPw from "./pages/FindPw";
 import FindContainer from "./pages/FindContainer";
 import ReSettingPw from "./pages/ReSettingPw";
 import ChattingPage from "./pages/ChattingPage";
@@ -61,12 +59,6 @@ function App() {
 
           {/* 계정 찾기 */}
           <Route exact path="/find" element={<FindContainer />} />
-
-          {/* 이메일 찾기 */}
-          <Route exact path="/findemail" element={<FindEmail />} />
-
-          {/* 비번찾기 */}
-          <Route exact path="/findpw" element={<FindPw />} />
 
           {/* 비번 재설정 */}
           <Route exact path="/repw" element={<ReSettingPw />} />
