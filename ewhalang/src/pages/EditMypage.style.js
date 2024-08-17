@@ -23,11 +23,20 @@ export const Container = styled.div`
   justify-content: center;
   text-align: center;
   align-items: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+`;
+export const ProfileImg = styled.img`
+  border-radius: 50%; /* 이미지의 경계가 원형이 되도록 설정 */
+  width: 100px;
+  height: 100px;
+  object-fit: cover; /* 이미지가 요소의 크기에 맞게 자르도록 설정 */
+  overflow-x: hidden;
 `;
 
 export const Camera = styled.div`
   position: absolute;
-  top: 88px; // 원하는 위치로 조정
+  top: 75px; // 원하는 위치로 조정
   z-index: 1;
   transform: translate(100%, 0%);
 `;
