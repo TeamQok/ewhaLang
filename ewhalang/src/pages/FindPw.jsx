@@ -5,19 +5,6 @@ import Modal from "../components/common/Modal";
 import { useState } from "react";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
-const auth = getAuth();
-const resetPassword = async (email) => {
-  try {
-    await sendPasswordResetEmail(auth, email);
-    console.log("Password reset email sent.");
-
-    // 사용자가 비밀번호 재설정 이메일을 확인하라는 안내를 제공할 수 있습니다.
-  } catch (error) {
-    console.error("Error sending password reset email:", error);
-    // 에러 처리
-  }
-};
-
 const FindPw = () => {
   const navigate = useNavigate();
   const [isModalOpen1, setIsModalOpen1] = useState(false);
@@ -31,6 +18,20 @@ const FindPw = () => {
 
   const onChangeEmail = (e) => {
     setEmail(e.target.value);
+  };
+
+  const auth = getAuth();
+  const resetPassword = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setIsModalOpen1(true);
+      console.log("Password reset email sent.");
+
+      // 사용자가 비밀번호 재설정 이메일을 확인하라는 안내를 제공할 수 있습니다.
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      // 에러 처리
+    }
   };
 
   return (
@@ -51,27 +52,26 @@ const FindPw = () => {
           <S.Button
             onClick={() => {
               resetPassword(email);
-              setIsModalOpen1(true);
             }}
           >
-            인증번호 요청
+            링크 요청
           </S.Button>
           <div style={{ marginBottom: "16px" }} />
         </S.Container>
 
-        <S.Title>인증번호</S.Title>
+        {/* <S.Title>인증번호</S.Title>
         <S.Container>
           <S.Input placeholder="인증번호를 입력해주세요." />
           <S.Button onClick={() => setIsModalOpen2(true)}>
             인증번호 확인
           </S.Button>
           <div style={{ marginBottom: "16px" }} />
-        </S.Container>
+        </S.Container> */}
       </S.Wrapper>
       <S.BtnContainer>
-        <LongButton ButtonType={ButtonType.GREEN} onClick={goRePw}>
+        {/* <LongButton ButtonType={ButtonType.GREEN} onClick={goRePw}>
           다음
-        </LongButton>
+        </LongButton> */}
 
         <Modal
           isOpen={isModalOpen1}
@@ -80,24 +80,10 @@ const FindPw = () => {
           confirmText="확인"
           onConfirm={() => {
             setIsModalOpen1(false);
+            navigate("/login");
           }}
           onCancel={() => {
             setIsModalOpen1(false);
-          }}
-          isSingleButton={true}
-          showTextInput={false}
-        />
-
-        <Modal
-          isOpen={isModalOpen2}
-          onClose={() => setIsModalOpen2(false)}
-          guideText="인증번호 확인이 완료되었습니다."
-          confirmText="확인"
-          onConfirm={() => {
-            setIsModalOpen2(false);
-          }}
-          onCancel={() => {
-            setIsModalOpen2(false);
           }}
           isSingleButton={true}
           showTextInput={false}

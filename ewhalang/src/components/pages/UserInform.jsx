@@ -7,16 +7,28 @@ import { LongButton, ButtonType } from "../common/LongButton";
 import { useState, useRef, useEffect } from "react";
 import Modal from "../common/Modal";
 import camera from "../../assets/camera.svg";
-import { setDoc, doc, getDoc } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { firestore, auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import BottomBar from "../layout/BottomBar";
+import imageCompression from "browser-image-compression";
 
 const UserInform = ({ isEdit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
+  const [isModalOpen4, setIsModalOpen4] = useState(false);
+  const [isModalOpen5, setIsModalOpen5] = useState(false);
   const navigate = useNavigate();
 
   // 이미지 업로드용
@@ -25,6 +37,10 @@ const UserInform = ({ isEdit }) => {
 
   const goNext = () => {
     navigate("/login");
+  };
+
+  const onClickX = () => {
+    isEdit ? navigate("/mypage") : navigate("/login");
   };
 
   // 입력 state
@@ -74,45 +90,10 @@ const UserInform = ({ isEdit }) => {
     });
   };
 
-  // 수정하기 페이지에서 사용할 수 있음
-
-  const auth = getAuth();
-  const user = auth.currentUser;
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const docRef = doc(firestore, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
-          setProfileImg(userData?.profileImg);
-          setBirthdate(userData?.birthdate);
-          setCountry(userData?.country);
-          setGender(userData?.gender);
-          setNickname(userData?.nickname);
-          setMajor(userData?.major);
-          setHobby(userData?.hobby);
-          setIntroduction(userData?.introduction);
-          setLanguages(userData?.languages);
-          console.log("User data:", userData);
-        }
-      } catch (error) {
-        console.error("Error fetching user profile: ", error);
-      }
-    };
-
-    getUserData();
-  }, []);
-
-  const onClickEdit = () => {
-    setIsModalOpen3(true);
-  };
-
   // 회원가입 시
   // 저장하기 버튼 눌렀을 때
   const onClickSignin = async () => {
+    // 해당 항목들이 입력 되어있어야 넘어갈 수 있음
     if (
       name &&
       nickname &&
@@ -151,23 +132,124 @@ const UserInform = ({ isEdit }) => {
     }
   };
 
-  //프로필 이미지 선택
+  /////////////////////////////////////////////////////
+  //프로필 이미지 선택(탐색기 열기)
   const openFileDialog = () => {
     fileInputRef.current.click();
   };
 
   // 파일 선택 시 호출되는 함수
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
+    const options = {
+      maxSizeMB: 0.75, // 최대 파일 크기를 759kb로 설정
+      maxWidthOrHeight: 1920, // 최대 높이
+      useWebWorker: true,
+    };
 
-    if (file) {
+    // 이미지 압축
+    const compressedFile = await imageCompression(file, options);
+
+    if (compressedFile) {
       // 선택된 파일을 프로필 이미지로 설정
       const reader = new FileReader();
+      //   파일 읽은 후 실행될 함수
       reader.onloadend = () => {
         setProfileImg(reader.result); // 이미지 URL을 상태로 설정
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(compressedFile);
     }
+  };
+  /////////////////////////////////////////////////////////////
+
+  //  수정 함수
+  // 수정하기 페이지 마운트 시점에서 기존 정보 불러오기
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const docRef = doc(firestore, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setProfileImg(userData?.profileImg);
+          setBirthdate(userData?.birthdate);
+          setCountry(userData?.country);
+          setGender(userData?.gender);
+          setNickname(userData?.nickname);
+          setMajor(userData?.major);
+          setHobby(userData?.hobby);
+          setIntroduction(userData?.introduction);
+          setLanguages(userData?.languages);
+          console.log("User data:", userData);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile: ", error);
+      }
+    };
+
+    getUserData();
+  }, []);
+
+  //   수정사항 업데이트
+  const updateUser = async (updatedData) => {
+    try {
+      const docRef = doc(firestore, "users", user.uid);
+      await updateDoc(docRef, updatedData);
+      // 'update' 메서드를 사용하여 문서 필드 업데이트
+      setIsModalOpen3(true);
+      navigate("/mypage");
+
+      console.log("User document successfully updated!");
+    } catch (error) {
+      console.log("Error updating user document: ", error);
+    }
+  };
+
+  const updatedData = {
+    profileImg,
+    nickname,
+    country,
+    birthdate,
+    gender,
+    major,
+    languages,
+    hobby,
+    introduction,
+  };
+
+  // 저장하기 버튼 눌렀을 떄
+  const onClickEdit = () => {
+    updateUser(updatedData);
+  };
+
+  //////////////////////////////////////////////////////////////
+  // 닉네임 중복 검사 함수
+  const checkNicknameDuplicate = async (nickname) => {
+    try {
+      // 'users' 컬렉션에 있는 닉네임과 일치하는 문서 찾기
+      const usersRef = collection(firestore, "users");
+      const q = query(usersRef, where("nickname", "==", nickname));
+      const querySnapshot = await getDocs(q);
+
+      // 중복 검사 결과
+      if (!querySnapshot.empty) {
+        setIsModalOpen5(true);
+      } else {
+        setIsModalOpen4(true);
+      }
+    } catch (error) {
+      console.error("Error checking nickname: ", error);
+      throw error; // 오류 처리
+    }
+  };
+
+  const onClickNicknameCheck = () => {
+    checkNicknameDuplicate(nickname);
   };
 
   return (
@@ -176,6 +258,7 @@ const UserInform = ({ isEdit }) => {
         title={isEdit ? "수정하기" : "회원가입"}
         right={"x"}
         left={"back"}
+        rightonClick={onClickX}
       />
 
       <S.Container>
@@ -207,13 +290,14 @@ const UserInform = ({ isEdit }) => {
           </>
         )}
 
-        <InputBox
-          title={"닉네임"}
-          placeholder={"닉네임을 입력해주세요."}
-          onChange={inputNickname}
-          value={nickname}
-        />
-        <div style={{ marginBottom: "16px" }} />
+        <S.NicknameWrapper>
+          <S.Title>닉네임</S.Title>
+          <S.NicknameContainer>
+            <S.Input onChange={inputNickname} value={nickname} />
+            <S.Button onClick={onClickNicknameCheck}>중복 확인</S.Button>
+            <div style={{ marginBottom: "16px" }} />
+          </S.NicknameContainer>
+        </S.NicknameWrapper>
 
         <S.InputTitle>국적</S.InputTitle>
         <DropDown
@@ -342,6 +426,13 @@ const UserInform = ({ isEdit }) => {
           사용 가능 언어 추가하기
         </LongButton>
         <div style={{ marginBottom: "16px" }} />
+        <LongButton
+          type={ButtonType.PALE_GREEN}
+          onClick={() => setLanguages([])}
+        >
+          사용 가능 언어 리셋
+        </LongButton>
+        <div style={{ marginBottom: "16px" }} />
 
         <InputBox
           title={"취미 및 관심사"}
@@ -406,6 +497,35 @@ const UserInform = ({ isEdit }) => {
         }}
         onCancel={() => {
           setIsModalOpen3(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+
+      <Modal
+        isOpen={isModalOpen4}
+        onClose={() => setIsModalOpen4(false)}
+        guideText="사용할 수 있는 닉네임입니다."
+        confirmText="확인"
+        onConfirm={() => {
+          setIsModalOpen4(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen4(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+      <Modal
+        isOpen={isModalOpen5}
+        onClose={() => setIsModalOpen5(false)}
+        guideText="중복된 닉네임입니다."
+        confirmText="확인"
+        onConfirm={() => {
+          setIsModalOpen5(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen5(false);
         }}
         isSingleButton={true}
         showTextInput={false}
