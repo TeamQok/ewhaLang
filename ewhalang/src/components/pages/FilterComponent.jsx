@@ -11,6 +11,7 @@ import arrowRightIcon from '../../assets/filterArrowRight.svg';
 import resetIcon from '../../assets/reset.svg';
 import { LongButton } from '../common/LongButton';
 
+
 const languages = [
   '한국어', '영어', '일본어', '중국어', '프랑스어', '스페인어',
   '독일어', '이탈리아어', '러시아어', '포르투갈어', '아랍어',
@@ -26,7 +27,7 @@ const countries = [
   '스웨덴', '스위스', '벨기에', '오스트리아'
 ];
 
-const genderOptions = ['전체', '여성', '남성'];
+const genderOptions = ["전체", "여성", "남성"];
 
 const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const [activeFilter, setActiveFilter] = useState(null);
@@ -40,11 +41,11 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     if (activeFilter !== null || isFullScreenFilterOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [activeFilter, isFullScreenFilterOpen]);
 
@@ -55,6 +56,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   useEffect(() => {
     onFilterChange(appliedFilters);
   }, [appliedFilters]);
+
 
   const openFilter = (filter) => {
     if (!isFullScreenFilterOpen) {
@@ -71,12 +73,15 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
   const openFullScreenFilter = () => {
     setCurrentFilters(appliedFilters);
+
+
     setIsFullScreenFilterOpen(true);
   };
 
   const closeFullScreenFilter = () => {
     setIsFullScreenFilterOpen(false);
     setCurrentFilters(appliedFilters);
+
   };
 
   const toggleLanguage = (language) => {
@@ -85,20 +90,25 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
       languages: prev.languages.includes(language)
         ? prev.languages.filter(lang => lang !== language)
         : [...prev.languages, language]
+
     }));
   };
 
   const toggleCountry = (country) => {
+
     setCurrentFilters(prev => ({
       ...prev,
       countries: prev.countries.includes(country)
         ? prev.countries.filter(c => c !== country)
         : [...prev.countries, country]
+
     }));
   };
 
   const toggleGender = (gender) => {
+
     setCurrentFilters(prev => ({ ...prev, gender }));
+
   };
 
   const filteredCountries = countries.filter(country =>
@@ -108,18 +118,22 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const getCurrentLanguagesText = () => {
     const { languages } = currentFilters;
     if (languages.length === 1) return languages[0];
+
     if (languages.length > 1) return `${languages[0]} 외 ${languages.length - 1}`;
+
     return null;
   };
 
   const getCurrentCountriesText = () => {
     const { countries } = currentFilters;
     if (countries.length === 1) return countries[0];
+
     if (countries.length > 1) return `${countries[0]} 외 ${countries.length - 1}`;
     return null;
   };
 
   const getCurrentGenderText = () => currentFilters.gender !== '전체' ? currentFilters.gender : null;
+
 
   const getCurrentBirthdateRangeText = () => {
     const { start, end } = currentFilters.birthdateRange;
@@ -132,18 +146,22 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const getAppliedLanguagesText = () => {
     const { languages } = appliedFilters;
     if (languages.length === 1) return languages[0];
+
     if (languages.length > 1) return `${languages[0]} 외 ${languages.length - 1}`;
+
     return null;
   };
 
   const getAppliedCountriesText = () => {
     const { countries } = appliedFilters;
     if (countries.length === 1) return countries[0];
+
     if (countries.length > 1) return `${countries[0]} 외 ${countries.length - 1}`;
     return null;
   };
 
   const getAppliedGenderText = () => appliedFilters.gender !== '전체' ? appliedFilters.gender : null;
+
 
   const getAppliedBirthdateRangeText = () => {
     const { start, end } = appliedFilters.birthdateRange;
@@ -157,8 +175,10 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     const resetFilters = {
       languages: [],
       countries: [],
+
       gender: '전체',
       birthdateRange: { start: 1996, end: 2005 }
+
     };
     setCurrentFilters(resetFilters);
     if (!isFullScreenFilterOpen) {
@@ -171,6 +191,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     setCurrentFilters(prev => ({ ...prev, [filterType]: newValue }));
     if (!isFullScreenFilterOpen) {
       setAppliedFilters(prev => ({ ...prev, [filterType]: newValue }));
+
       onFilterChange({ ...appliedFilters, [filterType]: newValue });
     }
     closeFilter();
@@ -250,6 +271,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         selectedOption={currentFilters.gender}
         onSelect={toggleGender}
         onApply={(selectedGen) => handleFilterApply('gender', selectedGen)}
+
       />
 
       <RangePopup
@@ -261,7 +283,9 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         step={1}
         formatLabel={(year) => `${year}년생`}
         formatDisplayItem={(year) => `${year.toString().slice(2)}년생`}
+
         onApply={(start, end) => handleFilterApply('birthdateRange', { start, end })}
+
         fullScreen={isFullScreenSubFilter}
         birthdateRange={currentFilters.birthdateRange}
       />
@@ -338,6 +362,7 @@ const ResetButton = styled.button`
     font-size: 11px;
     width: 29px;
   }
+
 `;
 
 const AllScreenButtonWrapper = styled.div`

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import arrowDown from "../../assets/arrowDown.svg";
 
@@ -10,11 +10,11 @@ const DropDownContainer = styled.div`
 const DropDownHeader = styled.div`
   height: 40px;
   padding: 10px;
-  border: 1px solid var(--grey3);
+  border: none;
   background-color: white;
   border-radius: 12px;
-  font-size: 14px;
-  color: ${(props) => (props.isPlaceholder ? "var(--grey3)" : "var(--black)")};
+  font-size: 16px;
+  color: black;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -33,10 +33,12 @@ const DropDownListContainer = styled.div`
   position: absolute;
   width: 100%;
   z-index: 100;
-  border: 1px solid var(--grey3);
+  border: none;
   border-radius: 12px;
   background-color: white;
+  max-height: 200px;
   overflow-y: auto;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const DropDownList = styled.ul`
@@ -78,19 +80,14 @@ const ArrowIcon = styled.img`
   height: 12px;
 `;
 
-const DropDown = ({
+const DropDownOnboarding = ({
   options,
   isLong = false,
   onSelect,
   placeholder = "Select an option",
-  evalue,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(evalue);
-
-  useEffect(() => {
-    setSelectedOption(evalue);
-  }, [evalue]);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const toggling = () => setIsOpen(!isOpen);
 
@@ -121,4 +118,4 @@ const DropDown = ({
   );
 };
 
-export default DropDown;
+export default DropDownOnboarding;

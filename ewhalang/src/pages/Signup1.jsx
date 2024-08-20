@@ -34,6 +34,10 @@ const Signup1 = () => {
     validateEmailDomain(newEmail, expectedDomain1, expectedDomain2);
   };
 
+  const goLogin = () => {
+    navigate("/login");
+  };
+
   const validateEmailDomain = (email, expectedDomain1, expectedDomain2) => {
     // 이메일 주소에서 '@' 뒤에 있는 부분을 추출
     const domain = email.split("@")[1];
@@ -60,7 +64,12 @@ const Signup1 = () => {
 
   return (
     <>
-      <Topbar title={"회원가입"} right={"x"} left={"back"} />
+      <Topbar
+        title={"회원가입"}
+        right={"x"}
+        left={"back"}
+        rightonClick={goLogin}
+      />
       <S.Wrapper>
         <InputBox
           title={"이메일"}

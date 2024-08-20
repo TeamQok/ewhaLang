@@ -69,6 +69,69 @@ export const LangContainer = styled.div`
   margin-bottom: 8px;
 `;
 
+export const NicknameContainer = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+export const Button = styled.button`
+  display: flex;
+  width: 30%px;
+  height: 40px;
+  padding: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--Sub-1, #33936d);
+  color: var(--White, #fff);
+
+  /* Button 14SB */
+  font-family: var(--korean);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 171.429% */
+  border: none;
+  margin-bottom: 16px;
+`;
+export const Title = styled.div`
+  color: var(--black);
+  width: 100%;
+
+  /* Subsubtitle_16_SB */
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 150% */
+  margin-bottom: 4px;
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--Grey-3, #b8b8b8);
+  background: var(--White, #fff);
+  height: 40px;
+  padding: 8px 13px;
+  box-sizing: border-box;
+  outline: none;
+  &::placeholder {
+    color: var(--grey3);
+    font-size: 14px;
+    font-family: var(--korean);
+  }
+  margin-right: 10px;
+`;
+
+export const NicknameWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 export const Introduce = styled.textarea`
   border-radius: 10px;
   border: 1px solid var(--Grey-3, #b8b8b8);
