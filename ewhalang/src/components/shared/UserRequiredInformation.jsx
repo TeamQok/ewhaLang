@@ -42,7 +42,7 @@ const InfoItem = ({ label, value, layout, isLanguage }) => {
     return (
       <LanguageList>
         {value.map((lang, index) => (
-          <LanguageTag key={index} level={lang.level}>
+          <LanguageTag key={index} level={lang.proficiency}>
             {lang.language}
           </LanguageTag>
         ))}

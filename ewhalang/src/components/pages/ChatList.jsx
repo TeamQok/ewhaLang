@@ -1,19 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { firestore } from '../../firebase';
+import { auth, firestore } from '../../firebase';
 import ChatBox from './ChatBox';
 import * as S from './ChatList.style';
+import { useNavigate } from 'react-router-dom';
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
-  const loggedInUserId = 'user1';
+  const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+        navigate("/login");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   useEffect(() => {
     const fetchChatList = async () => {
+      if (!currentUser) return;
+
       try {
-        // Firestore에서 모든 채팅 문서 가져오기
         const chatsRef = collection(firestore, 'chats');
-        const q = query(chatsRef, where('isDeleted', '==', false));
+        const q = query(
+          chatsRef,
+          where("participantsId", "array-contains", currentUser.uid),
+          where("isDeleted", "==", false)
+        );
         const querySnapshot = await getDocs(q);
 
         const chats = querySnapshot.docs.map(doc => {
@@ -24,13 +44,8 @@ const ChatList = () => {
           };
         });
 
-        // 클라이언트 측에서 로그인한 사용자가 참여하고 있는 채팅 필터링
-        const filteredChatList = chats.filter(chat =>
-          chat.participants.some(participant => participant.userId === loggedInUserId)
-        );
-
         // 최신순으로 정렬
-        const sortedChatList = filteredChatList.sort((a, b) => 
+        const sortedChatList = chats.sort((a, b) => 
           new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)
         );
 
@@ -41,14 +56,22 @@ const ChatList = () => {
     };
 
     fetchChatList();
-  }, [loggedInUserId]);
+  }, [currentUser]);
+
+  if (!currentUser) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <S.ListContainer>
-    {chatList.map((chat) => (
-      <ChatBox chat={chat} loggedInUserId={loggedInUserId} />
-    ))}
-  </S.ListContainer>
+      {chatList.map((chat) => (
+        <ChatBox 
+          key={chat.channelId} 
+          chat={chat} 
+          loggedInUserId={currentUser.uid} 
+        />
+      ))}
+    </S.ListContainer>
   );
 };
 

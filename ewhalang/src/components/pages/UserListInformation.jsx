@@ -8,11 +8,11 @@ import { useNavigate } from 'react-router-dom';
 const UserListInformation = ({ user }) => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(`/users/${user.userId}`);
+    navigate(`/users/${user.id}`);
   }
   return (
       <UserListItem onClick={handleClick}>
-        <UserImage profilePicture={user.profilePicture} alt={user.nickname} width={65} height={65} />
+        <UserImage profilePicture={user.profileImg} alt={user.nickname} width={65} height={65} />
         <UserCoreInformation nickname={user.nickname} country={user.country} layout="list" />
         <UserRequiredInformation
           gender={user.gender}
@@ -30,8 +30,7 @@ const UserListInformation = ({ user }) => {
     flex-direction: column;
     align-items: center;
     padding: 16px 10px;
-    min-width: 168px;
-    height: 169px;
+    min-width: 43vw;
     border: 0.5px solid var(--grey3);
     border-radius: 10px;
     box-sizing: border-box;
