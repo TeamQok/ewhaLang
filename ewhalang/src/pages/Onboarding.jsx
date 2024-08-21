@@ -4,19 +4,29 @@ import { LongButton, ButtonType } from "../components/common/LongButton";
 import { useNavigate } from "react-router-dom";
 import DropDownOnboarding from "../components/common/DropDownOnboarding";
 import { useState } from "react";
+import Modal from "../components/common/Modal";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const [lang, setLang] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const goSignin = () => {
-    sessionStorage.setItem("usingLang", lang);
-    navigate("/signup1");
+    if (lang) {
+      sessionStorage.setItem("usingLang", lang);
+      navigate("/signup1");
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   const goLogin = () => {
-    sessionStorage.setItem("usingLang", lang);
-    navigate("/login");
+    if (lang) {
+      sessionStorage.setItem("usingLang", lang);
+      navigate("/login");
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   return (
@@ -79,6 +89,22 @@ const Onboarding = () => {
             로그인하러 가기
           </LongButton>
         </S.Container>
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
+          guideText="초기 언어를 설정해 주세요!"
+          confirmText="확인"
+          onConfirm={() => {
+            setIsModalOpen(false);
+          }}
+          onCancel={() => {
+            setIsModalOpen(false);
+          }}
+          isSingleButton={true}
+          showTextInput={false}
+        />
       </S.Wrapper>
     </>
   );
