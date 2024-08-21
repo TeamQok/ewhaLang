@@ -8,11 +8,13 @@ import { useNavigate } from "react-router-dom";
 // props로 back, dot, setting 넣어주면 됨
 // 아무것도 안 넣으면 암 것도 없음
 
-const Topbar = ({ title, left, right, rightonClick }) => {
+const Topbar = ({ title, left, right, rightonClick, leftOnClick }) => {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate(-1); // 브라우저 히스토리에서 한 단계 뒤로 이동
+    if (leftOnClick) {
+      leftOnClick();
+    } else navigate(-1); // 브라우저 히스토리에서 한 단계 뒤로 이동
   };
   return (
     <>

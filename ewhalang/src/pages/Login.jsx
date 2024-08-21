@@ -67,6 +67,7 @@ const Login = () => {
         placeholder="비밀번호 입력"
         onChange={inputPw}
         value={password}
+        type="password"
       />
       <div style={{ marginTop: "12px" }}></div>
       <LongButton type={ButtonType.GREEN} onClick={handleLogin}>

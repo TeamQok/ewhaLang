@@ -19,7 +19,7 @@ import {
 } from "firebase/firestore";
 import { firestore, auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { getAuth } from "firebase/auth";
+import { deleteUser, getAuth } from "firebase/auth";
 import BottomBar from "../layout/BottomBar";
 import imageCompression from "browser-image-compression";
 
@@ -32,15 +32,33 @@ const UserInform = ({ isEdit }) => {
   const navigate = useNavigate();
 
   // 이미지 업로드용
-  const [profileImg, setProfileImg] = useState(null); // 프로필 이미지를 저장할 상태
+  const [profileImg, setProfileImg] = useState(profile); // 프로필 이미지를 저장할 상태
   const fileInputRef = useRef(null); // 파일 입력 요소에 대한 참조
 
   const goNext = () => {
     navigate("/login");
   };
 
-  const onClickX = () => {
-    isEdit ? navigate("/mypage") : navigate("/login");
+  const onClickX = async () => {
+    if (!isEdit) {
+      const user = auth.currentUser;
+
+      if (user) {
+        try {
+          await deleteUser(user);
+          console.log("사용자가 삭제되었습니다.");
+          navigate("/login");
+          // 이전 페이지로 이동
+        } catch (error) {
+          console.error("사용자 삭제 중 오류 발생:", error);
+        }
+      } else {
+        navigate("/login");
+        console.log("로그인된 사용자가 없습니다.");
+      }
+    } else {
+      navigate("/mypage");
+    }
   };
 
   // 입력 state
@@ -122,6 +140,7 @@ const UserInform = ({ isEdit }) => {
         introduction,
         email,
         usingLanguage,
+        isValidated: "unverified",
         lastConnectDate: new Date().toISOString(), // 현재 시간 저장
       });
 
@@ -259,6 +278,7 @@ const UserInform = ({ isEdit }) => {
         right={"x"}
         left={"back"}
         rightonClick={onClickX}
+        leftOnClick={isEdit ? undefined : onClickX}
       />
 
       <S.Container>
