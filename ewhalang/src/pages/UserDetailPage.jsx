@@ -1,8 +1,8 @@
 import * as S from "./UserDetailPage.style";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
-import { firestore } from "../firebase";
+import { collection, addDoc, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import { auth, firestore } from "../firebase";
 import Topbar from "../components/layout/Topbar";
 import UserImage from "../components/shared/UserImage";
 import UserCoreInformation from "../components/shared/UserCoreInformation";
@@ -11,38 +11,62 @@ import UserOptionalInformation from "../components/shared/UserOptionalInformatio
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import ShortDropDown from "../components/shared/ShortDropDown";
 import Modal from "../components/common/Modal";
-import userMockData from '../_mock/userMockData';
 
 const UserDetailPage = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loggedUser, setLoggedUser] = useState(null);
   const { userId } = useParams();
-  const user = userMockData.find(user => user.userId === userId);
   const navigate = useNavigate();
-  const loggedInUserId = 'user1';
 
-  const loggedUserInfo = {
-    nickname: "John Doe",
-    profilePhoto: "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
-    country: "미국"
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userDoc = await getDoc(doc(firestore, "users", userId));
+      if (userDoc.exists()) {
+        setUser({ id: userDoc.id, ...userDoc.data() });
+      } else {
+        console.log("No such user!");
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        const userDoc = await getDoc(doc(firestore, "users", currentUser.uid));
+        if (userDoc.exists()) {
+          setLoggedUser({ id: currentUser.uid, ...userDoc.data() });
+        } else {
+          console.log("No such document!");
+        }
+      } else {
+        setLoggedUser(null);
+        navigate("/login");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   const handleClick = async () => {
+    if (!loggedUser) return;
+
     try {
-      // user에서 필요한 정보만 추출
       const userInfo = {
-        userId: user.userId,
+        userId: user.id,
         nickname: user.nickname,
-        profilePhoto: user.profilePhoto,
+        profilePhoto: user.profileImg,
         country: user.country
       };
 
-      // 기존 채팅 검색
       const chatsRef = collection(firestore, "chats");
       const q = query(
         chatsRef,
-        where("participantsId", "array-contains", loggedInUserId)
+        where("participantsId", "array-contains", loggedUser.id)
       );
       const querySnapshot = await getDocs(q);
   
@@ -50,21 +74,24 @@ const UserDetailPage = () => {
 
       querySnapshot.forEach((doc) => {
         const chatData = doc.data();
-        if (chatData.participantsId.includes(user.userId)) {
+        if (chatData.participantsId.includes(user.id)) {
           existingChatId = doc.id;
         }
       });
 
       if (existingChatId) {
-        // 기존 채팅이 있으면 해당 채팅으로 이동
         navigate(`/chats/${existingChatId}`);
       } else {
-        // 기존 채팅이 없으면 새 채팅 생성
         const newChatRef = await addDoc(chatsRef, {
-          participantsId: [loggedInUserId, user.userId],
+          participantsId: [loggedUser.id, user.id],
           participantsInfo: {
-            [loggedInUserId]: loggedUserInfo,
-            [user.userId]: userInfo
+            [loggedUser.id]: {
+              userId: loggedUser.id,
+              nickname: loggedUser.nickname,
+              profilePhoto: loggedUser.profileImg,
+              country: loggedUser.country
+            },
+            [user.id]: userInfo
           },
           lastMessage: {
             content: '',
@@ -72,21 +99,21 @@ const UserDetailPage = () => {
             senderId: ''
           },
           unreadCounts: {
-            [loggedInUserId]: 0,
-            [user.userId]: 0
-          }
+            [loggedUser.id]: 0,
+            [user.id]: 0
+          },
+          isDeleted: false
         });  
 
-        // 채팅 페이지로 이동
         navigate(`/chats/${newChatRef.id}`);
-        }
-      } catch (error) {
-        console.error("Error adding document: ", error);
       }
-    };
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
   
-  if (!user){
-    return <div>사용자를 찾을 수 없습니다.</div>
+  if (!user || !loggedUser){
+    return <div>Loading...</div>;
   }
 
   const options = ["신고하기"];
@@ -105,10 +132,9 @@ const UserDetailPage = () => {
 
   const handleReportConfirm = async (reportReason) => {
     try {
-      // Add report reason to Firestore
       await addDoc(collection(firestore, "reports"), {
-        reporterId: loggedInUserId,
-        reportedUserId: user.userId,
+        reporterId: loggedUser.id,
+        reportedUserId: user.id,
         reason: reportReason,
         timestamp: new Date().toISOString(),
       });

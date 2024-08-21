@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import UserListInformation from "../components/pages/UserListInformation";
-import users from "../_mock/userMockData";
 import Topbar from "../components/layout/Topbar";
 import BottomBar from "../components/layout/BottomBar";
 import FilterComponent from "../components/pages/FilterComponent";
 import LanguageLevelInfo from "../components/pages/LanguageLevelInfo";
+import { auth, firestore } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 const UserListPage = () => {
-  const [filteredUsers, setFilteredUsers] = useState(users);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [loggedUser, setLoggedUser] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({
     languages: [],
     countries: [],
@@ -16,12 +20,29 @@ const UserListPage = () => {
     birthdateRange: { start: 1996, end: 2005 },
   });
 
-  const loggedInUserId = "user1";
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const filtered = users.filter((user) => {
-      //로그인한 사용자 제외
-      if (user.userId === loggedInUserId) return false;
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        const userDoc = await getDocs(collection(firestore, "users"));
+        const users = userDoc.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setAllUsers(users);
+        setLoggedUser(users.find(user => user.id === currentUser.uid));
+      } else {
+        setLoggedUser(null);
+        navigate("/login");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!loggedUser) return;
+
+    const filtered = allUsers.filter((user) => {
+      if (user.id === loggedUser.id) return false;
 
       const languageMatch =
         filterCriteria.languages.length === 0 ||
@@ -45,7 +66,7 @@ const UserListPage = () => {
     });
 
     setFilteredUsers(filtered);
-  }, [filterCriteria]);
+  }, [filterCriteria, allUsers, loggedUser]);
 
   const handleFilterChange = (newFilterCriteria) => {
     setFilterCriteria((prevCriteria) => ({
@@ -53,6 +74,12 @@ const UserListPage = () => {
       ...newFilterCriteria,
     }));
   };
+
+  if (!loggedUser) {
+    return <div>Loading...</div>;
+  }
+
+  console.log(filteredUsers);
 
   return (
     <Wrapper>
@@ -64,8 +91,8 @@ const UserListPage = () => {
       <LanguageLevelInfo />
 
       <ContentsWrapper>
-        {filteredUsers.map((user, index) => (
-          <UserListInformation key={index} user={user} />
+        {allUsers.map((user) => (
+          <UserListInformation key={user.id} user={user} />
         ))}
       </ContentsWrapper>
 

@@ -15,8 +15,9 @@ const ChatBox = ({ chat, loggedInUserId }) => {
           hour12: true,
         }).format(date);
       };
-
-  const otherUser = chat.participants.find(p => p.userId !== loggedInUserId);
+  
+  const otherUserId = chat.participantsId.find(id => id !== loggedInUserId);
+  const otherUser = chat.participantsInfo[otherUserId];
   const unreadCount = chat.unreadCounts[loggedInUserId] || 0;
 
   const handleClick = () => {

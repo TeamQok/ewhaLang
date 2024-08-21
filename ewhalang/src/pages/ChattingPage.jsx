@@ -2,7 +2,7 @@ import * as S from './ChattingPage.style';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { collection, getDocs, doc, addDoc, getDoc, updateDoc, increment, writeBatch } from 'firebase/firestore';
-import { firestore } from '../firebase';
+import { auth, firestore } from '../firebase';
 import Topbar from '../components/layout/Topbar';
 import MessageList from '../components/pages/MessageList';
 import InputArea from '../components/pages/InputArea';
@@ -15,7 +15,7 @@ const ChattingPage = () => {
   const [messages, setMessages] = useState([]);
   const [chatData, setChatData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const currentUserId = 'user1'; // 현재 로그인한 사용자 ID
+  const [currentUser, setCurrentUser] = useState(null);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
@@ -25,8 +25,27 @@ const ChattingPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(firestore, "users", user.uid));
+        if (userDoc.exists()) {
+          setCurrentUser({ id: user.uid, ...userDoc.data() });
+        } else {
+          console.log("No such document!");
+          setCurrentUser(null);
+        }
+      } else {
+        setCurrentUser(null);
+        navigate("/login");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
+  useEffect(() => {
     const fetchChatData = async () => {
-      if (chatId) {
+      if (chatId && currentUser) {
         try {
           const chatDoc = await getDoc(doc(firestore, "chats", chatId));
           if (chatDoc.exists()) {
@@ -38,7 +57,7 @@ const ChattingPage = () => {
               const batch = writeBatch(firestore);
               const messagesData = messagesSnapshot.docs.map(doc => {
                 const messageData = doc.data();
-                if (messageData.senderId !== currentUserId && !messageData.isRead) {
+                if (messageData.senderId !== currentUser.id && !messageData.isRead) {
                   batch.update(doc.ref, { isRead: true });
                 }
                 return messageData;
@@ -49,7 +68,7 @@ const ChattingPage = () => {
               setMessages(messagesData);
 
               await updateDoc(doc(firestore, "chats", chatId), {
-                [`unreadCounts.${currentUserId}`]: 0
+                [`unreadCounts.${currentUser.id}`]: 0
               });
             } else {
               setMessages([]);
@@ -66,9 +85,9 @@ const ChattingPage = () => {
     };
 
     fetchChatData();
-  }, [chatId]);
+  }, [chatId, currentUser]);
 
-  if (loading) {
+  if (loading || !currentUser) {
     return <div>Loading...</div>;
   }
 
@@ -76,13 +95,13 @@ const ChattingPage = () => {
     return <div>Chat not found.</div>;
   }
 
-  const otherUserId = chatData.participantsId.find(id => id !== currentUserId);
+  const otherUserId = chatData.participantsId.find(id => id !== currentUser.id);
   const otherUser = chatData.participantsInfo[otherUserId];
 
   const handleSendMessage = async (text) => {
     const newMessage = {
       messageId: Date.now().toString(),
-      senderId: currentUserId,
+      senderId: currentUser.id,
       content: text,
       timestamp: new Date().toISOString(),
       isRead: false
@@ -139,7 +158,7 @@ const ChattingPage = () => {
           </S.Title>
         } left={"back"} right="dot" rightonClick={handleDotClick} />
         <S.MessageListContainer>
-          <MessageList messages={messages} currentUserId={currentUserId} userProfileImage={otherUser.profilePhoto} />
+          <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profilePhoto} />
         </S.MessageListContainer>
       </S.ContentWrapper>
       <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
@@ -185,7 +204,7 @@ const ChattingPage = () => {
         confirmText="확인"
         onConfirm={() => {
           setIsChatOutConfirmOpen(false);
-          leaveChat(chatId, currentUserId)
+          leaveChat(chatId, currentUser.id)
           navigate('/chats');
         }}
         isSingleButton={true}

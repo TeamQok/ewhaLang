@@ -1,5 +1,5 @@
 import * as S from "./MyPage.style";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Topbar from "../components/layout/Topbar";
 import UserImage from "../components/shared/UserImage";
 import UserCoreInformation from "../components/shared/UserCoreInformation";
@@ -10,37 +10,58 @@ import EditButton from "../components/pages/EditButton";
 import BottomBar from "../components/layout/BottomBar";
 import Modal from "../components/common/Modal";
 import { useNavigate } from "react-router-dom";
+import { auth, firestore } from "../firebase";
+import { signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const MyPage = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        // 사용자가 로그인한 경우, Firestore에서 사용자 정보를 가져옵니다.
+        const userDoc = await getDoc(doc(firestore, "users", currentUser.uid));
+        if (userDoc.exists()) {
+          setUser({ id: currentUser.uid, ...userDoc.data() });
+        } else {
+          console.log("No such document!");
+        }
+      } else {
+        // 사용자가 로그아웃한 경우
+        setUser(null);
+        navigate("/login");
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [navigate]);
 
   const goSetting = () => {
     navigate("/setting");
   };
+
   const goEditMypage = () => {
     navigate("/editmypage");
   };
 
-  // 예시 사용자 데이터
-  const user = {
-    nickname: "홍길동",
-    profilePicture:
-      "https://phinf.pstatic.net/contact/20230927_97/1695771297678iH1D0_JPEG/profileImage.jpg?type=s160",
-    country: "대한민국",
-    gender: "남성",
-    birthdate: "1990",
-    major: "컴퓨터 공학",
-    languages: [
-      { language: "한국어", level: "원어민" },
-      { language: "영어", level: "중급" },
-      { language: "일본어", level: "초급" },
-    ],
-    hobby: "독서, 여행",
-    introduction: "안녕하세요! 저는 소프트웨어 개발자입니다.",
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setIsConfirmModalOpen(true);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <S.Wrapper>
@@ -58,7 +79,6 @@ const MyPage = () => {
           gender={user.gender}
           birthdate={user.birthdate}
           major={user.major}
-          z
           languages={user.languages}
         />
         <S.BoldDivider />
@@ -82,7 +102,7 @@ const MyPage = () => {
           cancelText="아니오"
           onConfirm={() => {
             setIsLogoutModalOpen(false);
-            setIsConfirmModalOpen(true);
+            handleLogout();
           }}
           onCancel={() => {
             setIsLogoutModalOpen(false);
@@ -96,6 +116,7 @@ const MyPage = () => {
           confirmText="확인"
           onConfirm={() => {
             setIsConfirmModalOpen(false);
+            navigate("/login");
           }}
           isSingleButton={true}
           showTextInput={false}
