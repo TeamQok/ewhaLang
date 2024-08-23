@@ -6,16 +6,17 @@ import { useNavigate } from "react-router-dom";
 import mypageGreen from "../../assets/mypageGreen.svg";
 import chatGreen from "../../assets/chatGreen.svg";
 import userGreen from "../../assets/userGreen.svg";
-import { useState } from "react";
+import { useState, useEffect } from 'react';
+import { getUnreadCount } from '../common/UnreadCountManager';
 
 const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
   const navigate = useNavigate();
   const [friend, setFriend] = useState(false);
   const [mypage, setMypage] = useState(false);
   const [chat, setChat] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const goFriends = () => {
-    // 나중에 라우팅 주소 정해지면 넣어주세요.
     navigate("/users");
     setFriend(true);
     setMypage(false);
@@ -23,7 +24,6 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
   };
 
   const goChat = () => {
-    // 나중에 라우팅 주소 정해지면 넣어주세요.
     navigate("/chats");
     setChat(true);
     setFriend(false);
@@ -31,12 +31,27 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
   };
 
   const goMypage = () => {
-    // 나중에 라우팅 주소 정해지면 넣어주세요.
     navigate("/mypage");
     setMypage(true);
     setChat(false);
     setFriend(false);
   };
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUnreadCount(getUnreadCount());
+    };
+
+    // 초기 unreadCount 설정
+    setUnreadCount(getUnreadCount());
+
+    // 로컬 스토리지 변경 이벤트 리스너 추가
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   return (
     <>
@@ -50,6 +65,7 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
         </Item>
         <Item onClick={goChat}>
           {chat || isOnChat ? <img src={chatGreen} /> : <img src={chatGrey} />}
+          {unreadCount > 0 && <UnreadBadge>{unreadCount}</UnreadBadge>}
         </Item>
         <Item onClick={goMypage}>
           {mypage || isOnMypage ? (
@@ -83,4 +99,17 @@ const Wrapper = styled.div`
 const Item = styled.div`
   margin-left: 35px;
   margin-right: 35px;
+  position: relative;
+`;
+
+const UnreadBadge = styled.div`
+  position: absolute;
+  top: 3px;
+  right: 0px;
+  background-color: var(--main);
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
 `;

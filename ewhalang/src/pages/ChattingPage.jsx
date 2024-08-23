@@ -1,7 +1,7 @@
 import * as S from './ChattingPage.style';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { collection, getDocs, doc, addDoc, getDoc, updateDoc, increment, writeBatch } from 'firebase/firestore';
+import { collection, onSnapshot, getDocs, doc, addDoc, getDoc, updateDoc, increment, writeBatch } from 'firebase/firestore';
 import { auth, firestore } from '../firebase';
 import Topbar from '../components/layout/Topbar';
 import MessageList from '../components/pages/MessageList';
@@ -51,28 +51,37 @@ const ChattingPage = () => {
           if (chatDoc.exists()) {
             const data = chatDoc.data();
             setChatData(data);
-
-            const messagesSnapshot = await getDocs(collection(firestore, `chats/${chatId}/messages`));
-            if (!messagesSnapshot.empty) {
+  
+            const messagesRef = collection(firestore, `chats/${chatId}/messages`);
+            const unsubscribe = onSnapshot(messagesRef, async (snapshot) => {
               const batch = writeBatch(firestore);
-              const messagesData = messagesSnapshot.docs.map(doc => {
+              let messagesData = snapshot.docs.map(doc => {
                 const messageData = doc.data();
                 if (messageData.senderId !== currentUser.id && !messageData.isRead) {
                   batch.update(doc.ref, { isRead: true });
                 }
-                return messageData;
+                return { id: doc.id, ...messageData };
               });
+  
               await batch.commit();
-
+  
+              // 사용자가 채팅방을 나갔다가 다시 들어온 경우, 나간 시점 이후의 메시지만 필터링
+              const userDeletedDate = data.deletedDate[currentUser.id];
+              if (userDeletedDate) {
+                messagesData = messagesData.filter(msg => 
+                  new Date(msg.timestamp) > new Date(userDeletedDate)
+                );
+              }
+  
               messagesData.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
               setMessages(messagesData);
-
+  
               await updateDoc(doc(firestore, "chats", chatId), {
                 [`unreadCounts.${currentUser.id}`]: 0
               });
-            } else {
-              setMessages([]);
-            }
+            });
+  
+            return () => unsubscribe();
           } else {
             console.error("No such chat document!");
           }
@@ -83,7 +92,7 @@ const ChattingPage = () => {
         }
       }
     };
-
+  
     fetchChatData();
   }, [chatId, currentUser]);
 
@@ -98,28 +107,26 @@ const ChattingPage = () => {
   const otherUserId = chatData.participantsId.find(id => id !== currentUser.id);
   const otherUser = chatData.participantsInfo[otherUserId];
 
-  const handleSendMessage = async (text) => {
-    const newMessage = {
-      messageId: Date.now().toString(),
-      senderId: currentUser.id,
-      content: text,
-      timestamp: new Date().toISOString(),
-      isRead: false
-    };
-
-    try {
-      await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
-
-      await updateDoc(doc(firestore, "chats", chatId), {
-        [`unreadCounts.${otherUserId}`]: increment(1),
-        lastMessage: newMessage
-      });
-  
-      setMessages([...messages, newMessage]);
-    } catch (error) {
-      console.error("Error sending message: ", error);
-    }
+const handleSendMessage = async (text) => {
+  const newMessage = {
+    senderId: currentUser.id,
+    content: text,
+    timestamp: new Date().toISOString(),
+    isRead: false
   };
+
+  try {
+    await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
+
+    await updateDoc(doc(firestore, "chats", chatId), {
+      [`unreadCounts.${otherUserId}`]: increment(1),
+      lastMessage: newMessage
+    });
+  
+  } catch (error) {
+    console.error("Error sending message: ", error);
+  }
+};
 
   const options = ['채팅방 나가기', '신고하기'];
 
@@ -140,8 +147,9 @@ const ChattingPage = () => {
   const leaveChat = async (chatId, currentUserId) => {
     try {
       await updateDoc(doc(firestore, "chats", chatId), {
-        isDeleted: true
+        [`deletedDate.${currentUserId}`]: new Date().toISOString()
       });
+      navigate('/chats');
     } catch (error) {
       console.error("Error leaving chat:", error);
     }
@@ -158,7 +166,7 @@ const ChattingPage = () => {
           </S.Title>
         } left={"back"} right="dot" rightonClick={handleDotClick} />
         <S.MessageListContainer>
-          <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profilePhoto} />
+          <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profilePhoto} chatData={chatData} />
         </S.MessageListContainer>
       </S.ContentWrapper>
       <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />

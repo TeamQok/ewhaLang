@@ -20,12 +20,14 @@ import AccountManagePage from "./pages/AccountManagePage";
 import FeedbackPage from "./pages/FeedbackPage";
 import EditMypage from "./pages/EditMypage";
 import VerificationPage from "./pages/VerificationPage";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <Routes>
+      <BrowserRouter>  
+      <ScrollToTop/>
+      <Routes>
           {/* 메인 페이지 */}
           <Route exact path="/" element={<MainPage />} />
 
