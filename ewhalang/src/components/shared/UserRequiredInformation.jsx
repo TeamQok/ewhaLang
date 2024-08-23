@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const UserRequiredInformation = ({ gender, birthdate, major, languages, layout = 'detail' }) => {
   const formatLanguages = (languages) => {
-    return languages.map(lang => ({ language: lang.language, level: lang.level }));
+    return languages.map(lang => ({ language: lang.language, level: lang.proficiency }));
   };
 
   const requiredInfo = [
@@ -42,7 +42,7 @@ const InfoItem = ({ label, value, layout, isLanguage }) => {
     return (
       <LanguageList>
         {value.map((lang, index) => (
-          <LanguageTag key={index} level={lang.proficiency}>
+          <LanguageTag key={index} level={lang.level}>
             {lang.language}
           </LanguageTag>
         ))}
@@ -149,11 +149,11 @@ const LanguageTag = styled.span`
   border-radius: 5px;
   background-color: ${({ level }) => {
     switch (level) {
-      case '원어민':
+      case '원어민 (Native)':
         return '#40C79A';
-      case '상급':
+      case '상급 (Advanced)':
         return '#86E8C7';
-      case '중급':
+      case '중급 (Intermediate)':
         return 'var(--sub2)';
       default:
         return 'var(--sub3)';

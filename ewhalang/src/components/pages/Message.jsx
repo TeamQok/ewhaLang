@@ -6,10 +6,16 @@ import { useNavigate } from 'react-router-dom';
 const MessageContainer = styled.div`
   display: flex;
   justify-content: ${props => props.isCurrentUser ? 'flex-end' : 'flex-start'};
-  margin-bottom: 20px;
+  margin-bottom: ${props => props.showTime ? '20px' : '4px'};
   align-items: flex-end;
   gap: 8px;
   overflow: hidden;
+`;
+
+const ImagePlaceholder = styled.div`
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
 `;
 
 const MessageContent = styled.div`
@@ -38,7 +44,7 @@ const MessageInfo = styled.div`
   min-width: 12.5vw;
 `;
 
-const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProfileImage }) => {
+const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProfileImage, showTime }) => {
   const isCurrentUser = senderId === currentUserId;
   const navigate = useNavigate();
 
@@ -60,14 +66,28 @@ const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProf
   }
 
   return (
-    <MessageContainer isCurrentUser={isCurrentUser}>
-      {!isCurrentUser && <UserImage profilePhoto={userProfileImage} alt="User profile" width={40} height={40} onClick={handleImageClick}/>}
+    <MessageContainer isCurrentUser={isCurrentUser} showTime={showTime}>
+      {!isCurrentUser ? (
+        showTime ? (
+          <UserImage 
+            profilePhoto={userProfileImage} 
+            alt="User profile" 
+            width={40} 
+            height={40} 
+            onClick={handleImageClick}
+          />
+        ) : (
+          <ImagePlaceholder />
+        )
+      ) : (
+        <ImagePlaceholder />
+      )}
       <MessageContent isCurrentUser={isCurrentUser}>
         <MessageBubble isCurrentUser={isCurrentUser}>
           {content}
         </MessageBubble>
         <MessageInfo isCurrentUser={isCurrentUser}>
-          {formatTime(timestamp)}
+          {showTime && formatTime(timestamp)}
           {!isRead && isCurrentUser && <span style={{ color: 'var(--sub1)' }}>1</span>}
         </MessageInfo>
       </MessageContent>

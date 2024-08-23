@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { auth, firestore } from '../../firebase';
 import ChatBox from './ChatBox';
 import * as S from './ChatList.style';
 import { useNavigate } from 'react-router-dom';
+import { setUnreadCount } from '../common/UnreadCountManager';
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
@@ -24,38 +25,37 @@ const ChatList = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const fetchChatList = async () => {
-      if (!currentUser) return;
+    if (!currentUser) return;
 
-      try {
-        const chatsRef = collection(firestore, 'chats');
-        const q = query(
-          chatsRef,
-          where("participantsId", "array-contains", currentUser.uid),
-          where("isDeleted", "==", false)
-        );
-        const querySnapshot = await getDocs(q);
+    const chatsRef = collection(firestore, 'chats');
+    const q = query(
+      chatsRef,
+      where("participantsId", "array-contains", currentUser.uid)
+    );
 
-        const chats = querySnapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            channelId: doc.id,
-            ...data
-          };
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const chats = snapshot.docs
+        .map(doc => ({
+          channelId: doc.id,
+          ...doc.data()
+        }))
+        .filter(chat => {
+          return !chat.deletedDate[currentUser.uid] || 
+                 (chat.lastMessage && new Date(chat.lastMessage.timestamp) > new Date(chat.deletedDate[currentUser.uid]));
         });
 
-        // 최신순으로 정렬
-        const sortedChatList = chats.sort((a, b) => 
-          new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)
-        );
+      const sortedChatList = chats.sort((a, b) => 
+        new Date(b.lastMessage?.timestamp || 0) - new Date(a.lastMessage?.timestamp || 0)
+      );
 
-        setChatList(sortedChatList);
-      } catch (error) {
-        console.error("Error fetching chat list: ", error);
-      }
-    };
+      setChatList(sortedChatList);
 
-    fetchChatList();
+      // 읽지 않은 메시지 수 계산 및 로컬 스토리지에 저장
+      const totalUnread = sortedChatList.reduce((sum, chat) => sum + (chat.unreadCounts?.[currentUser.uid] || 0), 0);
+      setUnreadCount(totalUnread);
+    });
+
+    return () => unsubscribe();
   }, [currentUser]);
 
   if (!currentUser) {

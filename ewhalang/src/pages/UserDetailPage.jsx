@@ -74,7 +74,7 @@ const UserDetailPage = () => {
 
       querySnapshot.forEach((doc) => {
         const chatData = doc.data();
-        if (chatData.participantsId.includes(user.id)) {
+        if (chatData.participantsId.includes(user.id) && !chatData.deletedDate[loggedUser.id]) {
           existingChatId = doc.id;
         }
       });
@@ -102,7 +102,10 @@ const UserDetailPage = () => {
             [loggedUser.id]: 0,
             [user.id]: 0
           },
-          isDeleted: false
+          deletedDate: {
+            [loggedUser.id]: null,
+            [user.id]: null
+          }
         });  
 
         navigate(`/chats/${newChatRef.id}`);

@@ -16,8 +16,21 @@ const DateWrapper = styled.div`
 
 const DateSeparator = ({ date }) => {
   const formatDate = (dateString) => {
+    // 날짜 문자열을 안전하게 파싱
+    const parts = dateString.split('-');
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // JavaScript의 월은 0부터 시작
+    const day = parseInt(parts[2], 10);
+    
+    const dateObj = new Date(year, month, day);
+
+    if (isNaN(dateObj.getTime())) {
+      console.error('Invalid date:', dateString);
+      return 'Invalid Date';
+    }
+
     const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-    return new Date(dateString).toLocaleDateString('ko-KR', options);
+    return dateObj.toLocaleDateString('ko-KR', options);
   };
 
   return <DateWrapper>{formatDate(date)}</DateWrapper>;
