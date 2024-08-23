@@ -8,6 +8,8 @@ import { useState } from "react";
 import { app, firestore } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import Modal from "../components/common/Modal";
+import cloeye from "../assets/cloeye.svg";
+import eyeImg from "../assets/eye.svg";
 
 const expectedDomain1 = "ewhain.net";
 const expectedDomain2 = "ewha.ac.kr";
@@ -20,6 +22,8 @@ const Signup1 = () => {
   const [conPw, setConPw] = useState("");
   const [authpw, setAuthpw] = useState(false);
   const [err, setErr] = useState("");
+
+  const [eye, setEye] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -40,6 +44,10 @@ const Signup1 = () => {
 
   const goLogin = () => {
     navigate("/login");
+  };
+
+  const onClickEye = () => {
+    setEye(!eye);
   };
 
   const validateEmailDomain = (email, expectedDomain1, expectedDomain2) => {
@@ -115,8 +123,9 @@ const Signup1 = () => {
           placeholder={"비밀번호를 입력해주세요."}
           value={pw}
           onChange={handlePw}
-          type="password"
+          type={eye ? "text" : "password"}
         />
+        <S.Eye src={eye ? eyeImg : cloeye} onClick={onClickEye} />
         <S.Info err={err}>
           * 영문, 숫자, 특수문자 조합
           <br />* 최소 6자에서 최대 20자

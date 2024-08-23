@@ -14,6 +14,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
+import cloeye from "../assets/cloeye.svg";
+import eyeImg from "../assets/eye.svg";
 
 const AccountManagePage = () => {
   // 모달, 드롭다운, 버튼
@@ -40,6 +42,10 @@ const AccountManagePage = () => {
   const [originPw, setOriginPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [newPw2, setNewPw2] = useState("");
+
+  // 눈 아이콘
+  const [eye1, setEye1] = useState(false);
+  const [eye2, setEye2] = useState(false);
 
   const onChangeOriginPw = (e) => {
     setOriginPw(e.target.value);
@@ -178,6 +184,13 @@ const AccountManagePage = () => {
     }
   };
 
+  const onClickEye = () => {
+    setEye1(!eye1);
+  };
+  const onClickEye1 = () => {
+    setEye2(!eye2);
+  };
+
   return (
     <>
       <Topbar
@@ -220,15 +233,17 @@ const AccountManagePage = () => {
           title={"기존 비밀번호 입력"}
           onChange={onChangeOriginPw}
           value={originPw}
-          type="password"
+          type={eye1 ? "text" : "password"}
         />
+        <S.Eye src={eye1 ? eyeImg : cloeye} onClick={onClickEye} />
         <div style={{ height: "16px" }} />
         <InputBox
           title={"새 비밀번호 입력"}
           onChange={onChangeNewPw}
           value={newPw}
-          type="password"
+          type={eye2 ? "text" : "password"}
         />
+        <S.Eye1 src={eye2 ? eyeImg : cloeye} onClick={onClickEye1} />
         <S.Info err={err}>
           * 영문, 숫자, 특수문자 조합
           <br />* 최소 6자에서 최대 20자
