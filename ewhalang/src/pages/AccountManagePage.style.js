@@ -74,3 +74,19 @@ export const Box = styled.div`
   right: 0;
   margin-right: 10px;
 `;
+
+export const Eye = styled.img`
+  position: absolute;
+  top: 275px; // 원하는 위치로 조정
+  z-index: 1;
+  right: 33px;
+  cursor: pointer;
+`;
+
+export const Eye1 = styled.img`
+  position: absolute;
+  top: 363px; // 원하는 위치로 조정
+  z-index: 1;
+  right: 33px;
+  cursor: pointer;
+`;

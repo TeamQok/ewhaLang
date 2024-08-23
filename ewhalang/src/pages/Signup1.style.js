@@ -25,3 +25,11 @@ export const Container = styled.div`
   padding-left: 23px;
   padding-right: 23px;
 `;
+
+export const Eye = styled.img`
+  position: absolute;
+  top: 218px; // 원하는 위치로 조정
+  z-index: 1;
+  right: 33px;
+  cursor: pointer;
+`;

@@ -23,6 +23,13 @@ import { deleteUser, getAuth } from "firebase/auth";
 import BottomBar from "../layout/BottomBar";
 import imageCompression from "browser-image-compression";
 
+const proficiencyOrder = {
+  "원어민 (Native)": 4,
+  "상급 (Advanced)": 3,
+  "중급 (Intermediate)": 2,
+  "기초(Basic)": 1,
+};
+
 const UserInform = ({ isEdit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
@@ -108,6 +115,13 @@ const UserInform = ({ isEdit }) => {
     });
   };
 
+  // 언어와 숙련도를 내림차순으로 정렬하는 함수
+  const sortLanguagesByProficiency = (languages) => {
+    return languages.sort((a, b) => {
+      return proficiencyOrder[b.proficiency] - proficiencyOrder[a.proficiency];
+    });
+  };
+
   // 회원가입 시
   // 저장하기 버튼 눌렀을 때
   const onClickSignin = async () => {
@@ -121,6 +135,7 @@ const UserInform = ({ isEdit }) => {
       languages &&
       birthdate
     ) {
+      const sortedLanguages = sortLanguagesByProficiency(languages);
       const user = auth.currentUser;
       const uid = user?.uid;
       const email = user?.email;
@@ -135,7 +150,7 @@ const UserInform = ({ isEdit }) => {
         birthdate,
         gender,
         major,
-        languages,
+        languages: sortedLanguages,
         hobby,
         introduction,
         email,
@@ -229,21 +244,21 @@ const UserInform = ({ isEdit }) => {
     }
   };
 
-  const updatedData = {
-    profileImg,
-    nickname,
-    country,
-    birthdate,
-    gender,
-    major,
-    languages,
-    hobby,
-    introduction,
-  };
-
   // 저장하기 버튼 눌렀을 떄
-  const onClickEdit = () => {
-    updateUser(updatedData);
+  const onClickEdit = async () => {
+    const sortedLanguages = sortLanguagesByProficiency(languages);
+    const updatedData = {
+      profileImg,
+      nickname,
+      country,
+      birthdate,
+      gender,
+      major,
+      languages: sortedLanguages, // 정렬된 언어 배열
+      hobby,
+      introduction,
+    };
+    await updateUser(updatedData);
   };
 
   //////////////////////////////////////////////////////////////
@@ -324,27 +339,54 @@ const UserInform = ({ isEdit }) => {
           isLong={true}
           placeholder="국적을 선택해주세요."
           options={[
-            "대한민국",
-            "미국",
-            "일본",
-            "중국",
-            "프랑스",
-            "스페인",
-            "영국",
-            "독일",
-            "이탈리아",
-            "캐나다",
-            "호주",
-            "인도",
-            "브라질",
-            "멕시코",
-            "남아프리카 공화국",
-            "러시아",
-            "네덜란드",
-            "스웨덴",
-            "스위스",
-            "벨기에",
-            "오스트리아",
+            "대한민국 🇰🇷",
+            "미국 🇺🇸",
+            "일본 🇯🇵",
+            "중국 🇨🇳",
+            "브라질 🇧🇷",
+            "과테말라 🇬🇹",
+            "자메이카 🇯🇲",
+            "파라과이 🇵🇾",
+            "멕시코 🇲🇽",
+            "방글라데 🇧🇩",
+            "브루나이 🇧🇳",
+            "캄보디아 🇰🇭",
+            "홍콩 🇭🇰",
+            "인도 🇮🇳",
+            "인도네시아 🇮🇩",
+            "카자흐스탄 🇰🇿",
+            "말레이시아 🇲🇾",
+            "파키스탄 🇵🇰",
+            "필리핀 🇵🇭",
+            "사우디아라비아 🇸🇦",
+            "싱가포르 🇸🇬",
+            "수단 🇸🇩",
+            "대만 🇹🇼",
+            "태국 🇹🇭",
+            "아랍에미리트 🇦🇪",
+            "베트남 🇻🇳",
+            "핀란드 🇫🇮",
+            "오스트리아 🇦🇹",
+            "벨기에 🇧🇪",
+            "덴마크 🇩🇰",
+            "프랑스 🇫🇷",
+            "스페인 🇪🇸",
+            "독일 🇩🇪",
+            "영국 🇬🇧",
+            "아이슬란드 🇮🇸",
+            "아일랜드 🇮🇪",
+            "이탈리아 🇮🇹",
+            "라투아니아 🇱🇹",
+            "네덜란드 🇳🇱",
+            "노르웨이 🇳🇴",
+            "폴란드 🇵🇱",
+            "루마니아 🇷🇴",
+            "러시아 🇷🇺",
+            "스웨덴 🇸🇪",
+            "스위스 🇨🇭",
+            "캐나다 🇨🇦",
+            "호주 🇦🇺",
+            "뉴질랜드 🇳🇿",
           ]}
           onSelect={(selectedOption) => {
             console.log(`Selected: ${selectedOption}`);
@@ -415,6 +457,18 @@ const UserInform = ({ isEdit }) => {
                 "덴마크어",
                 "노르웨이어",
                 "히브리어",
+                "벵골어",
+                "말레이어",
+                "크메르어",
+                "인도네시아어",
+                "카자흐어",
+                "우르두어",
+                "필리핀어(타갈로그어)",
+                "아이슬란드어",
+                "라트비아어",
+                "루마니아어",
+                "터키어",
+                "그리스어",
               ]}
               onSelect={(selectedOption) => {
                 console.log(`Selected: ${selectedOption}`);
