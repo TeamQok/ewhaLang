@@ -10,6 +10,7 @@ import camera from "../assets/camera.svg";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { firestore, auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Signup2 = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +20,8 @@ const Signup2 = () => {
   // 이미지 업로드용
   const [profileImg, setProfileImg] = useState(null); // 프로필 이미지를 저장할 상태
   const fileInputRef = useRef(null); // 파일 입력 요소에 대한 참조
+
+  const { i18n, t } = useTranslation();
 
   const goNext = () => {
     navigate("/login");
@@ -131,7 +134,7 @@ const Signup2 = () => {
 
   return (
     <>
-      <Topbar title={"회원가입"} right={"x"} left={"back"} />
+      <Topbar title={t("signup2.title")} right={"x"} left={"back"} />
 
       <S.Container>
         <S.ProfileWrapper>

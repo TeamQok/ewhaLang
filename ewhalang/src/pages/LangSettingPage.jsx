@@ -7,10 +7,12 @@ import * as S from "./LangSettingPage.style";
 import { useState } from "react";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { useTranslation } from "react-i18next";
 
 const LangSettingPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [lang, setLang] = useState("");
+  const { i18n, t } = useTranslation();
 
   const firestore = getFirestore();
   const auth = getAuth();
@@ -40,44 +42,18 @@ const LangSettingPage = () => {
 
   return (
     <>
-      <Topbar title={"언어 설정하기"} left={"back"} />
+      <Topbar title={t("langSetting.언어 설정하기")} left={"back"} />
 
       <S.Wrapper>
-        <S.InputTitle>언어</S.InputTitle>
+        <S.InputTitle>{t("langSetting.언어")}</S.InputTitle>
         <DropDown
-          options={[
-            "한국어",
-            "영어",
-            "일본어",
-            "중국어",
-            "프랑스어",
-            "스페인어",
-            "독일어",
-            "이탈리아어",
-            "러시아어",
-            "포르투갈어",
-            "아랍어",
-            "힌디어",
-            "베트남어",
-            "태국어",
-            "터키어",
-            "폴란드어",
-            "네덜란드어",
-            "스웨덴어",
-            "그리스어",
-            "체코어",
-            "헝가리어",
-            "핀란드어",
-            "덴마크어",
-            "노르웨이어",
-            "히브리어",
-          ]}
+          options={[t("language.한국어"), t("language.영어")]}
           onSelect={(selectedOption) => {
             console.log(`Selected: ${selectedOption}`);
             setLang(selectedOption);
           }}
           isLong={true}
-          placeholder="언어를 재설정해 주세요."
+          placeholder={t("langSetting.언어를 재설정해 주세요.")}
         />
         <div style={{ height: "24px" }} />
 
@@ -85,7 +61,7 @@ const LangSettingPage = () => {
           ButtonType={ButtonType.GREEN}
           onClick={() => updateUsingLang(lang)}
         >
-          변경 완료
+          {t("langSetting.변경 완료")}
         </LongButton>
       </S.Wrapper>
 

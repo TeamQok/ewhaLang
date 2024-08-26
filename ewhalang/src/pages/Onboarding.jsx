@@ -15,7 +15,7 @@ const Onboarding = () => {
   const { i18n, t } = useTranslation();
 
   useEffect(() => {
-    const selectedLanguage = localStorage.getItem("selectedLanguage");
+    const selectedLanguage = localStorage.getItem("usingLanguage");
     if (selectedLanguage) {
       setLang(selectedLanguage);
       i18n.changeLanguage(selectedLanguage);
@@ -62,7 +62,7 @@ const Onboarding = () => {
                 console.log(`Selected: ${selectedOption}`);
                 const selectedLangCode =
                   selectedOption === t("onboarding.ko") ? "ko" : "en";
-                localStorage.setItem("selectedLanguage", selectedLangCode);
+                localStorage.setItem("usingLanguage", selectedLangCode);
                 setLang(selectedOption);
                 i18n.changeLanguage(selectedLangCode); // 언어 변경 호출
               }}
@@ -81,8 +81,8 @@ const Onboarding = () => {
           onClose={() => {
             setIsModalOpen(false);
           }}
-          guideText="초기 언어를 설정해 주세요!"
-          confirmText="확인"
+          guideText={t("onboarding.modal")}
+          confirmText={t("onboarding.modalOk")}
           onConfirm={() => {
             setIsModalOpen(false);
           }}

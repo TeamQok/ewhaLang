@@ -16,6 +16,7 @@ import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
 import cloeye from "../assets/cloeye.svg";
 import eyeImg from "../assets/eye.svg";
+import { useTranslation } from "react-i18next";
 
 const AccountManagePage = () => {
   // 모달, 드롭다운, 버튼
@@ -26,6 +27,8 @@ const AccountManagePage = () => {
   const [btn, setBtn] = useState(false);
   // 조건에 따라 ButtonType을 설정합니다.
   const buttonType = btn ? ButtonType.GREEN : ButtonType.LONG_GREY_BLACK;
+
+  const { i18n, t } = useTranslation();
 
   // firebase 연결용
   const [userName, setUserName] = useState("");
@@ -194,7 +197,7 @@ const AccountManagePage = () => {
   return (
     <>
       <Topbar
-        title={"계정 관리하기"}
+        title={t("rePw.계정 관리하기")}
         left={"back"}
         right={"dot"}
         rightonClick={() => setDropdown(!dropdown)}
@@ -206,31 +209,31 @@ const AccountManagePage = () => {
             setDropdown(!dropdown);
           }}
         >
-          회원 탈퇴하기
+          {t("rePw.회원 탈퇴하기")}
         </S.Box>
       ) : (
         <></>
       )}
 
       <S.Wrapper>
-        <S.Title>이름</S.Title>
+        <S.Title>{t("rePw.이름")}</S.Title>
         <S.DInput
           readOnly={true}
           type="text"
-          value={loading ? "로딩중 " : userName}
+          value={loading ? "loading" : userName}
         />
-        <S.Info>변경 불가한 항목입니다.</S.Info>
+        <S.Info>{t("rePw.변경 불가한 항목입니다.")}</S.Info>
 
-        <S.Title>이메일</S.Title>
+        <S.Title>{t("rePw.이메일")}</S.Title>
         <S.DInput
           readOnly={true}
           type="text"
-          value={loading ? "로딩중 " : userEmail}
+          value={loading ? "loading" : userEmail}
         />
-        <S.Info>변경 불가한 항목입니다.</S.Info>
+        <S.Info>{t("rePw.변경 불가한 항목입니다.")}</S.Info>
 
         <InputBox
-          title={"기존 비밀번호 입력"}
+          title={t("rePw.기존 비밀번호 입력")}
           onChange={onChangeOriginPw}
           value={originPw}
           type={eye1 ? "text" : "password"}
@@ -238,34 +241,32 @@ const AccountManagePage = () => {
         <S.Eye src={eye1 ? eyeImg : cloeye} onClick={onClickEye} />
         <div style={{ height: "16px" }} />
         <InputBox
-          title={"새 비밀번호 입력"}
+          title={t("rePw.새 비밀번호 입력")}
           onChange={onChangeNewPw}
           value={newPw}
           type={eye2 ? "text" : "password"}
         />
         <S.Eye1 src={eye2 ? eyeImg : cloeye} onClick={onClickEye1} />
-        <S.Info err={err}>
-          * 영문, 숫자, 특수문자 조합
-          <br />* 최소 6자에서 최대 20자
-        </S.Info>
+        <S.Info1 err={err}>{t("rePw.pwpD1")}</S.Info1>
+        <S.Info2 err={err}>{t("rePw.pwpD2")}</S.Info2>
 
         <InputBox
-          title={"새 비밀번호 확인"}
+          title={t("rePw.새 비밀번호 확인")}
           onChange={onChangeNewPw2}
           value={newPw2}
           type="password"
         />
-        {authpw ? <S.Info>* 알맞은 비밀번호입니다.</S.Info> : <></>}
+        {authpw ? <S.Info>{t("rePw.* 알맞은 비밀번호입니다.")}</S.Info> : <></>}
         <div style={{ height: "24px" }} />
         <LongButton type={buttonType} onClick={() => changePassword(newPw)}>
-          수정 완료
+          {t("rePw.수정 완료")}
         </LongButton>
         <div style={{ height: "24px" }} />
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          guideText="비밀번호 변경이 완료되었습니다."
-          confirmText="확인"
+          guideText={t("rePw.비밀번호 변경이 완료되었습니다.")}
+          confirmText={t("rePw.확인")}
           onConfirm={() => {
             setIsModalOpen(false);
             navigate("/setting");
@@ -277,9 +278,9 @@ const AccountManagePage = () => {
         <Modal
           isOpen={isModalOpen2}
           onClose={() => setIsModalOpen2(false)}
-          guideText="정말 탈퇴 히시겠습니까?"
-          confirmText="예"
-          cancelText="아니오"
+          guideText={t("rePw.정말 탈퇴 히시겠습니까?")}
+          confirmText={t("rePw.예")}
+          cancelText={t("rePw.아니오")}
           onConfirm={() => {
             setIsModalOpen2(false);
             setIsModalOpen3(true);
@@ -295,8 +296,8 @@ const AccountManagePage = () => {
         <Modal
           isOpen={isModalOpen3}
           onClose={() => setIsModalOpen3(false)}
-          guideText="회원 탈퇴가 완료되었습니다."
-          confirmText="확인"
+          guideText={t("rePw.회원 탈퇴가 완료되었습니다.")}
+          confirmText={t("rePw.확인")}
           onConfirm={() => {
             setIsModalOpen3(false);
             navigate("/onboarding");
