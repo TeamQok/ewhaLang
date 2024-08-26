@@ -9,6 +9,7 @@ export const Menu1 = styled.div`
   border-bottom: ${(props) =>
     props.email ? "2px solid var(--sub1)" : "2px solid var(--grey3)"};
 
+  cursor: pointer;
   width: 50%;
   text-align: center;
   padding-top: 20px;
@@ -26,7 +27,7 @@ export const Menu1 = styled.div`
 export const Menu2 = styled.div`
   border-bottom: ${(props) =>
     props.pw ? "2px solid var(--sub1)" : "2px solid var(--grey3)"};
-
+  cursor: pointer;
   width: 50%;
   text-align: center;
   padding-top: 20px;

@@ -8,6 +8,7 @@ import { LongButton, ButtonType } from "../components/common/LongButton";
 import Modal from "../components/common/Modal";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { firestore } from "../firebase";
+import { useTranslation } from "react-i18next";
 
 const FindEmail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,6 +17,8 @@ const FindEmail = () => {
   const [country, setCountry] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [Semail, setSEmail] = useState("");
+
+  const { i18n, t } = useTranslation();
 
   const onChangeName = (e) => {
     setName(e.target.value);
@@ -67,20 +70,20 @@ const FindEmail = () => {
 
   return (
     <>
-      <S.Title>회원 정보로 찾기</S.Title>
-      <S.Contents>회원 정보에 등록된 정보를 입력해주세요.</S.Contents>
+      <S.Title>{t("findEmail.content")}</S.Title>
+      <S.Contents>{t("findEmail.content2")}</S.Contents>
       <InputBox
-        title={"이름"}
-        placeholder={"이름을 입력해주세요."}
+        title={t("findEmail.name")}
+        placeholder={t("findEmail.namep")}
         onChange={onChangeName}
         value={name}
       />
       <div style={{ marginBottom: "16px" }} />
 
-      <S.Title>국적</S.Title>
+      <S.Title>{t("findEmail.country")}</S.Title>
       <DropDown
         isLong={true}
-        placeholder="국적을 선택해주세요."
+        placeholder={t("findEmail.countryp")}
         options={[
           "대한민국",
           "미국",
@@ -112,15 +115,15 @@ const FindEmail = () => {
       <div style={{ marginBottom: "16px" }} />
 
       <InputBox
-        title={"생년월일"}
-        placeholder={"생년월일을 입력해주세요."}
+        title={t("findEmail.birth")}
+        placeholder={t("findEmail.birthp")}
         onChange={onChangeBirth}
         value={birthdate}
       />
-      <S.Info>* YYYYMMDD로 입력해주세요. (예시 : 20010101)</S.Info>
+      <S.Info>{t("findEmail.detail")}</S.Info>
       <S.Container>
         <LongButton ButtonType={ButtonType.GREEN} onClick={onClickCheckUser}>
-          이메일 찾기
+          {t("findEmail.findE")}
         </LongButton>
       </S.Container>
 
