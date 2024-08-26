@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { deleteUser, getAuth } from "firebase/auth";
 import BottomBar from "../layout/BottomBar";
 import imageCompression from "browser-image-compression";
+import { useTranslation } from "react-i18next";
 
 const proficiencyOrder = {
   "원어민 (Native)": 4,
@@ -41,6 +42,8 @@ const UserInform = ({ isEdit }) => {
   // 이미지 업로드용
   const [profileImg, setProfileImg] = useState(profile); // 프로필 이미지를 저장할 상태
   const fileInputRef = useRef(null); // 파일 입력 요소에 대한 참조
+
+  const { i18n, t } = useTranslation();
 
   const goNext = () => {
     navigate("/login");
@@ -139,7 +142,7 @@ const UserInform = ({ isEdit }) => {
       const user = auth.currentUser;
       const uid = user?.uid;
       const email = user?.email;
-      const usingLanguage = sessionStorage.getItem("usingLang");
+      const usingLanguage = localStorage.getItem("usingLanguage");
 
       const docRef = await setDoc(doc(firestore, "users", uid), {
         uid,
@@ -208,7 +211,7 @@ const UserInform = ({ isEdit }) => {
         const docRef = doc(firestore, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
+        if (docSnap.exists() && isEdit === true) {
           const userData = docSnap.data();
           setProfileImg(userData?.profileImg);
           setBirthdate(userData?.birthdate);
@@ -263,15 +266,15 @@ const UserInform = ({ isEdit }) => {
 
   //////////////////////////////////////////////////////////////
   // 닉네임 중복 검사 함수
-  const checkNicknameDuplicate = async (nickname) => {
+  const checkNicknameDuplicate = async (nicknamearg) => {
     try {
       // 'users' 컬렉션에 있는 닉네임과 일치하는 문서 찾기
       const usersRef = collection(firestore, "users");
-      const q = query(usersRef, where("nickname", "==", nickname));
+      const q = query(usersRef, where("nickname", "==", nicknamearg));
       const querySnapshot = await getDocs(q);
 
       // 중복 검사 결과
-      if (!querySnapshot.empty) {
+      if (!querySnapshot.empty && nickname) {
         setIsModalOpen5(true);
       } else {
         setIsModalOpen4(true);
@@ -289,7 +292,7 @@ const UserInform = ({ isEdit }) => {
   return (
     <>
       <Topbar
-        title={isEdit ? "수정하기" : "회원가입"}
+        title={isEdit ? "수정하기" : t("signup2.title")}
         right={"x"}
         left={"back"}
         rightonClick={onClickX}
@@ -316,8 +319,8 @@ const UserInform = ({ isEdit }) => {
         ) : (
           <>
             <InputBox
-              title={"이름"}
-              placeholder={"이름을 입력해주세요."}
+              title={t("signup2.이름")}
+              placeholder={t("signup2.이름을입력해주세요")}
               onChange={inputName}
               value={name}
             />
@@ -326,149 +329,153 @@ const UserInform = ({ isEdit }) => {
         )}
 
         <S.NicknameWrapper>
-          <S.Title>닉네임</S.Title>
+          <S.Title>{t("signup2.닉네임")}</S.Title>
           <S.NicknameContainer>
             <S.Input onChange={inputNickname} value={nickname} />
-            <S.Button onClick={onClickNicknameCheck}>중복 확인</S.Button>
+            <S.Button onClick={onClickNicknameCheck}>
+              {t("signup2.중복 확인")}
+            </S.Button>
             <div style={{ marginBottom: "16px" }} />
           </S.NicknameContainer>
         </S.NicknameWrapper>
 
-        <S.InputTitle>국적</S.InputTitle>
+        <S.InputTitle>{t("signup2.국적")}</S.InputTitle>
         <DropDown
           isLong={true}
-          placeholder="국적을 선택해주세요."
+          placeholder={t("signup2.국적을 선택해주세요")}
           options={[
-            "대한민국 🇰🇷",
-            "미국 🇺🇸",
-            "일본 🇯🇵",
-            "중국 🇨🇳",
-            "브라질 🇧🇷",
-            "과테말라 🇬🇹",
-            "자메이카 🇯🇲",
-            "파라과이 🇵🇾",
-            "멕시코 🇲🇽",
-            "방글라데 🇧🇩",
-            "브루나이 🇧🇳",
-            "캄보디아 🇰🇭",
-            "홍콩 🇭🇰",
-            "인도 🇮🇳",
-            "인도네시아 🇮🇩",
-            "카자흐스탄 🇰🇿",
-            "말레이시아 🇲🇾",
-            "파키스탄 🇵🇰",
-            "필리핀 🇵🇭",
-            "사우디아라비아 🇸🇦",
-            "싱가포르 🇸🇬",
-            "수단 🇸🇩",
-            "대만 🇹🇼",
-            "태국 🇹🇭",
-            "아랍에미리트 🇦🇪",
-            "베트남 🇻🇳",
-            "핀란드 🇫🇮",
-            "오스트리아 🇦🇹",
-            "벨기에 🇧🇪",
-            "덴마크 🇩🇰",
-            "프랑스 🇫🇷",
-            "스페인 🇪🇸",
-            "독일 🇩🇪",
-            "영국 🇬🇧",
-            "아이슬란드 🇮🇸",
-            "아일랜드 🇮🇪",
-            "이탈리아 🇮🇹",
-            "라투아니아 🇱🇹",
-            "네덜란드 🇳🇱",
-            "노르웨이 🇳🇴",
-            "폴란드 🇵🇱",
-            "루마니아 🇷🇴",
-            "러시아 🇷🇺",
-            "스웨덴 🇸🇪",
-            "스위스 🇨🇭",
-            "캐나다 🇨🇦",
-            "호주 🇦🇺",
-            "뉴질랜드 🇳🇿",
+            t("nationality.대한민국 🇰🇷"),
+            t("nationality.미국 🇺🇸"),
+            t("nationality.일본 🇯🇵"),
+            t("nationality.중국 🇨🇳"),
+            t("nationality.브라질 🇧🇷"),
+            t("nationality.과테말라 🇬🇹"),
+            t("nationality.자메이카 🇯🇲"),
+            t("nationality.파라과이 🇵🇾"),
+            t("nationality.멕시코 🇲🇽"),
+            t("nationality.방글라데시 🇧🇩"),
+            t("nationality.브루나이 🇧🇳"),
+            t("nationality.캄보디아 🇰🇭"),
+            t("nationality.홍콩 🇭🇰"),
+            t("nationality.인도 🇮🇳"),
+            t("nationality.인도네시아 🇮🇩"),
+            t("nationality.카자흐스탄 🇰🇿"),
+            t("nationality.말레이시아 🇲🇾"),
+            t("nationality.파키스탄 🇵🇰"),
+            t("nationality.필리핀 🇵🇭"),
+            t("nationality.사우디아라비아 🇸🇦"),
+            t("nationality.싱가포르 🇸🇬"),
+            t("nationality.수단 🇸🇩"),
+            t("nationality.대만 🇹🇼"),
+            t("nationality.태국 🇹🇭"),
+            t("nationality.아랍에미리트 🇦🇪"),
+            t("nationality.베트남 🇻🇳"),
+            t("nationality.핀란드 🇫🇮"),
+            t("nationality.오스트리아 🇦🇹"),
+            t("nationality.벨기에 🇧🇪"),
+            t("nationality.덴마크 🇩🇰"),
+            t("nationality.프랑스 🇫🇷"),
+            t("nationality.스페인 🇪🇸"),
+            t("nationality.독일 🇩🇪"),
+            t("nationality.영국 🇬🇧"),
+            t("nationality.아이슬란드 🇮🇸"),
+            t("nationality.아일랜드 🇮🇪"),
+            t("nationality.이탈리아 🇮🇹"),
+            t("nationality.라투아니아 🇱🇹"),
+            t("nationality.네덜란드 🇳🇱"),
+            t("nationality.노르웨이 🇳🇴"),
+            t("nationality.폴란드 🇵🇱"),
+            t("nationality.루마니아 🇷🇴"),
+            t("nationality.러시아 🇷🇺"),
+            t("nationality.스웨덴 🇸🇪"),
+            t("nationality.스위스 🇨🇭"),
+            t("nationality.캐나다 🇨🇦"),
+            t("nationality.호주 🇦🇺"),
+            t("nationality.뉴질랜드 🇳🇿"),
           ]}
           onSelect={(selectedOption) => {
             console.log(`Selected: ${selectedOption}`);
             setCountry(selectedOption);
           }}
-          evalue={country}
+          evalue={isEdit ? country : null}
         />
         <div style={{ marginBottom: "16px" }} />
 
-        <S.InputTitle>성별</S.InputTitle>
+        <S.InputTitle>{t("signup2.성별")}</S.InputTitle>
         <DropDown
           isLong={true}
-          placeholder="성별을 선택해주세요."
-          options={["여성", "남성", "알리고 싶지 않음"]}
+          placeholder={t("signup2.성별을 선택해주세요.")}
+          options={[
+            t("signup2.여성"),
+            t("signup2.남성"),
+            t("signup2.알리고 싶지 않음"),
+          ]}
           onSelect={(selectedOption) => {
             console.log(`Selected: ${selectedOption}`);
             setGender(selectedOption);
           }}
-          evalue={gender}
+          evalue={isEdit ? gender : null}
         />
         <div style={{ marginBottom: "16px" }} />
 
         <InputBox
-          title={"생년월일"}
-          placeholder={"생년월일을 입력해주세요."}
+          title={t("signup2.생년월일")}
+          placeholder={t("signup2.생년월일을 입력해주세요.")}
           onChange={inputBirthdate}
-          value={birthdate}
+          value={isEdit ? birthdate : null}
         />
-        <S.Info>* YYYYMMDD로 입력해주세요. (예시 : 20010101)</S.Info>
+        <S.Info>{t("signup2.* YYYYMMDD로 입력해주세요.")}</S.Info>
 
         <InputBox
-          title={"전공"}
-          placeholder={"전공을 입력해주세요."}
+          title={t("signup2.전공")}
+          placeholder={t("signup2.전공을 입력해주세요.")}
           onChange={inputMajor}
-          value={major}
+          value={isEdit ? major : null}
         />
         <div style={{ marginBottom: "16px" }} />
 
-        <S.InputTitle>사용 가능 언어</S.InputTitle>
+        <S.InputTitle>{t("signup2.사용 가능 언어")}</S.InputTitle>
         {languages.map((languageObj, index) => (
           <S.LangContainer key={index}>
             <DropDown
               isLong={false}
-              placeholder="언어 선택"
+              placeholder={t("level.언어 선택")}
               options={[
-                "한국어",
-                "영어",
-                "일본어",
-                "중국어",
-                "프랑스어",
-                "스페인어",
-                "독일어",
-                "이탈리아어",
-                "러시아어",
-                "포르투갈어",
-                "아랍어",
-                "힌디어",
-                "베트남어",
-                "태국어",
-                "터키어",
-                "폴란드어",
-                "네덜란드어",
-                "스웨덴어",
-                "그리스어",
-                "체코어",
-                "헝가리어",
-                "핀란드어",
-                "덴마크어",
-                "노르웨이어",
-                "히브리어",
-                "벵골어",
-                "말레이어",
-                "크메르어",
-                "인도네시아어",
-                "카자흐어",
-                "우르두어",
-                "필리핀어(타갈로그어)",
-                "아이슬란드어",
-                "라트비아어",
-                "루마니아어",
-                "터키어",
-                "그리스어",
+                t("language.한국어"),
+                t("language.영어"),
+                t("language.일본어"),
+                t("language.중국어"),
+                t("language.프랑스어"),
+                t("language.스페인어"),
+                t("language.독일어"),
+                t("language.이탈리아어"),
+                t("language.러시아어"),
+                t("language.포르투갈어"),
+                t("language.아랍어"),
+                t("language.힌디어"),
+                t("language.베트남어"),
+                t("language.태국어"),
+                t("language.터키어"),
+                t("language.폴란드어"),
+                t("language.네덜란드어"),
+                t("language.스웨덴어"),
+                t("language.그리스어"),
+                t("language.체코어"),
+                t("language.헝가리어"),
+                t("language.핀란드어"),
+                t("language.덴마크어"),
+                t("language.노르웨이어"),
+                t("language.히브리어"),
+                t("language.벵골어"),
+                t("language.말레이어"),
+                t("language.크메르어"),
+                t("language.인도네시아어"),
+                t("language.카자흐어"),
+                t("language.우르두어"),
+                t("language.필리핀어(타갈로그어)"),
+                t("language.아이슬란드어"),
+                t("language.라트비아어"),
+                t("language.루마니아어"),
               ]}
               onSelect={(selectedOption) => {
                 console.log(`Selected: ${selectedOption}`);
@@ -479,12 +486,12 @@ const UserInform = ({ isEdit }) => {
             />
             <DropDown
               isLong={false}
-              placeholder="언어 숙련도 선택"
+              placeholder={t("level.언어 숙련도 선택")}
               options={[
-                "기초(Basic)",
-                "중급 (Intermediate)",
-                "상급 (Advanced)",
-                "원어민 (Native)",
+                t("level.기초(Basic)"),
+                t("level.중급 (Intermediate)"),
+                t("level.상급 (Advanced)"),
+                t("level.원어민 (Native)"),
               ]}
               onSelect={(selectedOption) => {
                 console.log(`Selected: ${selectedOption}`);
@@ -497,25 +504,25 @@ const UserInform = ({ isEdit }) => {
         ))}
 
         <LongButton type={ButtonType.PALE_GREEN} onClick={addLanguage}>
-          사용 가능 언어 추가하기
+          {t("signup2.사용 가능 언어 추가하기")}
         </LongButton>
         <div style={{ marginBottom: "16px" }} />
         <LongButton
           type={ButtonType.PALE_GREEN}
           onClick={() => setLanguages([])}
         >
-          사용 가능 언어 리셋
+          {t("signup2.사용 가능 언어 리셋")}
         </LongButton>
         <div style={{ marginBottom: "16px" }} />
 
         <InputBox
-          title={"취미 및 관심사"}
+          title={t("signup2.취미 및 관심사")}
           onChange={inputHobby}
           value={hobby}
         />
         <div style={{ marginBottom: "16px" }} />
 
-        <S.InputTitle>자기소개</S.InputTitle>
+        <S.InputTitle>{t("signup2.자기소개")}</S.InputTitle>
         <S.Introduce onChange={inputIntroduction} value={introduction} />
         <div style={{ marginBottom: "25px" }} />
 
@@ -523,7 +530,7 @@ const UserInform = ({ isEdit }) => {
           type={ButtonType.GREEN}
           onClick={isEdit ? onClickEdit : onClickSignin}
         >
-          저장하기
+          {t("signup2.저장하기")}
         </LongButton>
         <div style={{ marginBottom: "44px" }} />
       </S.Wrapper>
@@ -533,8 +540,8 @@ const UserInform = ({ isEdit }) => {
           setIsModalOpen(false);
           goNext();
         }}
-        guideText="회원가입이 완료되었습니다!"
-        confirmText="확인"
+        guideText={t("signup2.회원가입이 완료되었습니다!")}
+        confirmText={t("signup2.확인")}
         onConfirm={() => {
           setIsModalOpen(false);
           goNext();
@@ -550,8 +557,8 @@ const UserInform = ({ isEdit }) => {
         onClose={() => {
           setIsModalOpen2(false);
         }}
-        guideText="입력 항목을 모두 채워주세요!"
-        confirmText="확인"
+        guideText={t("signup2.입력 항목을 모두 채워주세요!")}
+        confirmText={t("signup2.확인")}
         onConfirm={() => {
           setIsModalOpen2(false);
         }}
@@ -564,8 +571,8 @@ const UserInform = ({ isEdit }) => {
       <Modal
         isOpen={isModalOpen3}
         onClose={() => setIsModalOpen3(false)}
-        guideText="회원정보 수정이 완료되었습니다!"
-        confirmText="확인"
+        guideText={t("signup2.회원정보 수정이 완료되었습니다!")}
+        confirmText={t("signup2.확인")}
         onConfirm={() => {
           setIsModalOpen3(false);
         }}
@@ -579,8 +586,8 @@ const UserInform = ({ isEdit }) => {
       <Modal
         isOpen={isModalOpen4}
         onClose={() => setIsModalOpen4(false)}
-        guideText="사용할 수 있는 닉네임입니다."
-        confirmText="확인"
+        guideText={t("signup2.사용할 수 있는 닉네임입니다.")}
+        confirmText={t("signup2.확인")}
         onConfirm={() => {
           setIsModalOpen4(false);
         }}
@@ -593,8 +600,8 @@ const UserInform = ({ isEdit }) => {
       <Modal
         isOpen={isModalOpen5}
         onClose={() => setIsModalOpen5(false)}
-        guideText="중복된 닉네임입니다."
-        confirmText="확인"
+        guideText={t("signup2.중복된 닉네임입니다.")}
+        confirmText={t("signup2.확인")}
         onConfirm={() => {
           setIsModalOpen5(false);
         }}

@@ -6,11 +6,13 @@ import * as S from "./FeedbackPage.style";
 import { useState } from "react";
 import { firestore, auth } from "../firebase"; // firebase 설정에서 firestore와 auth를 불러옴
 import { collection, addDoc } from "firebase/firestore"; // Firestore에 문서를 추가하기 위한 함수들
+import { useTranslation } from "react-i18next";
 
 const FeedbackPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [feedback, setFeedback] = useState("");
+  const { i18n, t } = useTranslation();
 
   const onChangeFeedback = (e) => {
     setFeedback(e.target.value);
@@ -41,12 +43,12 @@ const FeedbackPage = () => {
   };
   return (
     <>
-      <Topbar title={"피드백 보내기"} left={"back"} />
+      <Topbar title={t("feedback.피드백 보내기")} left={"back"} />
 
       <S.Wrapper>
-        <S.Title>To. 개발자...</S.Title>
+        <S.Title>{t("feedback.To. 개발자...")}</S.Title>
         <S.Introduce
-          placeholder="개발자에게 피드백을 주세요."
+          placeholder={t("feedback.개발자에게 피드백을 주세요.")}
           value={feedback}
           onChange={onChangeFeedback}
         />
@@ -55,7 +57,7 @@ const FeedbackPage = () => {
           ButtonType={ButtonType.GREEN}
           onClick={() => saveFeedback(feedback)}
         >
-          전송 하기
+          {t("feedback.전송 하기")}
         </LongButton>
 
         <Modal

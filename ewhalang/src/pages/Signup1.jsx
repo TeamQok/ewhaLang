@@ -116,14 +116,14 @@ const Signup1 = () => {
           onChange={handleEmail}
         />
         {emailValid ? (
-          <S.Info>*학교 이메일입니다.</S.Info>
+          <S.Info>{t("signup1.emailOk")}</S.Info>
         ) : (
-          <S.Info>* 학교 이메일로 가입해주세요.</S.Info>
+          <S.Info>{t("signup1.emailDetail")}</S.Info>
         )}
 
         <InputBox
-          title={"비밀번호"}
-          placeholder={"비밀번호를 입력해주세요."}
+          title={t("signup1.pw")}
+          placeholder={t("signup1.pwp")}
           value={pw}
           onChange={handlePw}
           type={eye ? "text" : "password"}
@@ -132,13 +132,13 @@ const Signup1 = () => {
         <S.Info1 err={err}>{t("signup1.pwpD1")}</S.Info1>
         <S.Info2 err={err}>{t("signup1.pwpD2")}</S.Info2>
         <InputBox
-          title={"비밀번호 확인"}
-          placeholder={"입력한 비밀번호를 확인해주세요."}
+          title={t("signup1.pwOk")}
+          placeholder={t("signup1.pwOkp")}
           value={conPw}
           onChange={confirmPw}
           type="password"
         />
-        {authpw ? <S.Info>* 알맞은 비밀번호입니다.</S.Info> : <></>}
+        {authpw ? <S.Info>{t("signup1.pwOkmessage")}</S.Info> : <></>}
       </S.Wrapper>
 
       <S.Container>
@@ -169,11 +169,13 @@ const Signup1 = () => {
               }
             }}
           >
-            다음
+            {t("signup1.next")}
           </LongButton>
         ) : (
           <>
-            <LongButton type={ButtonType.LONG_GREY}>다음</LongButton>
+            <LongButton type={ButtonType.LONG_GREY}>
+              {t("signup1.next")}
+            </LongButton>
           </>
         )}
 
