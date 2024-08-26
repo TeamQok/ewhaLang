@@ -10,6 +10,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import Modal from "../components/common/Modal";
 import cloeye from "../assets/cloeye.svg";
 import eyeImg from "../assets/eye.svg";
+import { useTranslation } from "react-i18next";
 
 const expectedDomain1 = "ewhain.net";
 const expectedDomain2 = "ewha.ac.kr";
@@ -26,6 +27,8 @@ const Signup1 = () => {
   const [eye, setEye] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { i18n, t } = useTranslation();
 
   const goNext = () => {
     navigate("/signup2");
@@ -99,15 +102,15 @@ const Signup1 = () => {
   return (
     <>
       <Topbar
-        title={"회원가입"}
+        title={t("signup1.title")}
         right={"x"}
         left={"back"}
         rightonClick={goLogin}
       />
       <S.Wrapper>
         <InputBox
-          title={"이메일"}
-          placeholder={"이메일을 입력해주세요."}
+          title={t("signup1.email")}
+          placeholder={t("signup1.emailp")}
           value={email}
           type="email"
           onChange={handleEmail}
@@ -126,10 +129,8 @@ const Signup1 = () => {
           type={eye ? "text" : "password"}
         />
         <S.Eye src={eye ? eyeImg : cloeye} onClick={onClickEye} />
-        <S.Info err={err}>
-          * 영문, 숫자, 특수문자 조합
-          <br />* 최소 6자에서 최대 20자
-        </S.Info>
+        <S.Info1 err={err}>{t("signup1.pwpD1")}</S.Info1>
+        <S.Info2 err={err}>{t("signup1.pwpD2")}</S.Info2>
         <InputBox
           title={"비밀번호 확인"}
           placeholder={"입력한 비밀번호를 확인해주세요."}

@@ -1,0 +1,55 @@
+{
+  "onboarding": {
+    "title": "EwhaLang",
+    "solgan": "",
+    "langSetting": "Language",
+    "option": "option",
+    "ko": "Korean",
+    "en": "English",
+    "signup": "Create a new account",
+    "login": "Login"
+  },
+  "login": {
+    "email": "Email",
+    "pw": "Password",
+    "login": "Login",
+    "findEmail": "Find Email",
+    "findPw": "Find Password",
+    "signup": "Sign Up"
+  },
+
+  "findEmail": {
+    "title": "Find Account",
+    "findE": "Find Email",
+    "findP": "Find Password",
+    "content": "Find by Membership Information",
+    "content2": "Please enter the information registered with your membership",
+    "name": "Name",
+    "namep": "Please enter your name",
+    "country": "Country",
+    "countryp": "Please select your country",
+    "birth": "Date of Birth",
+    "birthp": "Please enter your date of birth",
+    "detail": "* Please enter it in YYYYMMDD format. (Example: 20010101)"
+  },
+  "findPassword": {
+    "content": "Find by Registered Email",
+    "content2": "After verification through the email you entered during registration, please register a new password.",
+    "email": "Email",
+    "emailp": "Please enter your email",
+    "link": "Request Link"
+  },
+  "signup1": {
+    "title": "Sign Up",
+    "email": "Email",
+    "emailp": "Please enter your email.",
+    "emailDetail": "* Please use your school email.",
+    "pw": "Password",
+    "pwp": "Please enter your password.",
+    "pwpD1": "* Combination of letters, numbers, and special characters",
+    "pwpD2": "* Minimum 6 characters and maximum 20",
+    "pwOk": "Confirm Password",
+    "pwOkp": "Please confirm the password you entered.",
+    "next": "Next"
+  }
+}

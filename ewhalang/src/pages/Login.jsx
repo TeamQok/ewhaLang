@@ -7,6 +7,7 @@ import { useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Modal from "../components/common/Modal";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { i18n, t } = useTranslation();
 
   const goSignin = () => {
     navigate("/signup1");
@@ -62,24 +65,28 @@ const Login = () => {
         src={logo}
         style={{ width: "141px", marginBottom: "36px", marginTop: "174px" }}
       />
-      <S.Input placeholder="이메일 입력" onChange={inputEmail} value={email} />
       <S.Input
-        placeholder="비밀번호 입력"
+        placeholder={t("login.email")}
+        onChange={inputEmail}
+        value={email}
+      />
+      <S.Input
+        placeholder={t("login.pw")}
         onChange={inputPw}
         value={password}
         type="password"
       />
       <div style={{ marginTop: "12px" }}></div>
       <LongButton type={ButtonType.GREEN} onClick={handleLogin}>
-        로그인
+        {t("login.login")}
       </LongButton>
       <S.Container>
-        <S.Option onClick={goFindEmail}>이메일찾기</S.Option>
+        <S.Option onClick={goFindEmail}>{t("login.findEmail")}</S.Option>
         <S.Bar>|</S.Bar>
-        <S.Option onClick={goFindPw}>비밀번호 찾기</S.Option>
+        <S.Option onClick={goFindPw}>{t("login.findPw")}</S.Option>
         <S.Bar>|</S.Bar>
         <S.Option color="#33936D" onClick={goSignin}>
-          회원가입
+          {t("login.signup")}
         </S.Option>
       </S.Container>
       <Modal

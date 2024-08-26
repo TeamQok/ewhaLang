@@ -5,6 +5,7 @@ import { useNavigate, Outlet, Navigate } from "react-router-dom";
 import Topbar from "../components/layout/Topbar";
 import FindEmail from "./FindEmail";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const FindContainer = () => {
   const [email, setEmail] = useState(true);
@@ -12,6 +13,7 @@ const FindContainer = () => {
   const location = useLocation();
 
   const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
 
   const goLogin = () => {
     navigate("/login");
@@ -37,7 +39,7 @@ const FindContainer = () => {
   return (
     <>
       <Topbar
-        title={"계정 찾기"}
+        title={t("findEmail.title")}
         left={"back"}
         right={"x"}
         rightonClick={goLogin}
@@ -45,10 +47,10 @@ const FindContainer = () => {
       <S.Wrapper>
         <S.MenuContainer>
           <S.Menu1 email={email} onClick={goFindEmail}>
-            이메일 찾기
+            {t("findEmail.findE")}
           </S.Menu1>
           <S.Menu2 onClick={goFindPw} pw={pw}>
-            비밀번호 찾기
+            {t("findEmail.findP")}
           </S.Menu2>
         </S.MenuContainer>
         {email ? <FindEmail /> : <FindPw />}

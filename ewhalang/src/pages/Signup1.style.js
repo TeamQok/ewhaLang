@@ -17,6 +17,25 @@ export const Info = styled.div`
   margin-bottom: 16px;
 `;
 
+export const Info1 = styled.div`
+  color: ${(props) => (props.err ? "red" : "var(--grey2)")};
+  font-family: Pretendard;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 16.5px */
+  margin-top: 8px;
+`;
+export const Info2 = styled.div`
+  color: ${(props) => (props.err ? "red" : "var(--grey2)")};
+  font-family: Pretendard;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 16.5px */
+  margin-bottom: 16px;
+`;
+
 export const Container = styled.div`
   position: absolute;
   bottom: 0;

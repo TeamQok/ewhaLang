@@ -3,17 +3,27 @@ import logo from "../assets/x-logo.svg";
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import { useNavigate } from "react-router-dom";
 import DropDownOnboarding from "../components/common/DropDownOnboarding";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../components/common/Modal";
+import { useTranslation } from "react-i18next";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const [lang, setLang] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { i18n, t } = useTranslation();
+
+  useEffect(() => {
+    const selectedLanguage = localStorage.getItem("selectedLanguage");
+    if (selectedLanguage) {
+      setLang(selectedLanguage);
+      i18n.changeLanguage(selectedLanguage);
+    }
+  }, [i18n]);
+
   const goSignin = () => {
     if (lang) {
-      sessionStorage.setItem("usingLang", lang);
       navigate("/signup1");
     } else {
       setIsModalOpen(true);
@@ -22,7 +32,6 @@ const Onboarding = () => {
 
   const goLogin = () => {
     if (lang) {
-      sessionStorage.setItem("usingLang", lang);
       navigate("/login");
     } else {
       setIsModalOpen(true);
@@ -35,7 +44,7 @@ const Onboarding = () => {
         <S.Title>
           여기에 카피라이팅, 슬로건 등{<br />} 넣으면 좋을 것 같아요
         </S.Title>
-        <S.Name>이화랑</S.Name>
+        <S.Name>{t("onboarding.title")}</S.Name>
         <S.Container>
           <img
             alt="이미지로고"
@@ -43,50 +52,28 @@ const Onboarding = () => {
             style={{ width: "200px", marginBottom: "97px" }}
           />
           <S.Setting>
-            <S.SettingLang>초기 언어설정</S.SettingLang>
+            <S.SettingLang>{t("onboarding.langSetting")}</S.SettingLang>
             {/* 나중에 드롭다운 연결 */}
             <DropDownOnboarding
               isLong={false}
-              placeholder="언어 선택"
-              options={[
-                "한국어",
-                "영어",
-                "일본어",
-                "중국어",
-                "프랑스어",
-                "스페인어",
-                "독일어",
-                "이탈리아어",
-                "러시아어",
-                "포르투갈어",
-                "아랍어",
-                "힌디어",
-                "베트남어",
-                "태국어",
-                "터키어",
-                "폴란드어",
-                "네덜란드어",
-                "스웨덴어",
-                "그리스어",
-                "체코어",
-                "헝가리어",
-                "핀란드어",
-                "덴마크어",
-                "노르웨이어",
-                "히브리어",
-              ]}
+              placeholder={t("onboarding.option")}
+              options={[t("onboarding.ko"), t("onboarding.en")]}
               onSelect={(selectedOption) => {
                 console.log(`Selected: ${selectedOption}`);
+                const selectedLangCode =
+                  selectedOption === t("onboarding.ko") ? "ko" : "en";
+                localStorage.setItem("selectedLanguage", selectedLangCode);
                 setLang(selectedOption);
+                i18n.changeLanguage(selectedLangCode); // 언어 변경 호출
               }}
             />
           </S.Setting>
           <LongButton type={ButtonType.WHITE} onClick={goSignin}>
-            새로운 계정 만들기
+            {t("onboarding.signup")}
           </LongButton>
           <div style={{ marginBottom: "8px" }}></div>
           <LongButton type={ButtonType.GREEN} onClick={goLogin}>
-            로그인하러 가기
+            {t("onboarding.login")}
           </LongButton>
         </S.Container>
         <Modal

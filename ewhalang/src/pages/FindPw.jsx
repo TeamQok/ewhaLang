@@ -4,6 +4,7 @@ import * as S from "./FindPw.style";
 import Modal from "../components/common/Modal";
 import { useState } from "react";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { useTranslation } from "react-i18next";
 
 const FindPw = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const FindPw = () => {
   const [isModalOpen2, setIsModalOpen2] = useState(false);
 
   const [email, setEmail] = useState("");
+  const { i18n, t } = useTranslation();
 
   const goRePw = () => {
     navigate("/repw");
@@ -36,16 +38,14 @@ const FindPw = () => {
 
   return (
     <>
-      <S.Title>가입된 이메일로 찾기</S.Title>
-      <S.Contents>
-        가입 당시 입력한 이메일을 통해 인증 후<br /> 새 비밀번호를 등록해주세요.
-      </S.Contents>
+      <S.Title>{t("findPassword.content")}</S.Title>
+      <S.Contents>{t("findPassword.content2")}</S.Contents>
 
       <S.Wrapper>
-        <S.Title>이메일</S.Title>
+        <S.Title>{t("findPassword.email")}</S.Title>
         <S.Container>
           <S.Input
-            placeholder="이메일을 입력해주세요."
+            placeholder={t("findPassword.emailp")}
             onChange={onChangeEmail}
             value={email}
           />
@@ -54,7 +54,7 @@ const FindPw = () => {
               resetPassword(email);
             }}
           >
-            링크 요청
+            {t("findPassword.link")}
           </S.Button>
           <div style={{ marginBottom: "16px" }} />
         </S.Container>
