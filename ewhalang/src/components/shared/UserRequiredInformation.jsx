@@ -1,16 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const UserRequiredInformation = ({ gender, birthdate, major, languages, layout = 'detail' }) => {
+  const { t } = useTranslation();
+
   const formatLanguages = (languages) => {
     return languages.map(lang => ({ language: lang.language, level: lang.proficiency }));
   };
 
   const requiredInfo = [
-    { label: '성별', value: gender },
-    { label: '출생년도', value: birthdate },
-    { label: '전공', value: major },
-    { label: '사용 가능 언어', value: formatLanguages(languages), isLanguage: true },
+    { label: t('userInfo.gender'), value: gender },
+    { label: t('userInfo.birth'), value: birthdate },
+    { label: t('userInfo.major'), value: major },
+    { label: t('userInfo.languages'), value: formatLanguages(languages), isLanguage: true },
   ];
 
   const nonLanguageInfo = requiredInfo.filter(info => !info.isLanguage);

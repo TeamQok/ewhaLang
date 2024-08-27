@@ -63,7 +63,7 @@ const Title = styled.div`
   font-style: normal;
   font-weight: 700;
   line-height: 24px;
-  width: 161px;
+  width: 200px;
 `;
 
 const Wrapper = styled.div`

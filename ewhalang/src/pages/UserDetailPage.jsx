@@ -11,6 +11,7 @@ import UserOptionalInformation from "../components/shared/UserOptionalInformatio
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import ShortDropDown from "../components/shared/ShortDropDown";
 import Modal from "../components/common/Modal";
+import { useTranslation } from "react-i18next";
 
 const UserDetailPage = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
@@ -20,6 +21,7 @@ const UserDetailPage = () => {
   const [loggedUser, setLoggedUser] = useState(null);
   const { userId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -119,7 +121,7 @@ const UserDetailPage = () => {
     return <div>Loading...</div>;
   }
 
-  const options = ["신고하기"];
+  const options = [t("actions.report")];
 
   const handleDotClick = () => {
     setIsDropDownOpen(!isDropDownOpen);
@@ -175,7 +177,9 @@ const UserDetailPage = () => {
           introduction={user.introduction}
         />
         <S.ButtonWrapper>
-          <LongButton type={ButtonType.GREEN} onClick={handleClick}>채팅하기</LongButton>
+          <LongButton type={ButtonType.GREEN} onClick={handleClick}>
+            {t("actions.chat")}
+          </LongButton>
         </S.ButtonWrapper>
       </S.ContentWrapper>
       <ShortDropDown
@@ -185,16 +189,16 @@ const UserDetailPage = () => {
       />
       <Modal
         isOpen={isReportModalOpen}
-        guideText="신고 사유를 작성해주세요."
-        confirmText="작성완료"
+        guideText={t("messages.reportReason")}
+        confirmText={t("actions.submitReport")}
         onConfirm={handleReportConfirm}
         isSingleButton={true}
         showTextInput={true}
       />
       <Modal
         isOpen={isReportConfirmOpen}
-        guideText="신고를 완료했습니다."
-        confirmText="확인"
+        guideText={t("messages.reportConfirm")}
+        confirmText={t("common.confirm")}
         onConfirm={() => {
           setIsReportConfirmOpen(false);
         }}

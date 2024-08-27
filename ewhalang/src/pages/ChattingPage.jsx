@@ -9,6 +9,7 @@ import InputArea from '../components/pages/InputArea';
 import { Nickname, Separator, Country } from '../components/pages/ChatList.style';
 import ShortDropDown from '../components/shared/ShortDropDown';
 import Modal from '../components/common/Modal';
+import { useTranslation } from 'react-i18next';
 
 const ChattingPage = () => {
   const { chatId } = useParams();
@@ -21,6 +22,7 @@ const ChattingPage = () => {
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [isChatOutConfirmOpen, setIsChatOutConfirmOpen] = useState(false);
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -97,11 +99,11 @@ const ChattingPage = () => {
   }, [chatId, currentUser]);
 
   if (loading || !currentUser) {
-    return <div>Loading...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   if (!chatData) {
-    return <div>Chat not found.</div>;
+    return <div>{t("messages.notFound")}</div>;
   }
 
   const otherUserId = chatData.participantsId.find(id => id !== currentUser.id);
@@ -128,8 +130,7 @@ const handleSendMessage = async (text) => {
   }
 };
 
-  const options = ['채팅방 나가기', '신고하기'];
-
+const options = [t("actions.leaveChat"), t("actions.report")];
   const handleDotClick = () => {
     setIsDropDownOpen(!isDropDownOpen);
   };
@@ -137,9 +138,9 @@ const handleSendMessage = async (text) => {
   const handleSelect = (option) => {
     setIsDropDownOpen(false);
 
-    if(option === '채팅방 나가기'){
+    if(option === t("actions.leaveChat")){
       setIsChatOutModalOpen(true);
-    } else if(option === '신고하기'){
+    } else if(option === t("actions.report")){
       setIsReportModalOpen(true);
     }
   };
@@ -172,8 +173,8 @@ const handleSendMessage = async (text) => {
       <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
       <Modal
         isOpen={isReportModalOpen}
-        guideText="신고 사유를 작성해주세요."
-        confirmText="작성완료"
+        guideText={t("messages.reportReason")}
+        confirmText={t("actions.submitReport")}
         onConfirm={() => {
           setIsReportModalOpen(false);
           setIsReportConfirmOpen(true);
@@ -183,8 +184,8 @@ const handleSendMessage = async (text) => {
       />
       <Modal
         isOpen={isReportConfirmOpen}
-        guideText="신고를 완료했습니다."
-        confirmText="확인"
+        guideText={t("messages.reportConfirm")}
+        confirmText={t("common.confirm")}
         onConfirm={() => {
           setIsReportConfirmOpen(false);
         }}
@@ -193,9 +194,9 @@ const handleSendMessage = async (text) => {
       />
       <Modal
         isOpen={isChatOutModalOpen}
-        guideText="채팅방을 나가면 채팅 목록 및 대화 내용이 삭제되고 복구할 수 없어요. 채팅방에서 정말 나가시겠습니까?"
-        confirmText="예"
-        cancelText="아니오"
+        guideText={t("messages.leaveChatConfirm")}
+        confirmText={t("common.yes")}
+        cancelText={t("common.no")}
         onConfirm={() => {
           setIsChatOutModalOpen(false);
           setIsChatOutConfirmOpen(true);
@@ -208,8 +209,8 @@ const handleSendMessage = async (text) => {
       />
       <Modal
         isOpen={isChatOutConfirmOpen}
-        guideText="채팅방 나가기를 완료했습니다."
-        confirmText="확인"
+        guideText={t("messages.leaveChatComplete")}
+        confirmText={t("common.confirm")}
         onConfirm={() => {
           setIsChatOutConfirmOpen(false);
           leaveChat(chatId, currentUser.id)

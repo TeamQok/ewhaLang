@@ -36,6 +36,7 @@ const DropDownListContainer = styled.div`
   border: 1px solid var(--grey3);
   border-radius: 12px;
   background-color: white;
+  max-height: 400px;
   overflow-y: auto;
 `;
 

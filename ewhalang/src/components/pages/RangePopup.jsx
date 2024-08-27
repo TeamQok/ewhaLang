@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Range, getTrackBackground } from 'react-range';
 import Popup from './Popup';
 import { LongButton, ButtonType } from '../common/LongButton';
+import { useTranslation } from 'react-i18next';
 
 const RangePopup = ({ 
   isOpen, 
@@ -18,6 +19,7 @@ const RangePopup = ({
   birthdateRange
 }) => {
   const [values, setValues] = React.useState([birthdateRange.start, birthdateRange.end]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setValues([birthdateRange.start, birthdateRange.end]);
@@ -70,7 +72,7 @@ const RangePopup = ({
       </ItemDisplay>
       <ButtonWrapper>
         <LongButton type={ButtonType.GREEN} onClick={handleApply}>
-          선택 완료
+          {t("filters.select")}
         </LongButton>
       </ButtonWrapper>
     </Popup>

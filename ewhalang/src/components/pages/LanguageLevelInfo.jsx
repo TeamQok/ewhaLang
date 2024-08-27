@@ -1,24 +1,25 @@
-// src/components/pages/LanguageProficiencyInfo.jsx
-
 import React from 'react';
 import styled from 'styled-components';
-
-const Levels = [
-  { level: '기초', color: 'var(--sub3)' },
-  { level: '중급', color: 'var(--sub2)' },
-  { level: '상급', color: '#86E8C7' },
-  { level: '원어민', color: '#40C79A' },
-];
+import { useTranslation } from 'react-i18next';
 
 const LanguageLevelInfo = () => {
+  const { t } = useTranslation();
+
+  const Levels = [
+    { level: 'basic', color: 'var(--sub3)' },
+    { level: 'intermediate', color: 'var(--sub2)' },
+    { level: 'advanced', color: '#86E8C7' },
+    { level: 'native', color: '#40C79A' },
+  ];
+
   return (
     <Wrapper>
-      <Title>언어 숙련도</Title>
+      <Title>{t('userList.langLevel')}</Title>
       <LevelWrapper>
         {Levels.map(({ level, color }) => (
           <LevelItem key={level}>
             <ColorCircle color={color} />
-            <LevelText>{level}</LevelText>
+            <LevelText>{t(`userList.${level}`)}</LevelText>
           </LevelItem>
         ))}
       </LevelWrapper>
