@@ -4,12 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as S from './ChatList.style';
 import UserImage from '../shared/UserImage';
+import { useTranslation } from 'react-i18next';
 
 const ChatBox = ({ chat, loggedInUserId }) => {
+  const { i18n } = useTranslation();
+
   const navigate = useNavigate();
     const formatTime = (timestamp) => {
       const date = new Date(timestamp);
-        return new Intl.DateTimeFormat('ko-KR', {
+        return new Intl.DateTimeFormat(i18n.language, {
           hour: 'numeric',
           minute: 'numeric',
           hour12: true,

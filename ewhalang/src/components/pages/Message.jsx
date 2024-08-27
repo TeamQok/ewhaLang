@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import UserImage from '../shared/UserImage';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const MessageContainer = styled.div`
   display: flex;
@@ -46,6 +47,7 @@ const MessageInfo = styled.div`
 
 const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProfileImage, showTime }) => {
   const isCurrentUser = senderId === currentUserId;
+  const { i18n } = useTranslation();
   const navigate = useNavigate();
 
   const formatTime = (timestamp) => {
@@ -54,7 +56,7 @@ const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProf
       return '';
     }
     const date = new Date(timestamp);
-    return new Intl.DateTimeFormat('ko-KR', {
+    return new Intl.DateTimeFormat(i18n.language, {
       hour: 'numeric',
       minute: 'numeric',
       hour12: true,

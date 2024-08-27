@@ -17,6 +17,11 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+input, textarea, select {
+  font-size: 16px;
+}
+
 ::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera*/
 }

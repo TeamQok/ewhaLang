@@ -2,25 +2,30 @@
 import React from 'react';
 import styled from 'styled-components';
 import closeIcon from '../../assets/closeIcon.svg';
+import { useTranslation } from 'react-i18next';
 
 
-const Popup = ({ isOpen, onClose, title, children, fullScreen }) => (
-  <PopupWrapper isOpen={isOpen} title={title}>
-    <PopupContent isOpen={isOpen} fullScreen={fullScreen}>
-      <PopupHeader>
-        <Title>{title}</Title>
-        <CloseButton onClick={onClose}>
-          <img src={closeIcon} alt="Close" />
-        </CloseButton>
-      </PopupHeader>
+const Popup = ({ isOpen, onClose, title, children, fullScreen }) => {
+  const { t } = useTranslation();
 
-      <PopupBody>
-      {children}
-      </PopupBody>
-
-    </PopupContent>
-  </PopupWrapper>
-);
+  return (
+    <PopupWrapper isOpen={isOpen} isFilterPopup={title===t("pageTitles.filter")}>
+      <PopupContent isOpen={isOpen} fullScreen={fullScreen}>
+        <PopupHeader>
+          <Title>{title}</Title>
+          <CloseButton onClick={onClose}>
+            <img src={closeIcon} alt="Close" />
+          </CloseButton>
+        </PopupHeader>
+  
+        <PopupBody>
+        {children}
+        </PopupBody>
+  
+      </PopupContent>
+    </PopupWrapper>
+  );
+}
 
 const PopupWrapper = styled.div`
 
@@ -33,7 +38,7 @@ const PopupWrapper = styled.div`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 
-  z-index: ${(props) => (props.title === '전체 필터 설정' ? 1000 : 1001)};
+  z-index: ${(props) => (props.isFilterPopup ? 1000 : 1001)};
 
 `;
 

@@ -4,6 +4,7 @@ import Popup from './Popup';
 import { LongButton, ButtonType } from '../common/LongButton';
 import searchIcon from '../../assets/searchIcon.svg';
 import resetIcon from '../../assets/reset.svg';
+import { useTranslation } from 'react-i18next';
 
 const SelectIcon = ({ isSelected }) => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,9 +24,9 @@ const SelectionPopup = ({
   showSearch,
   fullScreen,
   onApply,
-  onReset,
-  isAllScreen
+  onReset
 }) => {
+  const { t } = useTranslation();
 
   const handleApply = () => {
     onApply(selectedItems);
@@ -38,7 +39,7 @@ const SelectionPopup = ({
         {showSearch && (
           <SearchInputWrapper>
             <SearchInput 
-              placeholder={`나라를 검색하세요.`}
+              placeholder={t("placeholder.searchCountry")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -57,14 +58,14 @@ const SelectionPopup = ({
         ))}
       </ItemList>
       <ButtonWrapper>
-        {!isAllScreen && (
+        {!fullScreen && (
           <ResetButton onClick={onReset}>
             <img src={resetIcon} alt="Reset" />
-            <span>초기화</span>
+            <span>t("filters.reset")</span>
           </ResetButton>
         )}
         <LongButton type={ButtonType.GREEN} onClick={handleApply}>
-          선택 완료
+        {t("filters.select")}
         </LongButton>
       </ButtonWrapper>
     </Popup>

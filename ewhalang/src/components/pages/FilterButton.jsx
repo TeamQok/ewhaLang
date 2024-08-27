@@ -1,23 +1,28 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
-const FilterButton = ({ text, icon, onClick, isAllScreen, selectedText }) => (
-  <StyledFilterButton onClick={onClick} isAllScreen={isAllScreen}>
-    <LeftContent>
-      <span>{text}</span>
-    </LeftContent>
-    <RightContent>
-      {isAllScreen && <AllText>{selectedText || '전체'}</AllText>}
-      {(!isAllScreen && selectedText) ? (
-        <SelectedText>{selectedText}</SelectedText>
-      ) : (
-        <ImageWrapper isAllScreen={isAllScreen}>
-          <img src={icon} alt={text} />
-        </ImageWrapper>
-      )}
-    </RightContent>
-  </StyledFilterButton>
-);
+const FilterButton = ({ text, icon, onClick, isAllScreen, selectedText }) => {
+  const { t } = useTranslation();
+
+  return (
+    <StyledFilterButton onClick={onClick} isAllScreen={isAllScreen}>
+      <LeftContent>
+        <span>{text}</span>
+      </LeftContent>
+      <RightContent>
+        {isAllScreen && <AllText>{selectedText || t("filters.all")}</AllText>}
+        {(!isAllScreen && selectedText) ? (
+          <SelectedText>{selectedText}</SelectedText>
+        ) : (
+          <ImageWrapper isAllScreen={isAllScreen}>
+            <img src={icon} alt={text} />
+          </ImageWrapper>
+        )}
+      </RightContent>
+    </StyledFilterButton>
+  );
+}
 
 // 스타일드 컴포넌트
 const StyledFilterButton = styled.button`

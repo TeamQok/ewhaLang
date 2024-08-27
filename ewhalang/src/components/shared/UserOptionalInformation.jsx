@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const UserOptionalInformation = ({ hobby, introduction }) => {
+  const { t } = useTranslation();
+
   const optionalInfo = [
-    { label: '취미 및 관심사', value: hobby || '없음' },
-    { label: '자기소개', value: introduction || '없음' },
+    { label: t('userInfo.hobby'), value: hobby || t('common.none') },
+    { label: t('userInfo.intro'), value: introduction || t('common.none') },
   ];
 
   return (
@@ -21,7 +24,8 @@ const InformationSection = styled.div`
 `;
 
 const InfoItem = ({ label, value }) => {
-  const isIntroduction = label === '자기소개';
+  const { t } = useTranslation();
+  const isIntroduction = label === t('userInfo.intro');
   return (
     <Item isIntroduction={isIntroduction}>
       <Label>{label}</Label>
@@ -49,7 +53,7 @@ const Value = styled.span`
   text-align: ${({ isIntroduction }) => (isIntroduction ? 'left' : 'right')};
   margin-top: ${({ isIntroduction }) => (isIntroduction ? '8px' : '0')};
   width: ${({ isIntroduction }) => (isIntroduction ? '100%' : 'auto')};
-    word-break: ${({ isIntroduction }) => (isIntroduction ? 'break-word' : 'normal')};
+  word-break: ${({ isIntroduction }) => (isIntroduction ? 'break-word' : 'normal')};
 `;
 
 export default UserOptionalInformation;
