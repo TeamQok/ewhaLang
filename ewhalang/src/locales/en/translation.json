@@ -56,6 +56,94 @@
     "pwOkmessage": "* The password is correct.",
     "next": "Next"
   },
+  "userInfo":{
+    "gender": "Gender",
+    "birth": "Birth Date",
+    "major": "Major",
+    "languages": "Available Language",
+    "hobby": "Hobbies and interests",
+    "intro": "Self Introduction"
+  },
+  "mypage": {
+    "logout": "Logout",
+    "logoutConfirm": "Are you sure you want to log out?",
+    "logoutCompleted": "Logout completed."
+  },
+  "userList": {
+    "langLevel": "Language Proficiency",
+    "basic": "Basic",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "native": "Native"
+  },
+  "filters":{
+    "filter": "Filter",
+    "lang": "Language",
+    "country": "Country",
+    "gender": "Gender",
+    "female": "Female",
+    "male": "Male",
+    "birthdate": "Birth Date",
+    "reset": "Reset",
+    "select": "Selected",
+    "apply": "Apply Filter",
+    "all": "All",
+    "andMore": "{{item}} and {{count}} more"
+  },
+  "verification": {
+    "title": "Student Verification",
+    "verified": {
+      "title": "Student verification completed.",
+      "description": "{{nickname}}, you have registered as a member of EwhaLang. Welcome!",
+      "button": "Find EwhaLang Friends"
+    },
+    "unverified": {
+      "description": "You need to complete student verification with your school email to find EwhaLang friends.",
+      "emailTitle": "Registered School Email",
+      "button": "Verify with Email"
+    },
+    "pending": {
+      "description": "A verification email has been sent. Please check your inbox.",
+      "button": "Pending Verification"
+    },
+    "modal": {
+      "message": "A verification link has been sent to your email. Please check your inbox!",
+      "confirm": "Confirm"
+    },
+    "error": {
+      "general": "Error: {{message}}"
+    }
+  },
+  "actions": {
+    "chat": "Chat",
+    "report": "Report",
+    "submitReport": "Submit Report",
+    "leaveChat": "Leave Chat"
+  },
+  "messages": {
+    "reportReason": "Please write the reason for reporting.",
+    "reportConfirm": "Report has been submitted.",
+    "notFound": "Chat not found.",
+    "leaveChatConfirm": "If you leave the chat room, the chat list and conversation content will be deleted and cannot be recovered. Are you sure you want to leave the chat room?",
+    "leaveChatComplete": "You have left the chat room."
+  },
+  "pageTitles":{
+    "mypage": "My Page",
+    "userList": "Find EwhaLang Friend",
+    "filter": "Filters",
+    "chatting": "Chats",
+    "verify": "Student Verification"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "none": "None",
+    "edit": "Edit",
+    "loading": "Loading..."
+  },
+  "placeholder": {
+    "searchCountry": "Search for a country"
   "signup2": {
     "title": "Sign Up",
     "이름": "Name",

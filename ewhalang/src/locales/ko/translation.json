@@ -54,6 +54,94 @@
     "pwOkmessage": "* 알맞은 비밀번호입니다.",
     "next": "다음"
   },
+  "userInfo":{
+    "gender": "성별",
+    "birth": "출생년도",
+    "major": "전공",
+    "languages": "사용 가능 언어",
+    "hobby": "취미 및 관심사",
+    "intro": "자기소개"
+  },
+  "mypage": {
+    "edit": "수정하기",
+    "logout": "로그아웃",
+    "logoutConfirm": "정말 로그아웃 하시겠습니까?",
+    "logoutCompleted": "로그아웃이 완료되었습니다."
+  },
+  "userList": {
+    "langLevel": "언어 숙련도",
+    "basic": "기초",
+    "intermediate": "중급",
+    "advanced": "상급",
+    "native": "원어민"
+  },
+  "filters":{
+    "filter": "필터",
+    "lang": "언어",
+    "country": "국적",
+    "gender": "성별",
+    "female": "여성",
+    "male": "남성",
+    "birthdate": "출생년도",
+    "reset": "초기화",
+    "select": "선택 완료",
+    "apply": "필터 설정 완료",
+    "all": "전체",
+    "andMore": "{{item}} 외 {{count}}"
+  },
+  "verification": {
+    "title": "학생 인증",
+    "verified": {
+      "title": "학생 인증이 완료되었습니다.",
+      "description": "{{nickname}}님, 이화랑의 회원으로 등록되셨습니다. 환영합니다!",
+      "button": "이화랑 친구 찾기"
+    },
+    "unverified": {
+      "description": "학교 이메일로 학생 인증을 마쳐야 이화랑 친구를 찾을 수 있어요.",
+      "emailTitle": "가입된 학교 이메일",
+      "button": "이메일로 학생 인증하기"
+    },
+    "pending": {
+      "description": "인증 이메일을 발송했습니다. 메일함을 확인해주세요.",
+      "button": "인증 대기 중"
+    },
+    "modal": {
+      "message": "이메일로 인증 링크를 발송했습니다. 메일함을 확인해주세요!",
+      "confirm": "확인"
+    },
+    "error": {
+      "general": "오류: {{message}}"
+    }
+  },
+  "actions": {
+    "chat": "채팅하기",
+    "report": "신고하기",
+    "submitReport": "작성완료",
+    "leaveChat": "채팅방 나가기"
+  },
+  "messages": {
+    "reportReason": "신고 사유를 작성해주세요.",
+    "reportConfirm": "신고를 완료했습니다.",
+    "notFound": "채팅을 찾을 수 없습니다.",
+    "leaveChatConfirm": "채팅방을 나가면 채팅 목록 및 대화 내용이 삭제되고 복구할 수 없어요. 채팅방에서 정말 나가시겠습니까?",
+    "leaveChatComplete": "채팅방 나가기를 완료했습니다."
+  },
+  "pageTitles":{
+    "mypage": "마이페이지",
+    "userList": "이화랑 친구 찾기",
+    "filter": "전체 필터",
+    "chatting": "채팅 목록"
+  },
+  "common": {
+    "yes": "예",
+    "no": "아니오",
+    "confirm": "확인",
+    "none": "없음",
+    "edit": "수정하기",
+    "loading": "로딩 중..."
+  },
+  "placeholder": {
+    "searchCountry": "나라를 검색하세요."
   "signup2": {
     "title": "회원가입",
     "이름": "이름",
@@ -221,4 +309,5 @@
     "확인": "확인",
     "예": "예"
   }
+
 }

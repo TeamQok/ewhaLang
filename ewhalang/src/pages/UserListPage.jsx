@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import UserListInformation from "../components/pages/UserListInformation";
@@ -8,15 +8,18 @@ import FilterComponent from "../components/pages/FilterComponent";
 import LanguageLevelInfo from "../components/pages/LanguageLevelInfo";
 import { auth, firestore } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { useTranslation } from "react-i18next";
 
 const UserListPage = () => {
+  const { t } = useTranslation();
+
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [loggedUser, setLoggedUser] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({
     languages: [],
     countries: [],
-    gender: "전체",
+    gender: t("filters.all"),
     birthdateRange: { start: 1996, end: 2005 },
   });
 
@@ -55,7 +58,7 @@ const UserListPage = () => {
         filterCriteria.countries.includes(user.country);
 
       const genderMatch =
-        filterCriteria.gender === "전체" ||
+        filterCriteria.gender === t("filters.all") ||
         user.gender === filterCriteria.gender;
 
       const birthYearMatch =
@@ -79,11 +82,9 @@ const UserListPage = () => {
     return <div>Loading...</div>;
   }
 
-  console.log(filteredUsers);
-
   return (
     <Wrapper>
-      <Topbar title={"이화랑 친구 찾기"} />
+      <Topbar title={t("pageTitles.userList")} />
       <FilterComponent
         onFilterChange={handleFilterChange}
         initialFilterCriteria={filterCriteria}

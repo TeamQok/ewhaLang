@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const DateWrapper = styled.div`
   width: 148px;
@@ -15,6 +16,8 @@ const DateWrapper = styled.div`
 `;
 
 const DateSeparator = ({ date }) => {
+  const { i18n } = useTranslation();
+
   const formatDate = (dateString) => {
     // 날짜 문자열을 안전하게 파싱
     const parts = dateString.split('-');
@@ -30,7 +33,7 @@ const DateSeparator = ({ date }) => {
     }
 
     const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-    return dateObj.toLocaleDateString('ko-KR', options);
+    return dateObj.toLocaleDateString(i18n.language, options);
   };
 
   return <DateWrapper>{formatDate(date)}</DateWrapper>;

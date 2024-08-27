@@ -10,6 +10,7 @@ import arrowDownIcon from "../../assets/filterArrowDown.svg";
 import arrowRightIcon from "../../assets/filterArrowRight.svg";
 import resetIcon from "../../assets/reset.svg";
 import { LongButton } from "../common/LongButton";
+import { useTranslation } from "react-i18next";
 
 const languages = [
   '한국어', '영어', '일본어', '중국어', '프랑스어', '스페인어',
@@ -26,14 +27,15 @@ const countries = [
   '스웨덴', '스위스', '벨기에', '오스트리아'
 ];
 
-const genderOptions = ["전체", "여성", "남성"];
-
 const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [isFullScreenFilterOpen, setIsFullScreenFilterOpen] = useState(false);
   const [isFullScreenSubFilter, setIsFullScreenSubFilter] = useState(false);
   const [currentFilters, setCurrentFilters] = useState(initialFilterCriteria);
   const [appliedFilters, setAppliedFilters] = useState(initialFilterCriteria);
+  const { i18n, t } = useTranslation();
+
+  const genderOptions = [t("filters.all"), t('filters.female'), t('filters.male')];
 
 
   const [countrySearchTerm, setCountrySearchTerm] = useState('');
@@ -60,11 +62,9 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   }, [appliedFilters]);
 
   const openFilter = (filter) => {
-    if (!isFullScreenFilterOpen) {
-      setCurrentFilters(appliedFilters);
-      setActiveFilter(filter);
-      setIsFullScreenSubFilter(isFullScreenFilterOpen);
-    }
+    setCurrentFilters(appliedFilters);
+    setActiveFilter(filter);
+    setIsFullScreenSubFilter(isFullScreenFilterOpen);
   };
 
   const closeFilter = () => {
@@ -95,45 +95,34 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   };
 
   const toggleCountry = (country) => {
-
     setCurrentFilters(prev => ({
       ...prev,
       countries: prev.countries.includes(country)
         ? prev.countries.filter(c => c !== country)
         : [...prev.countries, country]
-
     }));
+    console.log(currentFilters);
   };
 
   const toggleGender = (gender) => {
-    setCurrentFilters((prev) => ({ ...prev, gender }));
+    setCurrentFilters((prev) => ({...prev, gender: gender === prev.gender ? t("filters.all") : gender}));
   };
 
   const filteredCountries = countries.filter(country =>
     country.toLowerCase().includes(countrySearchTerm.toLowerCase())
   );
 
-  const getCurrentLanguagesText = () => {
-    const { languages } = currentFilters;
-    if (languages.length === 1) return languages[0];
-
-    if (languages.length > 1)
-      return `${languages[0]} 외 ${languages.length - 1}`;
-
-    return null;
+  const getFormattedText = (items) => {
+    if (items.length === 0) return null;
+    if (items.length === 1) return items[0];
+    return t('filters.andMore', { count: items.length - 1, item: items[0] });
   };
 
-  const getCurrentCountriesText = () => {
-    const { countries } = currentFilters;
-    if (countries.length === 1) return countries[0];
-
-    if (countries.length > 1)
-      return `${countries[0]} 외 ${countries.length - 1}`;
-    return null;
-  };
+  const getCurrentLanguagesText = () => getFormattedText(currentFilters.languages);
+  const getCurrentCountriesText = () => getFormattedText(currentFilters.countries);
 
   const getCurrentGenderText = () =>
-    currentFilters.gender !== "전체" ? currentFilters.gender : null;
+    currentFilters.gender !== t('filters.all') ? currentFilters.gender : null;
 
   const getCurrentBirthdateRangeText = () => {
     const { start, end } = currentFilters.birthdateRange;
@@ -143,27 +132,11 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     return null;
   };
 
-  const getAppliedLanguagesText = () => {
-    const { languages } = appliedFilters;
-    if (languages.length === 1) return languages[0];
-
-    if (languages.length > 1)
-      return `${languages[0]} 외 ${languages.length - 1}`;
-
-    return null;
-  };
-
-  const getAppliedCountriesText = () => {
-    const { countries } = appliedFilters;
-    if (countries.length === 1) return countries[0];
-
-    if (countries.length > 1)
-      return `${countries[0]} 외 ${countries.length - 1}`;
-    return null;
-  };
+  const getAppliedLanguagesText = () => getFormattedText(appliedFilters.languages);
+  const getAppliedCountriesText = () => getFormattedText(appliedFilters.countries);
 
   const getAppliedGenderText = () =>
-    appliedFilters.gender !== "전체" ? appliedFilters.gender : null;
+    appliedFilters.gender !== t("filters.all") ? appliedFilters.gender : null;
 
   const getAppliedBirthdateRangeText = () => {
     const { start, end } = appliedFilters.birthdateRange;
@@ -178,7 +151,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
       languages: [],
       countries: [],
 
-      gender: "전체",
+      gender: t("filters.all"),
       birthdateRange: { start: 1996, end: 2005 },
     };
     setCurrentFilters(resetFilters);
@@ -190,11 +163,9 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
   const handleFilterApply = (filterType, newValue) => {
     setCurrentFilters((prev) => ({ ...prev, [filterType]: newValue }));
+    console.log(currentFilters);
     if (!isFullScreenFilterOpen) {
-
       setAppliedFilters(prev => ({ ...prev, [filterType]: newValue }));
-
-
       onFilterChange({ ...appliedFilters, [filterType]: newValue });
     }
     closeFilter();
@@ -210,12 +181,12 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
       <FilterWrapper>
         <FilterButton
           icon={filterIcon}
-          text="필터"
+          text={t("filters.filter")}
           onClick={openFullScreenFilter}
         />
         <FilterButton
           icon={arrowDownIcon}
-          text="언어"
+          text={t("filters.lang")}
 
           onClick={() => openFilter('언어')}
 
@@ -223,15 +194,13 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         />
         <FilterButton
           icon={arrowDownIcon}
-          text="국적"
-
+          text={t("filters.country")}
           onClick={() => openFilter('국적')}
-
           selectedText={getAppliedCountriesText()}
         />
         <FilterButton
           icon={arrowDownIcon}
-          text="성별"
+          text={t("filters.gender")}
 
           onClick={() => openFilter('성별')}
 
@@ -239,7 +208,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         />
         <FilterButton
           icon={arrowDownIcon}
-          text="출생년도"
+          text={t("filters.birthdate")}
 
           onClick={() => openFilter('출생년도')}
 
@@ -250,56 +219,58 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
       <SelectionPopup
         isOpen={activeFilter === '언어'}
         onClose={closeFilter}
-        title="언어"
+        title={t("filters.lang")}
         items={languages}
         selectedItems={currentFilters.languages}
         toggleItem={toggleLanguage}
-
         onApply={(selectedLanguages) => handleFilterApply('languages', selectedLanguages)}
         onReset={() => setCurrentFilters(prev => ({ ...prev, languages: [] }))}
-
-        isAllScreen={isFullScreenSubFilter}
+        fullScreen={isFullScreenSubFilter}
       />
 
       <SelectionPopup
         isOpen={activeFilter === '국적'}
         onClose={closeFilter}
-        title="국적"
+        title={t("filters.country")}
         items={filteredCountries}
         selectedItems={currentFilters.countries}
         toggleItem={toggleCountry}
         searchTerm={countrySearchTerm}
         setSearchTerm={setCountrySearchTerm}
         showSearch={true}
-
         onApply={(selectedCountries) => handleFilterApply('countries', selectedCountries)}
         onReset={() => setCurrentFilters(prev => ({ ...prev, countries: [] }))}
-
-        isAllScreen={isFullScreenSubFilter}
+        fullScreen={isFullScreenSubFilter}
       />
 
       <BulletSelectionPopup
         isOpen={activeFilter === '성별'}
         onClose={closeFilter}
-        title="성별"
+        title={t("filters.gender")}
         options={genderOptions}
         selectedOption={currentFilters.gender}
-        onSelect={toggleGender}
-
+        toggleOption={toggleGender}
         onApply={(selectedGen) => handleFilterApply('gender', selectedGen)}
-
-
+        fullScreen={isFullScreenSubFilter}
       />
 
       <RangePopup
         isOpen={activeFilter === '출생년도'}
         onClose={closeFilter}
-        title="출생년도"
+        title={t("filters.birthdate")}
         minValue={1996}
         maxValue={2005}
         step={1}
-        formatLabel={(year) => `${year}년생`}
-        formatDisplayItem={(year) => `${year.toString().slice(2)}년생`}
+        formatLabel={(year) => {
+          return i18n.language === 'ko' 
+            ? `${year}년생`
+            : `${year}`;
+        }}
+        formatDisplayItem={(year) => {
+          return i18n.language === 'ko'
+            ? `${year.toString().slice(2)}년생`
+            : `${year}`;
+        }}
         onApply={(start, end) =>
           handleFilterApply("birthdateRange", { start, end })
         }
@@ -308,49 +279,42 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
       />
 
 
-      <Popup isOpen={isFullScreenFilterOpen} onClose={closeFullScreenFilter} title="필터" fullScreen={true}>
+      <Popup isOpen={isFullScreenFilterOpen} onClose={closeFullScreenFilter} title={t("pageTitles.filter")} fullScreen={true}>
         <FilterButton
           icon={arrowRightIcon}
-          text="언어"
+          text={t("filters.lang")}
           onClick={() => openFilter('언어')}
-
           isAllScreen={true}
           selectedText={getCurrentLanguagesText()}
         />
         <FilterButton
           icon={arrowRightIcon}
-          text="국적"
-
+          text={t("filters.country")}
           onClick={() => openFilter('국적')}
-
           isAllScreen={true}
           selectedText={getCurrentCountriesText()}
         />
         <FilterButton
           icon={arrowRightIcon}
-          text="성별"
-
+          text={t("filters.gender")}
           onClick={() => openFilter('성별')}
-
           isAllScreen={true}
           selectedText={getCurrentGenderText()}
         />
         <FilterButton
           icon={arrowRightIcon}
-          text="출생년도"
-
+          text={t("filters.birthdate")}
           onClick={() => openFilter('출생년도')}
-
           isAllScreen={true}
           selectedText={getCurrentBirthdateRangeText()}
         />
         <AllScreenButtonWrapper>
           <ResetButton onClick={resetFilters}>
             <img src={resetIcon} alt="Reset" />
-            <span>초기화</span>
+            <span>{t("filters.reset")}</span>
           </ResetButton>
           <LongButton onClick={applyFilters}>
-            필터 설정 완료
+            {t("filters.apply")}
           </LongButton>
         </AllScreenButtonWrapper>
       </Popup>

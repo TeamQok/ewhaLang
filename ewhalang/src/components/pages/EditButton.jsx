@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import editIcon from '../../assets/editProfile.svg'; // 연필 아이콘 경로
 
 const EditButtonWrapper = styled.div`
@@ -23,10 +24,12 @@ const EditText = styled.span`
 `;
 
 const EditButton = () => {
+  const { t } = useTranslation();
+
   return (
     <EditButtonWrapper>
-      <EditIcon src={editIcon} alt="Edit" />
-      <EditText>수정하기</EditText>
+      <EditIcon src={editIcon} alt={t('common.edit')} />
+      <EditText>{t('common.edit')}</EditText>
     </EditButtonWrapper>
   );
 };

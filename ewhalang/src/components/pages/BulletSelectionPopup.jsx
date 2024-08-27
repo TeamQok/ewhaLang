@@ -2,12 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import Popup from './Popup';
 import { LongButton, ButtonType } from '../common/LongButton';
+import { useTranslation } from 'react-i18next';
 
 const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption, toggleOption, fullScreen, onApply }) => {
   const handleApply = () => {
     onApply(selectedOption);
     onClose();
   };
+
+  const { t } = useTranslation();
   
   return (
     <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
@@ -21,7 +24,7 @@ const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption,
       </OptionList>
       <ButtonWrapper>
         <LongButton type={ButtonType.GREEN} onClick={handleApply}>
-          선택 완료
+          {t("filters.select")}
         </LongButton>
       </ButtonWrapper>
     </Popup>

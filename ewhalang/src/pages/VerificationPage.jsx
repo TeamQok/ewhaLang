@@ -11,8 +11,10 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, firestore } from "../firebase";
+import { useTranslation } from 'react-i18next';
 
 const VerificationPage = () => {
+    const { t } = useTranslation();
     const [user, setUser] = useState(null);
     const [verificationStatus, setVerificationStatus] = useState('unverified');
     const [isEmailSentModalOpen, setIsEmailSentModalOpen] = useState(false);
@@ -90,58 +92,60 @@ const VerificationPage = () => {
 
     return (
         <S.PageWrapper>
-            {verificationStatus === 'verified' ? (
-                <S.VerifiedContent>
-                    <S.ImageWrapper>
-                        <img src={verifiedIcon} alt="Verified Icon" />
-                    </S.ImageWrapper>
-                    <S.PageTitle>학생 인증이 완료되었습니다.</S.PageTitle>
-                    <S.PageDescription>
-                        {user.nickname}님, 이화랑의 회원으로 등록되셨습니다. 환영합니다!
-                    </S.PageDescription>
-                    <S.ButtonWrapper>
-                        <LongButton type={ButtonType.GREEN} onClick={() => navigate(`/users`)}>
-                            이화랑 친구 찾기
-                        </LongButton>
-                    </S.ButtonWrapper>
-                </S.VerifiedContent>
-            ) : (
-                <>
-                    <Topbar left={"back"} />
-                    <S.ContentWrapper>
-                        <S.PageTitle>학생 인증</S.PageTitle>
-                        <S.PageDescription>
-                            {verificationStatus === 'pending' 
-                                ? '인증 이메일을 발송했습니다. 메일함을 확인해주세요.' 
-                                : '학교 이메일로 학생 인증을 마쳐야 이화랑 친구를 찾을 수 있어요.'}
-                        </S.PageDescription>
-                        <S.EmailInfoWrapper>
-                            <S.EmailInfoTitle>가입된 학교 이메일</S.EmailInfoTitle>
-                            <S.EmailInfo>{user.email}</S.EmailInfo>
-                        </S.EmailInfoWrapper>
-                    </S.ContentWrapper>
-                    <S.ButtonWrapper>
-                        <LongButton 
-                            type={verificationStatus === 'pending' ? ButtonType.LONG_GREY : ButtonType.GREEN} 
-                            onClick={verificationStatus === 'pending' ? undefined : sendVerificationEmail}
-                            disabled={verificationStatus === 'pending'}
-                        >
-                            {verificationStatus === 'pending' ? '인증 대기 중' : '이메일로 학생 인증하기'}
-                        </LongButton>
-                    </S.ButtonWrapper>
-                    <Modal
-                        isOpen={isEmailSentModalOpen}
-                        onClose={() => setIsEmailSentModalOpen(false)}
-                        guideText="이메일로 인증 링크를 발송했습니다. 메일함을 확인해주세요!"
-                        confirmText="확인"
-                        onConfirm={handleConfirm}
-                        isSingleButton={true}
-                        showTextInput={false}
-                    />
-                </>
-            )}
+          {verificationStatus === 'verified' ? (
+            <S.VerifiedContent>
+              <S.ImageWrapper>
+                <img src={verifiedIcon} alt={t('verification.verified.title')} />
+              </S.ImageWrapper>
+              <S.PageTitle>{t('verification.verified.title')}</S.PageTitle>
+              <S.PageDescription>
+                {t('verification.verified.description', { nickname: user.nickname })}
+              </S.PageDescription>
+              <S.ButtonWrapper>
+                <LongButton type={ButtonType.GREEN} onClick={() => navigate(`/users`)}>
+                  {t('verification.verified.button')}
+                </LongButton>
+              </S.ButtonWrapper>
+            </S.VerifiedContent>
+          ) : (
+            <>
+              <Topbar left={"back"} />
+              <S.ContentWrapper>
+                <S.PageTitle>{t('verification.title')}</S.PageTitle>
+                <S.PageDescription>
+                  {verificationStatus === 'pending' 
+                    ? t('verification.pending.description')
+                    : t('verification.unverified.description')}
+                </S.PageDescription>
+                <S.EmailInfoWrapper>
+                  <S.EmailInfoTitle>{t('verification.unverified.emailTitle')}</S.EmailInfoTitle>
+                  <S.EmailInfo>{user.email}</S.EmailInfo>
+                </S.EmailInfoWrapper>
+              </S.ContentWrapper>
+              <S.ButtonWrapper>
+                <LongButton 
+                  type={verificationStatus === 'pending' ? ButtonType.LONG_GREY : ButtonType.GREEN} 
+                  onClick={verificationStatus === 'pending' ? undefined : sendVerificationEmail}
+                  disabled={verificationStatus === 'pending'}
+                >
+                  {verificationStatus === 'pending' 
+                    ? t('verification.pending.button')
+                    : t('verification.unverified.button')}
+                </LongButton>
+              </S.ButtonWrapper>
+              <Modal
+                isOpen={isEmailSentModalOpen}
+                onClose={() => setIsEmailSentModalOpen(false)}
+                guideText={t('verification.modal.message')}
+                confirmText={t('verification.modal.confirm')}
+                onConfirm={handleConfirm}
+                isSingleButton={true}
+                showTextInput={false}
+              />
+            </>
+          )}
         </S.PageWrapper>
-    );
+      );
 };
 
 export default VerificationPage;
