@@ -61,7 +61,7 @@ const UserDetailPage = () => {
       const userInfo = {
         userId: user.id,
         nickname: user.nickname,
-        profilePhoto: user.profileImg,
+        profileImg: user.profileImg,
         country: user.country
       };
 
@@ -90,7 +90,7 @@ const UserDetailPage = () => {
             [loggedUser.id]: {
               userId: loggedUser.id,
               nickname: loggedUser.nickname,
-              profilePhoto: loggedUser.profileImg,
+              profileImg: loggedUser.profileImg,
               country: loggedUser.country
             },
             [user.id]: userInfo

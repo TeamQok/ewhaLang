@@ -26,10 +26,13 @@ const ChatBox = ({ chat, loggedInUserId }) => {
   const handleClick = () => {
     navigate(`/chats/${chat.channelId}`);
 };
+
+  console.log(otherUser);
+  console.log(otherUser.profileImg);
   
   return (
     <S.ChatItemWrapper onClick={handleClick}>
-        <UserImage profilePicture={otherUser.profilePicture} alt={otherUser.nickname} width={68} height={68}/>
+        <UserImage profilePicture={otherUser.profileImg} alt={otherUser.nickname} width={68} height={68}/>
       <S.ChatInfo>
         <S.UserInfoWrapper>
           <S.Nickname>{otherUser.nickname}</S.Nickname>

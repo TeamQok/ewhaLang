@@ -73,7 +73,7 @@ const MyPage = () => {
           <EditButton>{t("mypage.edit")}</EditButton>
         </S.EditButtonWrapper>
         <S.ImageContainer>
-          <UserImage profilePicture={user.profilePicture} alt={user.nickname} />
+          <UserImage profilePicture={user.profileImg} alt={user.nickname} />
         </S.ImageContainer>
         <UserCoreInformation nickname={user.nickname} country={user.country} />
         <S.Divider />
