@@ -167,7 +167,7 @@ const options = [t("actions.leaveChat"), t("actions.report")];
           </S.Title>
         } left={"back"} right="dot" rightonClick={handleDotClick} />
         <S.MessageListContainer>
-          <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profilePhoto} chatData={chatData} />
+          <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData} />
         </S.MessageListContainer>
       </S.ContentWrapper>
       <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
