@@ -14,6 +14,7 @@ import { auth, firestore } from "../firebase";
 import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
+import Spinner from "../components/common/Spinner";
 
 const MyPage = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -59,7 +60,7 @@ const MyPage = () => {
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <Spinner/>;
   }
 
   return (
