@@ -16,6 +16,7 @@ import {
   query,
   where,
   getDocs,
+  writeBatch,
 } from "firebase/firestore";
 import { firestore, auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
@@ -158,7 +159,7 @@ const UserInform = ({ isEdit }) => {
         introduction,
         email,
         usingLanguage,
-        isValidated: "unverified",
+        verificationStatus: "unverified",
         lastConnectDate: new Date().toISOString(), // 현재 시간 저장
       });
 
@@ -237,6 +238,11 @@ const UserInform = ({ isEdit }) => {
     try {
       const docRef = doc(firestore, "users", user.uid);
       await updateDoc(docRef, updatedData);
+
+          // 프로필 이미지, 닉네임, 국가 중 하나라도 변경되었다면 채팅 문서도 업데이트
+    if (updatedData.profileImg || updatedData.nickname || updatedData.country) {
+      await updateChatsWithNewUserInfo(user.uid, updatedData);
+    }
       // 'update' 메서드를 사용하여 문서 필드 업데이트
       setIsModalOpen3(true);
       navigate("/mypage");
@@ -246,6 +252,41 @@ const UserInform = ({ isEdit }) => {
       console.log("Error updating user document: ", error);
     }
   };
+
+  //채팅 문서 속 유저 정보 업데이트
+  const updateChatsWithNewUserInfo = async (userId, updatedData) => {
+    try {
+      const chatsRef = collection(firestore, "chats");
+      const q = query(chatsRef, where(`participantsId`, "array-contains", userId));
+      const querySnapshot = await getDocs(q);
+
+      const batch = writeBatch(firestore);
+
+      querySnapshot.forEach((doc) => {
+        const chatData = doc.data();
+        if (chatData.participantsInfo && chatData.participantsInfo[userId]){
+          const updatedParticipantInfo = {
+            ...chatData.participantsInfo[userId],
+            ...(updatedData.profileImg && { profileImg: updatedData.profileImg }),
+            ...(updatedData.nickname && { nickname: updatedData.nickname }),
+            ...(updatedData.country && { country: updatedData.country })
+          };
+
+          const updatedParticipantsInfo = {
+            ...chatData.participantsInfo,
+            [userId]: updatedParticipantInfo
+          };
+
+          batch.update(doc.ref, { participantsInfo: updatedParticipantsInfo });
+        }
+      });
+
+      await batch.commit();
+      console.log("Chat documents successfully updated with new user info!");
+    } catch(error) {
+      console.error("Error updating chat documents: ", error);
+    }
+  }
 
   // 저장하기 버튼 눌렀을 떄
   const onClickEdit = async () => {
