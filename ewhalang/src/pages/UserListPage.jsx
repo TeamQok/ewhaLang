@@ -9,6 +9,7 @@ import LanguageLevelInfo from "../components/pages/LanguageLevelInfo";
 import { auth, firestore } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
+import Spinner from "../components/common/Spinner";
 
 const UserListPage = () => {
   const { t } = useTranslation();
@@ -34,7 +35,18 @@ const UserListPage = () => {
           ...doc.data(),
         }));
         setAllUsers(users);
-        setLoggedUser(users.find((user) => user.id === currentUser.uid));
+        const currentLoggedUser = users.find(
+          (user) => user.id === currentUser.uid
+        );
+        setLoggedUser(currentLoggedUser);
+
+        // 사용자 검증 상태 확인 및 리다이렉트
+        if (
+          currentLoggedUser &&
+          currentLoggedUser.verificationStatus !== "verified"
+        ) {
+          navigate("/verify");
+        }
       } else {
         setLoggedUser(null);
         navigate("/login");
@@ -48,7 +60,7 @@ const UserListPage = () => {
     if (!loggedUser) return;
 
     const filtered = allUsers.filter((user) => {
-      if (user.id === loggedUser.id) return false;
+      if (user.uid === loggedUser.uid) return false;
 
       const languageMatch =
         filterCriteria.languages.length === 0 ||
@@ -82,7 +94,7 @@ const UserListPage = () => {
   };
 
   if (!loggedUser) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
 
   return (
