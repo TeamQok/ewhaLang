@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 const DateWrapper = styled.div`
-  width: 148px;
+  width: fit-content;
+  padding: 0 10px;
   height: 24px;
   background-color: var(--grey5);
   color: var(--grey1);
