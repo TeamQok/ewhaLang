@@ -47,7 +47,7 @@ export const Option = styled.div`
   color: ${({ color }) => color || "var(--Grey-1, #7f7f7f)"};
 
   /* Body 14R */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -62,9 +62,17 @@ export const Bar = styled.div`
   color: var(--Grey-1, #7f7f7f);
 
   /* Body 14R */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
   line-height: 24px; /* 171.429% */
+`;
+
+export const Eye = styled.img`
+  position: absolute;
+  top: 30.1rem;
+  z-index: 1;
+  right: 33px;
+  cursor: pointer;
 `;

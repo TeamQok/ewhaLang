@@ -29,7 +29,7 @@ export const Name = styled.div`
   margin-bottom: 85px;
 
   /* Subtitle_18_B */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
@@ -45,7 +45,7 @@ export const Setting = styled.div`
   box-sizing: border-box;
 
   /* Subsubtitle_16_SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
