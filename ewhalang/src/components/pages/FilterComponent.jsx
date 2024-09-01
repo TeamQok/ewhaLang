@@ -62,19 +62,18 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   }, [appliedFilters]);
 
   const openFilter = (filter) => {
-    setCurrentFilters(appliedFilters);
     setActiveFilter(filter);
-    setIsFullScreenSubFilter(isFullScreenFilterOpen);
+    if(!isFullScreenSubFilter){
+      setCurrentFilters(appliedFilters);
+    }
   };
 
   const closeFilter = () => {
     setActiveFilter(null);
-    setIsFullScreenSubFilter(false);
   };
 
   const openFullScreenFilter = () => {
     setCurrentFilters(appliedFilters);
-
     setIsFullScreenFilterOpen(true);
   };
 
@@ -101,7 +100,6 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         ? prev.countries.filter(c => c !== country)
         : [...prev.countries, country]
     }));
-    console.log(currentFilters);
   };
 
   const toggleGender = (gender) => {
@@ -163,7 +161,6 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
 
   const handleFilterApply = (filterType, newValue) => {
     setCurrentFilters((prev) => ({ ...prev, [filterType]: newValue }));
-    console.log(currentFilters);
     if (!isFullScreenFilterOpen) {
       setAppliedFilters(prev => ({ ...prev, [filterType]: newValue }));
       onFilterChange({ ...appliedFilters, [filterType]: newValue });

@@ -61,7 +61,7 @@ const SelectionPopup = ({
         {!fullScreen && (
           <ResetButton onClick={onReset}>
             <img src={resetIcon} alt="Reset" />
-            <span>t("filters.reset")</span>
+            <span>{t("filters.reset")}</span>
           </ResetButton>
         )}
         <LongButton type={ButtonType.GREEN} onClick={handleApply}>
