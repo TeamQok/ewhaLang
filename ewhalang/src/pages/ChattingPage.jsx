@@ -248,7 +248,7 @@ const options = [t("actions.leaveChat"), t("actions.report")];
           <S.Title>
             <Nickname>{otherUser.nickname}</Nickname>
             <Separator>|</Separator>
-            <Country>{otherUser.country}</Country>
+            <Country>{t(`nationality.${otherUser.country}`)}</Country>
           </S.Title>
         } left={"back"} right="dot" rightonClick={handleDotClick} />
         <S.MessageListContainer className="message-list-container">
