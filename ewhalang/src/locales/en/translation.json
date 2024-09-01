@@ -152,6 +152,11 @@
     "searchCountry": "Search for a country",
     "unknownUser": "You cannot send a message to an unknown user"
   },
+  "gender": {
+    "여성": "Female",
+    "남성": "Male",
+    "알리고 싶지 않음": "Prefer not to say"
+  },
   "signup2": {
     "title": "Sign Up",
     "수정하기": "Edit Profile",
