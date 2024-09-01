@@ -5,9 +5,10 @@ import PropTypes from 'prop-types';
 import * as S from './ChatList.style';
 import UserImage from '../shared/UserImage';
 import { useTranslation } from 'react-i18next';
+import { RESIGNED_USER } from '../../constants';
 
 const ChatBox = ({ chat, loggedInUserId }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const navigate = useNavigate();
     const formatTime = (timestamp) => {
@@ -20,15 +21,12 @@ const ChatBox = ({ chat, loggedInUserId }) => {
       };
   
   const otherUserId = chat.participantsId.find(id => id !== loggedInUserId);
-  const otherUser = chat.participantsInfo[otherUserId];
+  const otherUser = otherUserId === RESIGNED_USER.id ? { ...RESIGNED_USER, nickname: t('user.unknown') } : chat.participantsInfo[otherUserId];
   const unreadCount = chat.unreadCounts[loggedInUserId] || 0;
 
   const handleClick = () => {
     navigate(`/chats/${chat.channelId}`);
 };
-
-  console.log(otherUser);
-  console.log(otherUser.profileImg);
   
   return (
     <S.ChatItemWrapper onClick={handleClick}>

@@ -67,8 +67,6 @@ const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProf
     navigate(`/users/${senderId}`);
   }
 
-  console.log(userProfileImage);
-
   return (
     <MessageContainer isCurrentUser={isCurrentUser} showTime={showTime}>
       {!isCurrentUser ? (
