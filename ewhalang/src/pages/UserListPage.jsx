@@ -52,7 +52,9 @@ const UserListPage = () => {
     if (!loggedUser) return;
 
     const filtered = allUsers.filter((user) => {
-      if (user.uid === loggedUser.uid) return false;
+      if (user.id === loggedUser.id) {
+        return false;
+      }
 
       const languageMatch =
         filterCriteria.languages.length === 0 ||
@@ -69,8 +71,8 @@ const UserListPage = () => {
         user.gender === filterCriteria.gender;
 
       const birthYearMatch =
-        parseInt(user.birthdate) >= filterCriteria.birthdateRange.start &&
-        parseInt(user.birthdate) <= filterCriteria.birthdateRange.end;
+        parseInt(user.birthdate.substring(0,4)) >= filterCriteria.birthdateRange.start &&
+        parseInt(user.birthdate.substring(0,4)) <= filterCriteria.birthdateRange.end;
 
       return languageMatch && countryMatch && genderMatch && birthYearMatch;
     });
@@ -100,7 +102,7 @@ const UserListPage = () => {
       <LanguageLevelInfo />
 
       <ContentsWrapper>
-        {allUsers.map((user) => (
+        {filteredUsers.map((user) => (
           <UserListInformation key={user.id} user={user} />
         ))}
       </ContentsWrapper>
