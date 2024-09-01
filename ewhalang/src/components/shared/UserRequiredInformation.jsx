@@ -6,11 +6,11 @@ const UserRequiredInformation = ({ gender, birthdate, major, languages, layout =
   const { t } = useTranslation();
 
   const formatLanguages = (languages) => {
-    return languages.map(lang => ({ language: lang.language, level: lang.proficiency }));
+    return languages.map(lang => ({ language: t(`language.${lang.language}`), level: lang.proficiency }));
   };
 
   const requiredInfo = [
-    { label: t('userInfo.gender'), value: gender },
+    { label: t('userInfo.gender'), value: t(`gender.${gender}`) },
     { label: t('userInfo.birth'), value: birthdate },
     { label: t('userInfo.major'), value: major },
     { label: t('userInfo.languages'), value: formatLanguages(languages), isLanguage: true },
@@ -59,7 +59,7 @@ const InfoItem = ({ label, value, layout, isLanguage }) => {
       {isLanguage ? (
         <LanguageValue layout={layout}>
           {value.map((lang, index) => (
-            <div key={index}>{`${lang.language}(${lang.level})`}</div>
+            <div key={index}>{`${lang.language}: ${lang.level}`}</div>
           ))}
         </LanguageValue>
       ) : (

@@ -105,6 +105,14 @@ const UserInform = ({ isEdit }) => {
     setIntroduction(e.target.value);
   };
 
+  const onSelectCountry = (selectedOption) => {
+    // 선택된 옵션의 키(한국어 국가명)를 찾아 저장
+    const countryKey = Object.keys(t('nationality', { returnObjects: true })).find(
+      key => t(`nationality.${key}`) === selectedOption
+    );
+    setCountry(countryKey);
+  };
+
   // 언어 추가하기 버튼 클릭 시
   const addLanguage = () => {
     setLanguages((prev) => [...prev, { language: "", proficiency: "" }]);
@@ -114,6 +122,10 @@ const UserInform = ({ isEdit }) => {
   const updateLanguage = (index, type, value) => {
     setLanguages((prev) => {
       const updatedLanguages = [...prev];
+      // 선택된 옵션의 키(한국어 언어명)를 찾아 저장
+      const languageKey = Object.keys(t('language', { returnObjects: true })).find(
+        key => t(`language.${key}`) === value
+      );
       updatedLanguages[index][type] = value;
       return updatedLanguages;
     });
@@ -330,6 +342,7 @@ const UserInform = ({ isEdit }) => {
     checkNicknameDuplicate(nickname);
   };
 
+
   return (
     <>
       <Topbar
@@ -384,61 +397,9 @@ const UserInform = ({ isEdit }) => {
         <DropDown
           isLong={true}
           placeholder={t("signup2.국적을 선택해주세요")}
-          options={[
-            t("nationality.대한민국 🇰🇷"),
-            t("nationality.미국 🇺🇸"),
-            t("nationality.일본 🇯🇵"),
-            t("nationality.중국 🇨🇳"),
-            t("nationality.브라질 🇧🇷"),
-            t("nationality.과테말라 🇬🇹"),
-            t("nationality.자메이카 🇯🇲"),
-            t("nationality.파라과이 🇵🇾"),
-            t("nationality.멕시코 🇲🇽"),
-            t("nationality.방글라데시 🇧🇩"),
-            t("nationality.브루나이 🇧🇳"),
-            t("nationality.캄보디아 🇰🇭"),
-            t("nationality.홍콩 🇭🇰"),
-            t("nationality.인도 🇮🇳"),
-            t("nationality.인도네시아 🇮🇩"),
-            t("nationality.카자흐스탄 🇰🇿"),
-            t("nationality.말레이시아 🇲🇾"),
-            t("nationality.파키스탄 🇵🇰"),
-            t("nationality.필리핀 🇵🇭"),
-            t("nationality.사우디아라비아 🇸🇦"),
-            t("nationality.싱가포르 🇸🇬"),
-            t("nationality.수단 🇸🇩"),
-            t("nationality.대만 🇹🇼"),
-            t("nationality.태국 🇹🇭"),
-            t("nationality.아랍에미리트 🇦🇪"),
-            t("nationality.베트남 🇻🇳"),
-            t("nationality.핀란드 🇫🇮"),
-            t("nationality.오스트리아 🇦🇹"),
-            t("nationality.벨기에 🇧🇪"),
-            t("nationality.덴마크 🇩🇰"),
-            t("nationality.프랑스 🇫🇷"),
-            t("nationality.스페인 🇪🇸"),
-            t("nationality.독일 🇩🇪"),
-            t("nationality.영국 🇬🇧"),
-            t("nationality.아이슬란드 🇮🇸"),
-            t("nationality.아일랜드 🇮🇪"),
-            t("nationality.이탈리아 🇮🇹"),
-            t("nationality.라투아니아 🇱🇹"),
-            t("nationality.네덜란드 🇳🇱"),
-            t("nationality.노르웨이 🇳🇴"),
-            t("nationality.폴란드 🇵🇱"),
-            t("nationality.루마니아 🇷🇴"),
-            t("nationality.러시아 🇷🇺"),
-            t("nationality.스웨덴 🇸🇪"),
-            t("nationality.스위스 🇨🇭"),
-            t("nationality.캐나다 🇨🇦"),
-            t("nationality.호주 🇦🇺"),
-            t("nationality.뉴질랜드 🇳🇿"),
-          ]}
-          onSelect={(selectedOption) => {
-            console.log(`Selected: ${selectedOption}`);
-            setCountry(selectedOption);
-          }}
-          evalue={isEdit ? country : null}
+          options={Object.keys(t('nationality', { returnObjects: true })).map(key => t(`nationality.${key}`))}
+          onSelect={onSelectCountry}
+          evalue={isEdit ? t(`nationality.${country}`) : null}
         />
         <div style={{ marginBottom: "16px" }} />
 
@@ -446,14 +407,13 @@ const UserInform = ({ isEdit }) => {
         <DropDown
           isLong={true}
           placeholder={t("signup2.성별을 선택해주세요.")}
-          options={[
-            t("signup2.여성"),
-            t("signup2.남성"),
-            t("signup2.알리고 싶지 않음"),
-          ]}
+          options={Object.keys(t('gender', { returnObjects: true })).map(key => t(`gender.${key}`))}
           onSelect={(selectedOption) => {
             console.log(`Selected: ${selectedOption}`);
-            setGender(selectedOption);
+            const genderKey = Object.keys(t('gender', { returnObjects: true })).find(
+              key => t(`gender.${key}`) === selectedOption
+            );
+            setGender(genderKey);
           }}
           evalue={isEdit ? gender : null}
         />
@@ -481,43 +441,7 @@ const UserInform = ({ isEdit }) => {
             <DropDown
               isLong={false}
               placeholder={t("level.언어 선택")}
-              options={[
-                t("language.한국어"),
-                t("language.영어"),
-                t("language.일본어"),
-                t("language.중국어"),
-                t("language.프랑스어"),
-                t("language.스페인어"),
-                t("language.독일어"),
-                t("language.이탈리아어"),
-                t("language.러시아어"),
-                t("language.포르투갈어"),
-                t("language.아랍어"),
-                t("language.힌디어"),
-                t("language.베트남어"),
-                t("language.태국어"),
-                t("language.터키어"),
-                t("language.폴란드어"),
-                t("language.네덜란드어"),
-                t("language.스웨덴어"),
-                t("language.그리스어"),
-                t("language.체코어"),
-                t("language.헝가리어"),
-                t("language.핀란드어"),
-                t("language.덴마크어"),
-                t("language.노르웨이어"),
-                t("language.히브리어"),
-                t("language.벵골어"),
-                t("language.말레이어"),
-                t("language.크메르어"),
-                t("language.인도네시아어"),
-                t("language.카자흐어"),
-                t("language.우르두어"),
-                t("language.필리핀어(타갈로그어)"),
-                t("language.아이슬란드어"),
-                t("language.라트비아어"),
-                t("language.루마니아어"),
-              ]}
+              options={Object.keys(t('language', { returnObjects: true })).map(key => t(`language.${key}`))}
               onSelect={(selectedOption) => {
                 console.log(`Selected: ${selectedOption}`);
                 updateLanguage(index, "language", selectedOption);
