@@ -20,6 +20,11 @@ const Input = styled.input`
   outline: none;
   background-color: transparent;
   font-size: 16px;
+
+  &::placeholder{
+    font-size: 12px;
+    color: #999;
+  }
 `;
 
 const SendButton = styled.button`
@@ -30,11 +35,11 @@ const SendButton = styled.button`
   cursor: pointer;
 `;
 
-const InputArea = ({ onSendMessage }) => {
+const InputArea = ({ onSendMessage, disabled, placeholder }) => {
   const [inputText, setInputText] = useState('');
 
   const handleSend = () => {
-    if (inputText.trim()) {
+    if (inputText.trim() && !disabled) {
       onSendMessage(inputText);
       setInputText('');
     }
@@ -46,6 +51,8 @@ const InputArea = ({ onSendMessage }) => {
         type="text"
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
+        disabled={disabled}
+        placeholder={placeholder}
       />
       <SendButton onClick={handleSend}>
         <img src={sendIcon} alt="Send" width="24" height="24" />

@@ -10,6 +10,7 @@ import { Nickname, Separator, Country } from '../components/pages/ChatList.style
 import ShortDropDown from '../components/shared/ShortDropDown';
 import Modal from '../components/common/Modal';
 import { useTranslation } from 'react-i18next';
+import { RESIGNED_USER } from '../constants';
 
 const ChattingPage = () => {
   const { chatId } = useParams();
@@ -17,11 +18,15 @@ const ChattingPage = () => {
   const [chatData, setChatData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+  const [otherUserId, setOtherUserId] = useState(null);
+  const [otherUser, setOtherUser] = useState(null);
+  const [isResignedUser, setIsResignedUser] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [isChatOutConfirmOpen, setIsChatOutConfirmOpen] = useState(false);
+  const [isResignedUserModalOpen, setIsResignedUserModalOpen] = useState(false);
   const { t } = useTranslation();
 
   const navigate = useNavigate();
@@ -45,17 +50,31 @@ const ChattingPage = () => {
     return () => unsubscribe();
   }, [navigate]);
 
+  //로그인한 사용자가 채팅을 읽는 경우
   useEffect(() => {
+    let unsubscribe = () => {};
     const fetchChatData = async () => {
-      if (chatId && currentUser) {
+      if (chatId && currentUser && !isResignedUser) {
         try {
           const chatDoc = await getDoc(doc(firestore, "chats", chatId));
           if (chatDoc.exists()) {
             const data = chatDoc.data();
             setChatData(data);
+
+            const newOtherUserId = data.participantsId.find(id => id !== currentUser.id);
+            setOtherUserId(newOtherUserId);
+
+            if (newOtherUserId === RESIGNED_USER.id) {
+              setOtherUser({ ...RESIGNED_USER, nickname: t('user.unknown') });
+              setIsResignedUser(true);
+            } else {
+              const otherUserInfo = data.participantsInfo[newOtherUserId];
+              setOtherUser(otherUserInfo);
+              setIsResignedUser(false);
+            }
   
             const messagesRef = collection(firestore, `chats/${chatId}/messages`);
-            const unsubscribe = onSnapshot(messagesRef, async (snapshot) => {
+            unsubscribe = onSnapshot(messagesRef, async (snapshot) => {
               const batch = writeBatch(firestore);
               let messagesData = snapshot.docs.map(doc => {
                 const messageData = doc.data();
@@ -67,7 +86,6 @@ const ChattingPage = () => {
   
               await batch.commit();
   
-              // 사용자가 채팅방을 나갔다가 다시 들어온 경우, 나간 시점 이후의 메시지만 필터링
               const userDeletedDate = data.deletedDate[currentUser.id];
               if (userDeletedDate) {
                 messagesData = messagesData.filter(msg => 
@@ -78,12 +96,11 @@ const ChattingPage = () => {
               messagesData.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
               setMessages(messagesData);
   
+              // 채팅 페이지에 들어왔을 때만 unreadCount를 초기화합니다.
               await updateDoc(doc(firestore, "chats", chatId), {
                 [`unreadCounts.${currentUser.id}`]: 0
               });
             });
-  
-            return () => unsubscribe();
           } else {
             console.error("No such chat document!");
           }
@@ -96,7 +113,23 @@ const ChattingPage = () => {
     };
   
     fetchChatData();
+
+    // 컴포넌트가 언마운트될 때 실행될 클린업 함수
+    return () => {
+      unsubscribe();
+    };
+  
   }, [chatId, currentUser]);
+
+
+  //새 메시지가 추가될 때 스크롤 최하단으로 이동
+  useEffect(() => {
+    const messageContainer = document.querySelector('.message-list-container');
+    if(messageContainer){
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+  }, [messages]);
+
 
   if (loading || !currentUser) {
     return <div>{t("common.loading")}</div>;
@@ -106,10 +139,8 @@ const ChattingPage = () => {
     return <div>{t("messages.notFound")}</div>;
   }
 
-  const otherUserId = chatData.participantsId.find(id => id !== currentUser.id);
-  const otherUser = chatData.participantsInfo[otherUserId];
-
 const handleSendMessage = async (text) => {
+
   const newMessage = {
     senderId: currentUser.id,
     content: text,
@@ -166,7 +197,7 @@ const options = [t("actions.leaveChat"), t("actions.report")];
             <Country>{otherUser.country}</Country>
           </S.Title>
         } left={"back"} right="dot" rightonClick={handleDotClick} />
-        <S.MessageListContainer>
+        <S.MessageListContainer className="message-list-container">
           <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData} />
         </S.MessageListContainer>
       </S.ContentWrapper>
@@ -219,8 +250,18 @@ const options = [t("actions.leaveChat"), t("actions.report")];
         isSingleButton={true}
         showTextInput={false}
       />
+      <Modal
+        isOpen={isResignedUserModalOpen}
+        guideText={t("messages.resignedUserInform")}
+        confirmText={t("common.confirm")}
+        onConfirm={() => {
+          setIsChatOutModalOpen(false);
+          setIsChatOutConfirmOpen(true);
+        }}
+        isSingleButton={true}
+      ></Modal>
       <S.InputAreaContainer>
-        <InputArea onSendMessage={handleSendMessage} />
+        <InputArea onSendMessage={handleSendMessage} disabled={isResignedUser} placeholder={isResignedUser ? t("placeholder.unknownUser") : null} />
       </S.InputAreaContainer>
     </S.Wrapper>
   );

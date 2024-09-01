@@ -56,6 +56,9 @@
     "pwOkmessage": "* The password is correct.",
     "next": "Next"
   },
+  "user":{
+    "unknown": "(Unknown User)"
+  },
   "userInfo":{
     "gender": "Gender",
     "birth": "Birth Date",
@@ -70,7 +73,7 @@
     "logoutCompleted": "Logout completed."
   },
   "userList": {
-    "langLevel": "Language Proficiency",
+    "langLevel": "Language Level",
     "basic": "Basic",
     "intermediate": "Intermediate",
     "advanced": "Advanced",
@@ -79,7 +82,7 @@
   "filters":{
     "filter": "Filter",
     "lang": "Language",
-    "country": "Country",
+    "country": "Nationality",
     "gender": "Gender",
     "female": "Female",
     "male": "Male",
@@ -125,7 +128,8 @@
     "reportConfirm": "Report has been submitted.",
     "notFound": "Chat not found.",
     "leaveChatConfirm": "If you leave the chat room, the chat list and conversation content will be deleted and cannot be recovered. Are you sure you want to leave the chat room?",
-    "leaveChatComplete": "You have left the chat room."
+    "leaveChatComplete": "You have left the chat room.",
+    "resignedUserInform": "You cannot chat with a resigned user. Do you want to live the chat room?"
   },
   "pageTitles":{
     "mypage": "My Page",
@@ -143,7 +147,9 @@
     "loading": "Loading..."
   },
   "placeholder": {
-    "searchCountry": "Search for a country"
+    "searchCountry": "Search for a country",
+    "unknownUser": "You cannot send a message to an unknown user"
+  },
   "signup2": {
     "title": "Sign Up",
     "이름": "Name",
