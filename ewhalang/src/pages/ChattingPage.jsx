@@ -1,6 +1,6 @@
 import * as S from './ChattingPage.style';
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { collection, onSnapshot, getDocs, doc, addDoc, getDoc, updateDoc, increment, writeBatch } from 'firebase/firestore';
 import { auth, firestore } from '../firebase';
 import Topbar from '../components/layout/Topbar';
@@ -14,6 +14,8 @@ import { RESIGNED_USER } from '../constants';
 
 const ChattingPage = () => {
   const { chatId } = useParams();
+  const location = useLocation();
+  const [isNewChat, setIsNewChat] = useState(false);
   const [messages, setMessages] = useState([]);
   const [chatData, setChatData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,76 +52,83 @@ const ChattingPage = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  //로그인한 사용자가 채팅을 읽는 경우
   useEffect(() => {
-    let unsubscribe = () => {};
-    const fetchChatData = async () => {
-      if (chatId && currentUser && !isResignedUser) {
-        try {
-          const chatDoc = await getDoc(doc(firestore, "chats", chatId));
-          if (chatDoc.exists()) {
-            const data = chatDoc.data();
-            setChatData(data);
-
-            const newOtherUserId = data.participantsId.find(id => id !== currentUser.id);
-            setOtherUserId(newOtherUserId);
-
-            if (newOtherUserId === RESIGNED_USER.id) {
-              setOtherUser({ ...RESIGNED_USER, nickname: t('user.unknown') });
-              setIsResignedUser(true);
-            } else {
-              const otherUserInfo = data.participantsInfo[newOtherUserId];
-              setOtherUser(otherUserInfo);
-              setIsResignedUser(false);
-            }
+    if (chatId === 'new') {
+      setIsNewChat(true);
+      const { otherUser: newOtherUser, loggedUser } = location.state;
+      setOtherUser(newOtherUser);
+      setCurrentUser(loggedUser);
+      setOtherUserId(newOtherUser.userId);
+      setLoading(false);
+    } else {
+      let unsubscribe = () => {};
+      const fetchChatData = async () => {
+        if (chatId && currentUser && !isResignedUser) {
+          try {
+            const chatDoc = await getDoc(doc(firestore, "chats", chatId));
+            if (chatDoc.exists()) {
+              const data = chatDoc.data();
+              setChatData(data);
   
-            const messagesRef = collection(firestore, `chats/${chatId}/messages`);
-            unsubscribe = onSnapshot(messagesRef, async (snapshot) => {
-              const batch = writeBatch(firestore);
-              let messagesData = snapshot.docs.map(doc => {
-                const messageData = doc.data();
-                if (messageData.senderId !== currentUser.id && !messageData.isRead) {
-                  batch.update(doc.ref, { isRead: true });
-                }
-                return { id: doc.id, ...messageData };
-              });
+              const newOtherUserId = data.participantsId.find(id => id !== currentUser.id);
+              setOtherUserId(newOtherUserId);
   
-              await batch.commit();
-  
-              const userDeletedDate = data.deletedDate[currentUser.id];
-              if (userDeletedDate) {
-                messagesData = messagesData.filter(msg => 
-                  new Date(msg.timestamp) > new Date(userDeletedDate)
-                );
+              if (newOtherUserId === RESIGNED_USER.id) {
+                setOtherUser({ ...RESIGNED_USER, nickname: t('user.unknown') });
+                setIsResignedUser(true);
+              } else {
+                const otherUserInfo = data.participantsInfo[newOtherUserId];
+                setOtherUser(otherUserInfo);
+                setIsResignedUser(false);
               }
-  
-              messagesData.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-              setMessages(messagesData);
-  
-              // 채팅 페이지에 들어왔을 때만 unreadCount를 초기화합니다.
-              await updateDoc(doc(firestore, "chats", chatId), {
-                [`unreadCounts.${currentUser.id}`]: 0
+    
+              const messagesRef = collection(firestore, `chats/${chatId}/messages`);
+              unsubscribe = onSnapshot(messagesRef, async (snapshot) => {
+                const batch = writeBatch(firestore);
+                let messagesData = snapshot.docs.map(doc => {
+                  const messageData = doc.data();
+                  if (messageData.senderId !== currentUser.id && !messageData.isRead) {
+                    batch.update(doc.ref, { isRead: true });
+                  }
+                  return { id: doc.id, ...messageData };
+                });
+    
+                await batch.commit();
+    
+                const userDeletedDate = data.deletedDate[currentUser.id];
+                if (userDeletedDate) {
+                  messagesData = messagesData.filter(msg => 
+                    new Date(msg.timestamp) > new Date(userDeletedDate)
+                  );
+                }
+    
+                messagesData.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                setMessages(messagesData);
+    
+                // 채팅 페이지에 들어왔을 때만 unreadCount를 초기화합니다.
+                await updateDoc(doc(firestore, "chats", chatId), {
+                  [`unreadCounts.${currentUser.id}`]: 0
+                });
               });
-            });
-          } else {
-            console.error("No such chat document!");
+            } else {
+              console.error("No such chat document!");
+            }
+          } catch (error) {
+            console.error("Error fetching chat data: ", error);
+          } finally {
+            setLoading(false);
           }
-        } catch (error) {
-          console.error("Error fetching chat data: ", error);
-        } finally {
-          setLoading(false);
         }
-      }
-    };
+      };
+    
+      fetchChatData();
   
-    fetchChatData();
-
-    // 컴포넌트가 언마운트될 때 실행될 클린업 함수
-    return () => {
-      unsubscribe();
-    };
-  
-  }, [chatId, currentUser]);
+      // 컴포넌트가 언마운트될 때 실행될 클린업 함수
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [chatId, location]);
 
 
   //새 메시지가 추가될 때 스크롤 최하단으로 이동
@@ -135,31 +144,76 @@ const ChattingPage = () => {
     return <div>{t("common.loading")}</div>;
   }
 
-  if (!chatData) {
-    return <div>{t("messages.notFound")}</div>;
-  }
-
-const handleSendMessage = async (text) => {
-
-  const newMessage = {
-    senderId: currentUser.id,
-    content: text,
-    timestamp: new Date().toISOString(),
-    isRead: false
-  };
-
-  try {
-    await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
-
-    await updateDoc(doc(firestore, "chats", chatId), {
-      [`unreadCounts.${otherUserId}`]: increment(1),
-      lastMessage: newMessage
-    });
+  const handleSendMessage = async (text) => {
+    if (!currentUser) return;
   
-  } catch (error) {
-    console.error("Error sending message: ", error);
-  }
-};
+    const newMessage = {
+      senderId: currentUser.id,
+      content: text,
+      timestamp: new Date().toISOString(),
+      isRead: false
+    };
+
+    console.log(newMessage);
+  
+    try {
+      if (chatId === 'new') {
+        // 새 채팅 문서 생성
+        const newChatData = {
+          participantsId: [currentUser.id, otherUserId],
+          participantsInfo: {
+            [currentUser.id]: {
+              userId: currentUser.id,
+              nickname: currentUser.nickname,
+              profileImg: currentUser.profileImg,
+              country: currentUser.country
+            },
+            [otherUserId]: otherUser
+          },
+          lastMessage: newMessage,
+          unreadCounts: {
+            [currentUser.id]: 0,
+            [otherUserId]: 1
+          },
+          deletedDate: {
+            [currentUser.id]: null,
+            [otherUserId]: null
+          }
+        };
+
+        const newChatRef = await addDoc(collection(firestore, "chats"), newChatData);
+  
+        // 새 채팅에 첫 메시지 추가
+        await addDoc(collection(firestore, `chats/${newChatRef.id}/messages`), newMessage);
+
+        // 채팅 문서 업데이트
+        await updateDoc(doc(firestore, "chats", newChatRef.id), {
+          [`unreadCounts.${otherUserId}`]: increment(1),
+          lastMessage: newMessage
+        });
+
+        setChatData(newChatData);
+  
+        // URL 업데이트
+        navigate(`/chats/${newChatRef.id}`, { replace: true });
+
+        if(isNewChat){
+          setIsNewChat(false);
+        }
+      } else {
+        // 기존 채팅에 메시지 추가
+        await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
+  
+        // 채팅 문서 업데이트
+        await updateDoc(doc(firestore, "chats", chatId), {
+          [`unreadCounts.${otherUserId}`]: increment(1),
+          lastMessage: newMessage
+        });
+      }
+    } catch (error) {
+      console.error("Error sending message: ", error);
+    }
+  };
 
 const options = [t("actions.leaveChat"), t("actions.report")];
   const handleDotClick = () => {
@@ -198,10 +252,14 @@ const options = [t("actions.leaveChat"), t("actions.report")];
           </S.Title>
         } left={"back"} right="dot" rightonClick={handleDotClick} />
         <S.MessageListContainer className="message-list-container">
-          <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData} />
+          {!isNewChat && (
+            <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData} />
+          )}
         </S.MessageListContainer>
       </S.ContentWrapper>
-      <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
+      {!isNewChat && (
+        <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
+      )}
       <Modal
         isOpen={isReportModalOpen}
         guideText={t("messages.reportReason")}
