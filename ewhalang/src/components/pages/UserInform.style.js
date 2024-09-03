@@ -55,7 +55,7 @@ export const InputTitle = styled.div`
   color: #000;
 
   /* Subsubtitle_16_SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -101,7 +101,7 @@ export const Title = styled.div`
   width: 100%;
 
   /* Subsubtitle_16_SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -141,9 +141,62 @@ export const Introduce = styled.textarea`
   box-sizing: border-box;
   resize: none;
   padding: 8px 12px 8px 12px;
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: 24px;
+`;
+
+export const ImgOptionWrp = styled.div`
+  position: absolute;
+  top: 110px; // 원하는 위치로 조정
+  right: 80px;
+  z-index: 1;
+  transform: translate(100%, 0%);
+  display: flex;
+  width: 130px;
+  padding: 8px 0px;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 12px;
+  background: var(--White, #fff);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+`;
+
+export const ImgOption = styled.div`
+  display: flex;
+  height: 44px;
+  padding: 10px 26px;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  color: var(--Black, #000);
+  text-align: center;
+  border-bottom: 1px solid var(--grey4);
+
+  /* Button 14SB */
+  font-family: var(--korean);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 171.429% */
+`;
+
+export const ImgOption2 = styled.div`
+  display: flex;
+  height: 44px;
+  padding: 10px 26px;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  color: var(--Black, #000);
+  text-align: center;
+
+  /* Button 14SB */
+  font-family: var(--korean);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 171.429% */
 `;

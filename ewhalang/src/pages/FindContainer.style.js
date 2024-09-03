@@ -17,7 +17,7 @@ export const Menu1 = styled.div`
   color: ${(props) => (props.email ? "var(--sub1)" : "var(--grey3)")};
 
   /* Subsubtitle_16_SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -35,7 +35,7 @@ export const Menu2 = styled.div`
   color: ${(props) => (props.pw ? "var(--sub1)" : "var(--grey3)")};
 
   /* Subsubtitle_16_SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 16px;
   font-style: normal;
   font-weight: 600;

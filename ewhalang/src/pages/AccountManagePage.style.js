@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
 `;
 export const Info = styled.div`
   color: ${(props) => (props.err ? "red" : "var(--grey2)")};
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
@@ -18,7 +18,7 @@ export const Info = styled.div`
 `;
 export const Info1 = styled.div`
   color: ${(props) => (props.err ? "red" : "var(--grey2)")};
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
@@ -27,7 +27,7 @@ export const Info1 = styled.div`
 `;
 export const Info2 = styled.div`
   color: ${(props) => (props.err ? "red" : "var(--grey2)")};
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
@@ -38,7 +38,7 @@ export const Title = styled.div`
   color: var(--black);
 
   /* Subsubtitle_16_SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -56,7 +56,7 @@ export const DInput = styled.input`
   color: var(--Grey-1, #7f7f7f);
 
   /* Body 14R */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -80,7 +80,7 @@ export const Box = styled.div`
   border: 1px solid var(--grey4);
 
   /* Button 14SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 14px;
   font-style: normal;
   font-weight: 600;

@@ -17,12 +17,13 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { firestore, auth } from "../../firebase";
+import { firestore, auth, storage } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { deleteUser, getAuth } from "firebase/auth";
 import BottomBar from "../layout/BottomBar";
 import imageCompression from "browser-image-compression";
 import { useTranslation } from "react-i18next";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const proficiencyOrder = {
   "원어민 (Native)": 4,
@@ -38,6 +39,10 @@ const UserInform = ({ isEdit }) => {
   const [isModalOpen4, setIsModalOpen4] = useState(false);
   const [isModalOpen5, setIsModalOpen5] = useState(false);
   const navigate = useNavigate();
+
+  // 카메라 옵션용
+  const [showOptions, setShowOptions] = useState(false);
+  const optionsRef = useRef(null); // 옵션 영역을 참조하기 위한 ref 생성
 
   // 이미지 업로드용
   const [profileImg, setProfileImg] = useState(profile); // 프로필 이미지를 저장할 상태
@@ -125,17 +130,63 @@ const UserInform = ({ isEdit }) => {
     });
   };
 
+  // 언어 중복선택 안 되도록 언어 목록에서 제외
+  const selectedLanguages = languages.map((langObj) => langObj.language);
+
+  const filteredOptions = [
+    t("language.한국어"),
+    t("language.영어"),
+    t("language.일본어"),
+    t("language.중국어"),
+    t("language.프랑스어"),
+    t("language.스페인어"),
+    t("language.독일어"),
+    t("language.이탈리아어"),
+    t("language.러시아어"),
+    t("language.포르투갈어"),
+    t("language.아랍어"),
+    t("language.힌디어"),
+    t("language.베트남어"),
+    t("language.태국어"),
+    t("language.터키어"),
+    t("language.폴란드어"),
+    t("language.네덜란드어"),
+    t("language.스웨덴어"),
+    t("language.그리스어"),
+    t("language.체코어"),
+    t("language.헝가리어"),
+    t("language.핀란드어"),
+    t("language.덴마크어"),
+    t("language.노르웨이어"),
+    t("language.히브리어"),
+    t("language.벵골어"),
+    t("language.말레이어"),
+    t("language.크메르어"),
+    t("language.인도네시아어"),
+    t("language.카자흐어"),
+    t("language.우르두어"),
+    t("language.필리핀어(타갈로그어)"),
+    t("language.아이슬란드어"),
+    t("language.라트비아어"),
+    t("language.루마니아어"),
+  ].filter((option) => !selectedLanguages.includes(option));
+
   // 회원가입 시
   // 저장하기 버튼 눌렀을 때
   const onClickSignin = async () => {
     // 해당 항목들이 입력 되어있어야 넘어갈 수 있음
+    // 모든 languages 배열의 각 항목이 유효한지 확인
+    const isLanguagesValid = languages.every(
+      (languageObj) => languageObj.language && languageObj.proficiency
+    );
+
     if (
       name &&
       nickname &&
       country &&
       gender &&
       major &&
-      languages &&
+      isLanguagesValid &&
       birthdate
     ) {
       const sortedLanguages = sortLanguagesByProficiency(languages);
@@ -143,6 +194,7 @@ const UserInform = ({ isEdit }) => {
       const uid = user?.uid;
       const email = user?.email;
       const usingLanguage = localStorage.getItem("usingLanguage");
+      // 1. 프로필 이미지를 업로드하고 URL 받아오기
 
       const docRef = await setDoc(doc(firestore, "users", uid), {
         uid,
@@ -170,6 +222,36 @@ const UserInform = ({ isEdit }) => {
   };
 
   /////////////////////////////////////////////////////
+
+  // 사진 선택 옵션
+  const openOption = () => {
+    setShowOptions(!showOptions);
+  };
+
+  // 옵션 영역 외부 클릭을 감지하기 위한 useEffect
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // 클릭된 요소가 옵션 영역이 아닐 때 옵션을 닫음
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setShowOptions(false);
+      }
+    }
+
+    // 마우스 클릭 이벤트 리스너 추가
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [optionsRef]);
+
+  //기본 이미지 선택
+  const defaultImg = () => {
+    setProfileImg(null);
+    setShowOptions(false);
+  };
+
   //프로필 이미지 선택(탐색기 열기)
   const openFileDialog = () => {
     fileInputRef.current.click();
@@ -179,10 +261,11 @@ const UserInform = ({ isEdit }) => {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     const options = {
-      maxSizeMB: 0.75, // 최대 파일 크기를 759kb로 설정
+      maxSizeMB: 0.35, // 최대 파일 크기를 759kb로 설정
       maxWidthOrHeight: 1920, // 최대 높이
       useWebWorker: true,
     };
+    setShowOptions(false);
 
     // 이미지 압축
     const compressedFile = await imageCompression(file, options);
@@ -195,8 +278,9 @@ const UserInform = ({ isEdit }) => {
         setProfileImg(reader.result); // 이미지 URL을 상태로 설정
       };
       reader.readAsDataURL(compressedFile);
-    }
+    } else return;
   };
+
   /////////////////////////////////////////////////////////////
 
   //  수정 함수
@@ -243,12 +327,30 @@ const UserInform = ({ isEdit }) => {
 
       console.log("User document successfully updated!");
     } catch (error) {
-      console.log("Error updating user document: ", error);
+      console.log(error);
     }
   };
 
   // 저장하기 버튼 눌렀을 떄
   const onClickEdit = async () => {
+    // 모든 languages 배열의 각 항목이 유효한지 확인
+    const isLanguagesValid = languages.every(
+      (languageObj) => languageObj.language && languageObj.proficiency
+    );
+
+    // 각 필드에 대한 유효성 검사
+    if (
+      !profileImg || // 프로필 이미지가 있는지 확인
+      !nickname || // 닉네임이 있는지 확인
+      !country || // 국가가 있는지 확인
+      !birthdate || // 생년월일이 있는지 확인
+      !gender || // 성별이 있는지 확인
+      !major || // 전공이 있는지 확인
+      !isLanguagesValid // 언어 배열이 유효한지 확인
+    ) {
+      setIsModalOpen2(true);
+      return; // 저장 작업 중단
+    }
     const sortedLanguages = sortLanguagesByProficiency(languages);
     const updatedData = {
       profileImg,
@@ -292,7 +394,7 @@ const UserInform = ({ isEdit }) => {
   return (
     <>
       <Topbar
-        title={isEdit ? "수정하기" : t("signup2.title")}
+        title={isEdit ? t("signup2.수정하기") : t("signup2.title")}
         right={"x"}
         left={"back"}
         rightonClick={onClickX}
@@ -302,7 +404,7 @@ const UserInform = ({ isEdit }) => {
       <S.Container>
         <S.ProfileWrapper>
           <S.ProfileImg src={profileImg ? profileImg : profile} />
-          <S.Camera onClick={openFileDialog}>
+          <S.Camera onClick={openOption}>
             <img src={camera} />
           </S.Camera>
           <input
@@ -311,6 +413,18 @@ const UserInform = ({ isEdit }) => {
             style={{ display: "none" }}
             onChange={handleFileChange}
           />
+          {showOptions ? (
+            <>
+              <S.ImgOptionWrp ref={optionsRef}>
+                <S.ImgOption onClick={defaultImg}>기본 이미지</S.ImgOption>
+                <S.ImgOption2 onClick={openFileDialog}>
+                  사진 불러오기
+                </S.ImgOption2>
+              </S.ImgOptionWrp>
+            </>
+          ) : (
+            <></>
+          )}
         </S.ProfileWrapper>
       </S.Container>
       <S.Wrapper>
@@ -440,43 +554,7 @@ const UserInform = ({ isEdit }) => {
             <DropDown
               isLong={false}
               placeholder={t("level.언어 선택")}
-              options={[
-                t("language.한국어"),
-                t("language.영어"),
-                t("language.일본어"),
-                t("language.중국어"),
-                t("language.프랑스어"),
-                t("language.스페인어"),
-                t("language.독일어"),
-                t("language.이탈리아어"),
-                t("language.러시아어"),
-                t("language.포르투갈어"),
-                t("language.아랍어"),
-                t("language.힌디어"),
-                t("language.베트남어"),
-                t("language.태국어"),
-                t("language.터키어"),
-                t("language.폴란드어"),
-                t("language.네덜란드어"),
-                t("language.스웨덴어"),
-                t("language.그리스어"),
-                t("language.체코어"),
-                t("language.헝가리어"),
-                t("language.핀란드어"),
-                t("language.덴마크어"),
-                t("language.노르웨이어"),
-                t("language.히브리어"),
-                t("language.벵골어"),
-                t("language.말레이어"),
-                t("language.크메르어"),
-                t("language.인도네시아어"),
-                t("language.카자흐어"),
-                t("language.우르두어"),
-                t("language.필리핀어(타갈로그어)"),
-                t("language.아이슬란드어"),
-                t("language.라트비아어"),
-                t("language.루마니아어"),
-              ]}
+              options={filteredOptions}
               onSelect={(selectedOption) => {
                 console.log(`Selected: ${selectedOption}`);
                 updateLanguage(index, "language", selectedOption);
