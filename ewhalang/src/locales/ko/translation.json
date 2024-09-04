@@ -54,7 +54,8 @@
     "pwOkmessage": "* 알맞은 비밀번호입니다.",
     "next": "다음"
   },
-  "userInfo": {
+
+  "userInfo":{
     "gender": "성별",
     "birth": "출생년도",
     "major": "전공",
@@ -75,7 +76,8 @@
     "advanced": "상급",
     "native": "원어민"
   },
-  "filters": {
+
+  "filters":{
     "filter": "필터",
     "lang": "언어",
     "country": "국적",
@@ -126,7 +128,8 @@
     "leaveChatConfirm": "채팅방을 나가면 채팅 목록 및 대화 내용이 삭제되고 복구할 수 없어요. 채팅방에서 정말 나가시겠습니까?",
     "leaveChatComplete": "채팅방 나가기를 완료했습니다."
   },
-  "pageTitles": {
+
+  "pageTitles":{
     "mypage": "마이페이지",
     "userList": "이화랑 친구 찾기",
     "filter": "전체 필터",
@@ -142,7 +145,10 @@
   },
   "placeholder": {
     "searchCountry": "나라를 검색하세요."
+
   },
+
+
   "signup2": {
     "title": "회원가입",
     "수정하기": "수정하기",
@@ -316,4 +322,5 @@
     "확인": "확인",
     "예": "예"
   }
+
 }

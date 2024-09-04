@@ -66,11 +66,9 @@ const MyPage = () => {
   return (
     <S.Wrapper>
       <S.ContentWrapper>
-        <Topbar
-          title={t("pageTitles.mypage")}
-          right="setting"
-          rightonClick={goSetting}
-        />
+
+        <Topbar title={t("pageTitles.mypage")} right="setting" rightonClick={goSetting} />
+
         <S.EditButtonWrapper onClick={goEditMypage}>
           <EditButton>{t("mypage.edit")}</EditButton>
         </S.EditButtonWrapper>
