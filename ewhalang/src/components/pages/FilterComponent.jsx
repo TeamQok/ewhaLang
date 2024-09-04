@@ -12,21 +12,6 @@ import resetIcon from "../../assets/reset.svg";
 import { LongButton } from "../common/LongButton";
 import { useTranslation } from "react-i18next";
 
-const languages = [
-  '한국어', '영어', '일본어', '중국어', '프랑스어', '스페인어',
-  '독일어', '이탈리아어', '러시아어', '포르투갈어', '아랍어',
-  '힌디어', '베트남어', '태국어', '터키어', '폴란드어',
-  '네덜란드어', '스웨덴어', '그리스어', '체코어', '헝가리어',
-  '핀란드어', '덴마크어', '노르웨이어', '히브리어'
-];
-
-const countries = [
-  '대한민국', '미국', '일본', '중국', '프랑스', '스페인',
-  '영국', '독일', '이탈리아', '캐나다', '호주', '인도',
-  '브라질', '멕시코', '남아프리카 공화국', '러시아', '네덜란드',
-  '스웨덴', '스위스', '벨기에', '오스트리아'
-];
-
 const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [isFullScreenFilterOpen, setIsFullScreenFilterOpen] = useState(false);
@@ -36,7 +21,18 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const { i18n, t } = useTranslation();
 
   const genderOptions = [t("filters.all"), t('filters.female'), t('filters.male')];
+  
+  // 언어 옵션 객체 배열
+  const languageOptions = Object.keys(t('language', { returnObjects: true })).map(key => ({
+    key: key,
+    value: t(`language.${key}`)
+  }));
 
+  // 국가 옵션 객체 배열
+  const countryOptions = Object.keys(t('nationality', { returnObjects: true })).map(key => ({
+    key: key,
+    value: t(`nationality.${key}`)
+  }));
 
   const [countrySearchTerm, setCountrySearchTerm] = useState('');
 
@@ -106,18 +102,34 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     setCurrentFilters((prev) => ({...prev, gender: gender === prev.gender ? t("filters.all") : gender}));
   };
 
-  const filteredCountries = countries.filter(country =>
-    country.toLowerCase().includes(countrySearchTerm.toLowerCase())
+  const filteredCountries = countryOptions.filter(country =>
+    country.value.toLowerCase().includes(countrySearchTerm.toLowerCase())
   );
 
-  const getFormattedText = (items) => {
+  const getFormattedText = (items, filterType) => {
     if (items.length === 0) return null;
-    if (items.length === 1) return items[0];
-    return t('filters.andMore', { count: items.length - 1, item: items[0] });
+    
+    const translateItem = (item) => {
+      switch(filterType) {
+        case 'languages':
+          return t(`language.${item}`);
+        case 'countries':
+          return t(`nationality.${item}`);
+        default:
+          return item; // 기본값으로 원래 항목을 반환
+      }
+    };
+  
+    if (items.length === 1) return translateItem(items[0]);
+    
+    return t('filters.andMore', { 
+      count: items.length - 1, 
+      item: translateItem(items[0])
+    });
   };
 
-  const getCurrentLanguagesText = () => getFormattedText(currentFilters.languages);
-  const getCurrentCountriesText = () => getFormattedText(currentFilters.countries);
+  const getCurrentLanguagesText = () => getFormattedText(currentFilters.languages, 'languages');
+  const getCurrentCountriesText = () => getFormattedText(currentFilters.countries, 'countries');
 
   const getCurrentGenderText = () =>
     currentFilters.gender !== t('filters.all') ? currentFilters.gender : null;
@@ -130,8 +142,8 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     return null;
   };
 
-  const getAppliedLanguagesText = () => getFormattedText(appliedFilters.languages);
-  const getAppliedCountriesText = () => getFormattedText(appliedFilters.countries);
+  const getAppliedLanguagesText = () => getFormattedText(appliedFilters.languages, 'languages');
+  const getAppliedCountriesText = () => getFormattedText(appliedFilters.countries, 'countries');
 
   const getAppliedGenderText = () =>
     appliedFilters.gender !== t("filters.all") ? appliedFilters.gender : null;
@@ -217,7 +229,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
         isOpen={activeFilter === '언어'}
         onClose={closeFilter}
         title={t("filters.lang")}
-        items={languages}
+        items={languageOptions}
         selectedItems={currentFilters.languages}
         toggleItem={toggleLanguage}
         onApply={(selectedLanguages) => handleFilterApply('languages', selectedLanguages)}
