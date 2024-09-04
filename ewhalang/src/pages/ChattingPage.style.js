@@ -3,16 +3,13 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
   overflow: hidden;
 `;
 
 export const ContentWrapper = styled.div`
   display: flex;
-  height: 100vh;
   flex: 1;
   overflow: hidden;
-  padding-bottom: 60px;
 `;
 
 export const Title = styled.div`
@@ -31,7 +28,7 @@ export const MessageListContainer = styled.div`
 export const InputAreaContainer = styled.div`
   padding: 7px 24px;
   position: fixed;
-  bottom: 0;
+  bottom: 0px;
   left: 0;
   right: 0;
   width: 100%;

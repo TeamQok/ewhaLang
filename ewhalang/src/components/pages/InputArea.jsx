@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import sendIcon from '../../assets/sendMessage.svg'
 
@@ -11,7 +11,7 @@ const InputContainer = styled.div`
   padding: 5px;
 `;
 
-const Input = styled.input`
+const Input = styled.textarea`
   width: 88vw;
   height: 40px;
   border: none;
@@ -20,6 +20,7 @@ const Input = styled.input`
   outline: none;
   background-color: transparent;
   font-size: 16px;
+  resize: none;
 
   &::placeholder{
     font-size: 12px;
@@ -37,17 +38,21 @@ const SendButton = styled.button`
 
 const InputArea = ({ onSendMessage, disabled, placeholder }) => {
   const [inputText, setInputText] = useState('');
+  const inputRef = useRef(null);
 
   const handleSend = () => {
     if (inputText.trim() && !disabled) {
       onSendMessage(inputText);
       setInputText('');
+      inputRef.current.focus();
     }
   };
+
 
   return (
     <InputContainer>
       <Input
+        ref={inputRef}
         type="text"
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}

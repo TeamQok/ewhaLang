@@ -1,5 +1,5 @@
 import * as S from './ChattingPage.style';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { collection, onSnapshot, getDocs, doc, addDoc, getDoc, updateDoc, increment, writeBatch } from 'firebase/firestore';
 import { auth, firestore } from '../firebase';
@@ -11,6 +11,7 @@ import ShortDropDown from '../components/shared/ShortDropDown';
 import Modal from '../components/common/Modal';
 import { useTranslation } from 'react-i18next';
 import { RESIGNED_USER } from '../constants';
+import Spinner from '../components/common/Spinner';
 
 const ChattingPage = () => {
   const { chatId } = useParams();
@@ -28,7 +29,8 @@ const ChattingPage = () => {
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [isChatOutConfirmOpen, setIsChatOutConfirmOpen] = useState(false);
-  const [isResignedUserModalOpen, setIsResignedUserModalOpen] = useState(false);
+  const [isKeyboard, setIsKeyboard] = useState(false);
+  const [height, setHeight] = useState(null);
   const { t } = useTranslation();
 
   const navigate = useNavigate();
@@ -81,6 +83,7 @@ const ChattingPage = () => {
                 setOtherUser(otherUserInfo);
                 setIsResignedUser(false);
               }
+              setLoading(false);
     
               const messagesRef = collection(firestore, `chats/${chatId}/messages`);
               unsubscribe = onSnapshot(messagesRef, async (snapshot) => {
@@ -94,6 +97,7 @@ const ChattingPage = () => {
                 });
     
                 await batch.commit();
+                setLoading(false);
     
                 const userDeletedDate = data.deletedDate[currentUser.id];
                 if (userDeletedDate) {
@@ -104,12 +108,12 @@ const ChattingPage = () => {
     
                 messagesData.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
                 setMessages(messagesData);
-    
                 // 채팅 페이지에 들어왔을 때만 unreadCount를 초기화합니다.
                 await updateDoc(doc(firestore, "chats", chatId), {
                   [`unreadCounts.${currentUser.id}`]: 0
                 });
               });
+              setLoading(false);
             } else {
               console.error("No such chat document!");
             }
@@ -128,20 +132,70 @@ const ChattingPage = () => {
         unsubscribe();
       };
     }
-  }, [chatId, location]);
+  }, [chatId, currentUser, location]);
 
-
-  //새 메시지가 추가될 때 스크롤 최하단으로 이동
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    }, 0);
+  };
+  
   useEffect(() => {
-    const messageContainer = document.querySelector('.message-list-container');
-    if(messageContainer){
-      messageContainer.scrollTop = messageContainer.scrollHeight;
+    if (!loading && messages.length > 0) {
+      scrollToBottom();
     }
-  }, [messages]);
+  }, [messages, loading]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const windowInnerHeight = window.innerHeight;
+      const viewportHeight = window.visualViewport.height;
+
+      if (windowInnerHeight > viewportHeight) {
+        // 키보드가 올라온 상태
+        setIsKeyboard(true);
+        setHeight(viewportHeight);
+      } else {
+        // 키보드가 내려간 상태
+        setIsKeyboard(false);
+        setHeight(null);
+      }
+    };
+
+    // 초기 실행
+    handleResize();
+
+    // 이벤트 리스너 등록
+    window.visualViewport.addEventListener('resize', handleResize);
+
+    // 클린업 함수
+    return () => {
+      window.visualViewport.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    // isKeyboard 값이 변경될 때마다 실행될 로직
+    console.log('Keyboard state changed:', isKeyboard);
+    // 여기에 키보드 상태 변경에 따른 추가 로직을 구현할 수 있습니다.
+  }, [isKeyboard]);
 
 
-  if (loading || !currentUser) {
-    return <div>{t("common.loading")}</div>;
+// // scroll event
+// function handleWindowScroll(){
+//   let viewportTopGap = parseInt(visualViewport.pageTop - visualViewport.offsetTop);
+//   let translateY = parseInt(window.scrollY - viewportTopGap);
+//   // 👇 scroll 변화에 따라 viewport div 이동
+//   viewportwrap.style.transform = `translateY(${translateY}px)`;
+// }
+
+// 가상 영역까지 스크롤 내려가는 것을 방지
+if(window.scrollY + visualViewport.height > document.body.offsetHeight - 2){ 
+  window.scrollTo(0, document.body.offsetHeight - visualViewport.height-1);
+}
+
+  if (loading) {
+    return <Spinner/>
   }
 
   const handleSendMessage = async (text) => {
@@ -153,8 +207,6 @@ const ChattingPage = () => {
       timestamp: new Date().toISOString(),
       isRead: false
     };
-
-    console.log(newMessage);
   
     try {
       if (chatId === 'new') {
@@ -216,9 +268,10 @@ const ChattingPage = () => {
   };
 
 const options = [t("actions.leaveChat"), t("actions.report")];
-  const handleDotClick = () => {
-    setIsDropDownOpen(!isDropDownOpen);
-  };
+  
+const handleDotClick = () => {
+  setIsDropDownOpen(!isDropDownOpen);
+};
 
   const handleSelect = (option) => {
     setIsDropDownOpen(false);
@@ -242,12 +295,12 @@ const options = [t("actions.leaveChat"), t("actions.report")];
   };
 
   return (
-    <S.Wrapper>
+    <S.Wrapper height={height}>
       <S.ContentWrapper>
         <Topbar title={
           <S.Title>
             <Nickname>{otherUser.nickname}</Nickname>
-            <Separator>|</Separator>
+            <Separator>{String(isKeyboard)}</Separator>
             <Country>{t(`nationality.${otherUser.country}`)}</Country>
           </S.Title>
         } left={"back"} right="dot" rightonClick={handleDotClick} />
@@ -308,17 +361,7 @@ const options = [t("actions.leaveChat"), t("actions.report")];
         isSingleButton={true}
         showTextInput={false}
       />
-      <Modal
-        isOpen={isResignedUserModalOpen}
-        guideText={t("messages.resignedUserInform")}
-        confirmText={t("common.confirm")}
-        onConfirm={() => {
-          setIsChatOutModalOpen(false);
-          setIsChatOutConfirmOpen(true);
-        }}
-        isSingleButton={true}
-      ></Modal>
-      <S.InputAreaContainer>
+      <S.InputAreaContainer bottomPosition={0}>
         <InputArea onSendMessage={handleSendMessage} disabled={isResignedUser} placeholder={isResignedUser ? t("placeholder.unknownUser") : null} />
       </S.InputAreaContainer>
     </S.Wrapper>
