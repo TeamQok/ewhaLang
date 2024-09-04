@@ -33,6 +33,8 @@ const SelectionPopup = ({
     onClose();
   };
 
+  console.log(searchTerm);
+
   return (
     <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
       <StickyContainer>
@@ -49,11 +51,11 @@ const SelectionPopup = ({
       </StickyContainer>
       <ItemList>
         {items.map((item) => (
-          <Item key={item} onClick={() => toggleItem(item)} isSelected={selectedItems.includes(item)}>
+          <Item key={item.key} onClick={() => toggleItem(item.key)} isSelected={selectedItems.includes(item.key)}>
             <SelectIconWrapper>
-              <SelectIcon isSelected={selectedItems.includes(item)}/>
+              <SelectIcon isSelected={selectedItems.includes(item.key)}/>
             </SelectIconWrapper>
-            <span>{item}</span>
+            <span>{item.value}</span>
           </Item>
         ))}
       </ItemList>
