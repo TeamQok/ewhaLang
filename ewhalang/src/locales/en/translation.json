@@ -56,6 +56,7 @@
     "pwOkmessage": "* The password is correct.",
     "next": "Next"
   },
+
   "userInfo":{
     "gender": "Gender",
     "birth": "Birth Date",
@@ -76,6 +77,7 @@
     "advanced": "Advanced",
     "native": "Native"
   },
+
   "filters":{
     "filter": "Filter",
     "lang": "Language",
@@ -127,6 +129,7 @@
     "leaveChatConfirm": "If you leave the chat room, the chat list and conversation content will be deleted and cannot be recovered. Are you sure you want to leave the chat room?",
     "leaveChatComplete": "You have left the chat room."
   },
+
   "pageTitles":{
     "mypage": "My Page",
     "userList": "Find EwhaLang Friend",
@@ -144,8 +147,12 @@
   },
   "placeholder": {
     "searchCountry": "Search for a country"
+
+  },
+
   "signup2": {
     "title": "Sign Up",
+    "수정하기": "Edit Profile",
     "이름": "Name",
     "이름을입력해주세요": "Please enter your name.",
     "닉네임": "Nickname",
@@ -222,7 +229,7 @@
     "자메이카 🇯🇲": "Jamaica 🇯🇲",
     "파라과이 🇵🇾": "Paraguay 🇵🇾",
     "멕시코 🇲🇽": "Mexico 🇲🇽",
-    "방글라데 🇧🇩": "Bangladesh 🇧🇩",
+    "방글라데시 🇧🇩": "Bangladesh 🇧🇩",
     "브루나이 🇧🇳": "Brunei 🇧🇳",
     "캄보디아 🇰🇭": "Cambodia 🇰🇭",
     "홍콩 🇭🇰": "Hong Kong 🇭🇰",
@@ -283,13 +290,17 @@
     "언어 설정하기": "Set Language",
     "언어": "Language",
     "언어를 재설정해 주세요.": "Please reset the language.",
-    "변경 완료": "Save"
+    "변경 완료": "Save",
+    "언어 변경이 완료되었습니다.": "Language change is complete",
+    "확인": "Ok"
   },
   "feedback": {
     "피드백 보내기": "Send Feedback",
     "To. 개발자...": "To. Developer...",
     "개발자에게 피드백을 주세요.": "Please give feedback to the developer.",
-    "전송 하기": "Send"
+    "전송 하기": "Send",
+    "피드백 감사합니다.": "Thank you for your feedback! We will strive to improve and come back better.",
+    "확인": "Ok"
   },
   "rePw": {
     "계정 관리하기": "Manage Account",
@@ -305,6 +316,7 @@
     "수정 완료": "Update",
     "* 알맞은 비밀번호입니다.": "* The password is correct.",
     "비밀번호 변경이 완료되었습니다.": "Password change has been completed.",
+    "기존 비밀번호가 일치하지 않습니다.": "The current password does not match.",
     "정말 탈퇴 히시겠습니까?": "Are you sure you want to delete your account?",
     "회원 탈퇴가 완료되었습니다.": "Account deletion has been completed.",
     "아니오": "No",

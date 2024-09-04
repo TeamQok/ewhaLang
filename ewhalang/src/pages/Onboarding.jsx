@@ -1,5 +1,5 @@
 import * as S from "./Onboarding.style";
-import logo from "../assets/x-logo.svg";
+import logo from "../assets/logo.svg";
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import { useNavigate } from "react-router-dom";
 import DropDownOnboarding from "../components/common/DropDownOnboarding";
@@ -31,11 +31,7 @@ const Onboarding = () => {
   };
 
   const goLogin = () => {
-    if (lang) {
-      navigate("/login");
-    } else {
-      setIsModalOpen(true);
-    }
+    navigate("/login");
   };
 
   return (

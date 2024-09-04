@@ -19,26 +19,28 @@ const FeedbackPage = () => {
   };
 
   const saveFeedback = async (feedbackContent) => {
-    try {
-      const user = auth.currentUser; // 현재 로그인된 사용자 정보 가져오기
+    if (feedback) {
+      try {
+        const user = auth.currentUser; // 현재 로그인된 사용자 정보 가져오기
 
-      if (user) {
-        const uid = user.uid; // 사용자 UID 가져오기
+        if (user) {
+          const uid = user.uid; // 사용자 UID 가져오기
 
-        // feedback 컬렉션에 문서 추가
-        await addDoc(collection(firestore, "feedback"), {
-          uid: uid, // UID 저장
-          content: feedbackContent, // 피드백 내용 저장
-          timestamp: new Date().toISOString(), // 문서가 저장된 시간을 기록 (옵션)
-        });
+          // feedback 컬렉션에 문서 추가
+          await addDoc(collection(firestore, "feedback"), {
+            uid: uid, // UID 저장
+            content: feedbackContent, // 피드백 내용 저장
+            timestamp: new Date().toISOString(), // 문서가 저장된 시간을 기록 (옵션)
+          });
 
-        console.log("Feedback successfully saved!");
+          console.log("Feedback successfully saved!");
 
-        setIsModalOpen(true);
-        setFeedback("");
+          setIsModalOpen(true);
+          setFeedback("");
+        }
+      } catch (error) {
+        console.error("Error saving feedback: ", error);
       }
-    } catch (error) {
-      console.error("Error saving feedback: ", error);
     }
   };
   return (
@@ -63,8 +65,8 @@ const FeedbackPage = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          guideText={"피드백 감사합니다! \n 더 나은 모습으로 찾아뵙겠습니다."}
-          confirmText="확인"
+          guideText={t("feedback.피드백 감사합니다.")}
+          confirmText={t("feedback.확인")}
           onConfirm={() => {
             setIsModalOpen(false);
           }}

@@ -56,7 +56,7 @@ export const InputTitle = styled.div`
   color: #000;
 
   /* Subsubtitle_16_SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -79,7 +79,7 @@ export const Introduce = styled.textarea`
   box-sizing: border-box;
   resize: none;
   padding: 8px 12px 8px 12px;
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;

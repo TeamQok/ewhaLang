@@ -91,6 +91,7 @@ const Signup1 = () => {
       }
     } catch (error) {
       console.error("Error checking nickname: ", error);
+
       throw error; // 오류 처리
     }
   };
