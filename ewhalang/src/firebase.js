@@ -4,6 +4,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 
 // Firebase 프로젝트 설정 객체
 const firebaseConfig = {

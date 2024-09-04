@@ -30,7 +30,10 @@ const UserListPage = () => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         const userDoc = await getDocs(collection(firestore, "users"));
-        const users = userDoc.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const users = userDoc.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setAllUsers(users);
         const currentLoggedUser = users.find(user => user.id === currentUser.uid);
         setLoggedUser(currentLoggedUser);

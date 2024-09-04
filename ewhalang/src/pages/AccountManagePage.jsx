@@ -23,6 +23,7 @@ const AccountManagePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
+  const [isModalOpen4, setIsModalOpen4] = useState(false);
   const [dropdown, setDropdown] = useState(false);
   const [btn, setBtn] = useState(false);
   // 조건에 따라 ButtonType을 설정합니다.
@@ -180,6 +181,7 @@ const AccountManagePage = () => {
       return true;
     } catch (error) {
       console.error("Error verifying password: ", error);
+      setIsModalOpen4(true);
     }
   };
 
@@ -194,7 +196,7 @@ const AccountManagePage = () => {
     }
 
     try {
-      if (await verifyPassword(newPw)) {
+      if (await verifyPassword(originPw)) {
         await updatePassword(user, newPassword);
         setIsModalOpen(true);
         console.log("Password updated successfully!");
@@ -279,6 +281,8 @@ const AccountManagePage = () => {
           {t("rePw.수정 완료")}
         </LongButton>
         <div style={{ height: "24px" }} />
+
+        {/* 모달 */}
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -291,7 +295,17 @@ const AccountManagePage = () => {
           isSingleButton={true}
           showTextInput={false}
         />
-
+        <Modal
+          isOpen={isModalOpen4}
+          onClose={() => setIsModalOpen4(false)}
+          guideText={t("rePw.기존 비밀번호가 일치하지 않습니다.")}
+          confirmText={t("rePw.확인")}
+          onConfirm={() => {
+            setIsModalOpen4(false);
+          }}
+          isSingleButton={true}
+          showTextInput={false}
+        />
         <Modal
           isOpen={isModalOpen2}
           onClose={() => setIsModalOpen2(false)}

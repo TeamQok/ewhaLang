@@ -5,7 +5,7 @@ export const Title = styled.div`
   width: 100%;
 
   /* Subsubtitle_16_SB */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -17,7 +17,7 @@ export const Contents = styled.div`
   color: var(--Grey-1, #7f7f7f);
 
   /* Button 14R */
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;

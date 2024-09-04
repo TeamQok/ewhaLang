@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
 
 export const Info = styled.div`
   color: ${(props) => (props.err ? "red" : "var(--grey2)")};
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
@@ -19,7 +19,7 @@ export const Info = styled.div`
 
 export const Info1 = styled.div`
   color: ${(props) => (props.err ? "red" : "var(--grey2)")};
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
@@ -28,7 +28,7 @@ export const Info1 = styled.div`
 `;
 export const Info2 = styled.div`
   color: ${(props) => (props.err ? "red" : "var(--grey2)")};
-  font-family: Pretendard;
+  font-family: var(--korean);
   font-size: 11px;
   font-style: normal;
   font-weight: 400;

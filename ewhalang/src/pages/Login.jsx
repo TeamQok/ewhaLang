@@ -1,5 +1,4 @@
 import * as S from "./Login.style";
-import logo from "../assets/x-logo.svg";
 import InputBox from "../components/common/InputBox";
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +7,9 @@ import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Modal from "../components/common/Modal";
 import { useTranslation } from "react-i18next";
+import logo from "../assets/logo.svg";
+import eyeImg from "../assets/eye.svg";
+import cloeye from "../assets/cloeye.svg";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [eye, setEye] = useState(false);
 
   const { i18n, t } = useTranslation();
 
@@ -42,6 +45,10 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
+  const onClickEye = () => {
+    setEye(!eye);
+  };
+
   const handleLogin = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -50,6 +57,15 @@ const Login = () => {
         password
       );
       const user = userCredential.user;
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          uid: user.uid,
+          accessToken: user.accessToken,
+        })
+      );
+
       console.log("Logged in user:", user);
       goMain();
     } catch (error) {
@@ -74,8 +90,9 @@ const Login = () => {
         placeholder={t("login.pw")}
         onChange={inputPw}
         value={password}
-        type="password"
+        type={eye ? "type" : "password"}
       />
+      <S.Eye src={eye ? eyeImg : cloeye} onClick={onClickEye} />
       <div style={{ marginTop: "12px" }}></div>
       <LongButton type={ButtonType.GREEN} onClick={handleLogin}>
         {t("login.login")}

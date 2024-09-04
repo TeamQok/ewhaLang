@@ -4,7 +4,7 @@ import Modal from "../components/common/Modal";
 import BottomBar from "../components/layout/BottomBar";
 import Topbar from "../components/layout/Topbar";
 import * as S from "./LangSettingPage.style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useTranslation } from "react-i18next";
@@ -30,7 +30,8 @@ const LangSettingPage = () => {
           usingLanguage: newLang,
         });
 
-        console.log("Document successfully updated!");
+        console.log("업데이트 성공!");
+        i18n.changeLanguage(lang); // 언어 변경 호출
         setIsModalOpen(true);
       } else {
         console.error("No user is logged in.");
@@ -47,14 +48,24 @@ const LangSettingPage = () => {
       <S.Wrapper>
         <S.InputTitle>{t("langSetting.언어")}</S.InputTitle>
         <DropDown
-          options={[t("language.한국어"), t("language.영어")]}
-          onSelect={(selectedOption) => {
-            console.log(`Selected: ${selectedOption}`);
-            setLang(selectedOption);
+          options={[
+            { label: t("language.한국어"), value: "ko" },
+            { label: t("language.영어"), value: "en" },
+          ].map((option) => option.label)} // 드롭다운에 표시할 항목만 배열로 전달
+          onSelect={(selectedLabel) => {
+            const selectedOption = [
+              { label: t("language.한국어"), value: "ko" },
+              { label: t("language.영어"), value: "en" },
+            ].find((option) => option.label === selectedLabel); // 선택된 label에 해당하는 option 찾기
+
+            console.log(`Selected: ${selectedOption.value}`);
+            localStorage.setItem("usingLanguage", selectedOption.value);
+            setLang(selectedOption.value);
           }}
           isLong={true}
           placeholder={t("langSetting.언어를 재설정해 주세요.")}
         />
+
         <div style={{ height: "24px" }} />
 
         <LongButton
@@ -70,11 +81,9 @@ const LangSettingPage = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        guideText="언어 변경이 완료되었습니다."
-        confirmText="확인"
-        onConfirm={() => {
-          setIsModalOpen(false);
-        }}
+        guideText={t("langSetting.언어 변경이 완료되었습니다.")}
+        confirmText={t("langSetting.확인")}
+        onConfirm={() => setIsModalOpen(false)}
         isSingleButton={true}
         showTextInput={false}
       />
