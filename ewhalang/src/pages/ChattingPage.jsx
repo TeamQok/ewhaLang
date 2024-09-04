@@ -181,18 +181,10 @@ const ChattingPage = () => {
   }, [isKeyboard]);
 
 
-// // scroll event
-// function handleWindowScroll(){
-//   let viewportTopGap = parseInt(visualViewport.pageTop - visualViewport.offsetTop);
-//   let translateY = parseInt(window.scrollY - viewportTopGap);
-//   // 👇 scroll 변화에 따라 viewport div 이동
-//   viewportwrap.style.transform = `translateY(${translateY}px)`;
+// // 가상 영역까지 스크롤 내려가는 것을 방지
+// if(window.scrollY + visualViewport.height > document.body.offsetHeight - 2){ 
+//   window.scrollTo(0, document.body.offsetHeight - visualViewport.height);
 // }
-
-// 가상 영역까지 스크롤 내려가는 것을 방지
-if(window.scrollY + visualViewport.height > document.body.offsetHeight - 2){ 
-  window.scrollTo(0, document.body.offsetHeight - visualViewport.height-1);
-}
 
   if (loading) {
     return <Spinner/>
@@ -300,7 +292,7 @@ const handleDotClick = () => {
         <Topbar title={
           <S.Title>
             <Nickname>{otherUser.nickname}</Nickname>
-            <Separator>{String(isKeyboard)}</Separator>
+            <Separator>|</Separator>
             <Country>{t(`nationality.${otherUser.country}`)}</Country>
           </S.Title>
         } left={"back"} right="dot" rightonClick={handleDotClick} />
