@@ -72,7 +72,7 @@ const Message = ({ content, senderId, currentUserId, timestamp, isRead, userProf
       {!isCurrentUser ? (
         showTime ? (
           <UserImage 
-            profilePhoto={userProfileImage} 
+            profilePicture={userProfileImage} 
             alt="User profile" 
             width={40} 
             height={40} 

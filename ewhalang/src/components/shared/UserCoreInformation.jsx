@@ -1,12 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const UserCoreInformation = ({ nickname, country, layout = 'detail' }) => {
+  const { t, i18n } = useTranslation();
+  
   return (
     <CoreInfoWrapper layout={layout}>
       <UserNickname layout={layout}>{nickname}</UserNickname>
       {layout === 'list' && <Separator>|</Separator>}
-      <UserCountry layout={layout}>{country}</UserCountry>
+      <UserCountry layout={layout}>{t(`nationality.${country}`)}</UserCountry>
     </CoreInfoWrapper>
   );
 };

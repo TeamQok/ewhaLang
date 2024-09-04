@@ -3,13 +3,12 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  overflow: hidden;
 `;
 
 export const ContentWrapper = styled.div`
-  flex: 1;
   display: flex;
-  flex-direction: column;
+  flex: 1;
   overflow: hidden;
 `;
 
@@ -29,7 +28,9 @@ export const MessageListContainer = styled.div`
 export const InputAreaContainer = styled.div`
   padding: 7px 24px;
   position: fixed;
-  bottom: 0; /* BottomBar의 높이만큼 설정 */
+  bottom: 0px;
+  left: 0;
+  right: 0;
   width: 100%;
   background-color: white; /* 배경색 설정 */
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);

@@ -5,7 +5,10 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // 채팅 페이지가 아닌 경우에만 스크롤을 최상단으로 이동
+    if (!pathname.startsWith('/chats/')) {
+      window.scrollTo(0, 0);
+    }
   }, [pathname]);
 
   return null;

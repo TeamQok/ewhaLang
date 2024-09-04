@@ -37,7 +37,7 @@ const MessageList = ({ messages, currentUserId, userProfileImage, chatData }) =>
   };
 
   return (
-    <div style={{ overflow: 'hidden' }}>
+    <div>
       {Object.entries(groupedMessages).map(([date, msgs]) => (
         <React.Fragment key={date}>
           <DateSeparator date={date} />

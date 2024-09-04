@@ -12,7 +12,7 @@ import {
   updatePassword,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, query, where, getDocs, writeBatch, collection } from "firebase/firestore";
 import { firestore } from "../firebase";
 import cloeye from "../assets/cloeye.svg";
 import eyeImg from "../assets/eye.svg";
@@ -125,6 +125,23 @@ const AccountManagePage = () => {
         // Firestore에서 해당 uid의 문서 삭제
         const userDocRef = doc(firestore, "users", uid);
         await deleteDoc(userDocRef);
+
+        // chats 컬렉션에서 participantsId에 해당 uid를 포함하는 문서 찾기
+        const chatsRef = collection(firestore, "chats");
+        const q = query(chatsRef, where("participantsId", "array-contains", uid));
+        const querySnapshot = await getDocs(q);
+        console.log(querySnapshot);
+        // 찾은 문서들의 participantsId 업데이트
+        const batch = writeBatch(firestore);
+        querySnapshot.forEach((doc) => {
+          const updatedParticipantsId = doc.data().participantsId.map(id => 
+            id === uid ? 'resignedUser' : id
+          );
+          batch.update(doc.ref, { participantsId: updatedParticipantsId });
+        });
+
+        // 배치 작업 실행
+        await batch.commit();
 
         console.log(`Document for user with UID ${uid} successfully deleted.`);
       } catch (error) {

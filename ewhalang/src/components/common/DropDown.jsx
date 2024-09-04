@@ -88,7 +88,6 @@ const DropDown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(evalue);
-
   useEffect(() => {
     setSelectedOption(evalue);
   }, [evalue]);

@@ -9,6 +9,7 @@ import LanguageLevelInfo from "../components/pages/LanguageLevelInfo";
 import { auth, firestore } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
+import Spinner from "../components/common/Spinner";
 
 const UserListPage = () => {
   const { t } = useTranslation();
@@ -34,7 +35,13 @@ const UserListPage = () => {
           ...doc.data(),
         }));
         setAllUsers(users);
-        setLoggedUser(users.find((user) => user.id === currentUser.uid));
+        const currentLoggedUser = users.find(user => user.id === currentUser.uid);
+        setLoggedUser(currentLoggedUser);
+
+        // 사용자 검증 상태 확인 및 리다이렉트
+        if (currentLoggedUser && (currentLoggedUser.verificationStatus !== "verified")) {
+          navigate("/verify");
+        }
       } else {
         setLoggedUser(null);
         navigate("/login");
@@ -48,7 +55,9 @@ const UserListPage = () => {
     if (!loggedUser) return;
 
     const filtered = allUsers.filter((user) => {
-      if (user.id === loggedUser.id) return false;
+      if (user.id === loggedUser.id) {
+        return false;
+      }
 
       const languageMatch =
         filterCriteria.languages.length === 0 ||
@@ -65,8 +74,8 @@ const UserListPage = () => {
         user.gender === filterCriteria.gender;
 
       const birthYearMatch =
-        parseInt(user.birthdate) >= filterCriteria.birthdateRange.start &&
-        parseInt(user.birthdate) <= filterCriteria.birthdateRange.end;
+        parseInt(user.birthdate.substring(0,4)) >= filterCriteria.birthdateRange.start &&
+        parseInt(user.birthdate.substring(0,4)) <= filterCriteria.birthdateRange.end;
 
       return languageMatch && countryMatch && genderMatch && birthYearMatch;
     });
@@ -80,9 +89,10 @@ const UserListPage = () => {
       ...newFilterCriteria,
     }));
   };
+  
 
   if (!loggedUser) {
-    return <div>Loading...</div>;
+    return <Spinner/>;
   }
 
   return (
@@ -95,7 +105,7 @@ const UserListPage = () => {
       <LanguageLevelInfo />
 
       <ContentsWrapper>
-        {allUsers.map((user) => (
+        {filteredUsers.map((user) => (
           <UserListInformation key={user.id} user={user} />
         ))}
       </ContentsWrapper>

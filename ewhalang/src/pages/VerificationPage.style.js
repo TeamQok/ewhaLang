@@ -4,7 +4,8 @@ import styled from 'styled-components';
 export const PageWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: calc(100vh - 141px);
+    overflow: hidden;
 `;
 
 export const ContentWrapper = styled.div`
@@ -47,8 +48,9 @@ export const EmailInfo = styled.div`
 export const ButtonWrapper = styled.div`
     width: 100%;
     padding: 0 24px;
+    margin: 20px 0;
     position: fixed;
-    bottom: 0;
+    bottom: 0px;
 `;
 
 export const VerifiedContent = styled.div`
@@ -56,11 +58,12 @@ export const VerifiedContent = styled.div`
     flex-direction: column;
     align-items: center;
     text-align: center;
-    height: 100vh;
-    padding-top: 172px;
+    height: 100%;
+    padding-top: 122px;
 
     ${PageTitle} {
         margin-bottom: 24px;
+        padding: 0 24px;
     }
 
     ${PageDescription} {
@@ -69,7 +72,7 @@ export const VerifiedContent = styled.div`
 `;
 
 export const ImageWrapper = styled.div`
-    margin-bottom: 56px;
+    margin-bottom: 45px;
     img {
         width: 82px;
         height: 82px;

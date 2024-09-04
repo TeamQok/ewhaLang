@@ -61,7 +61,7 @@ const UserDetailPage = () => {
       const userInfo = {
         userId: user.id,
         nickname: user.nickname,
-        profilePhoto: user.profileImg,
+        profileImg: user.profileImg,
         country: user.country
       };
 
@@ -84,33 +84,17 @@ const UserDetailPage = () => {
       if (existingChatId) {
         navigate(`/chats/${existingChatId}`);
       } else {
-        const newChatRef = await addDoc(chatsRef, {
-          participantsId: [loggedUser.id, user.id],
-          participantsInfo: {
-            [loggedUser.id]: {
+        navigate(`/chats/new`, { 
+          state: { 
+            otherUser: userInfo,
+            loggedUser: {
               userId: loggedUser.id,
               nickname: loggedUser.nickname,
-              profilePhoto: loggedUser.profileImg,
+              profileImg: loggedUser.profileImg,
               country: loggedUser.country
-            },
-            [user.id]: userInfo
-          },
-          lastMessage: {
-            content: '',
-            timestamp: '',
-            senderId: ''
-          },
-          unreadCounts: {
-            [loggedUser.id]: 0,
-            [user.id]: 0
-          },
-          deletedDate: {
-            [loggedUser.id]: null,
-            [user.id]: null
-          }
-        });  
-
-        navigate(`/chats/${newChatRef.id}`);
+            }
+          } 
+        });
       }
     } catch (error) {
       console.error("Error adding document: ", error);

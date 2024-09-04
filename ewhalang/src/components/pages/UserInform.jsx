@@ -16,6 +16,7 @@ import {
   query,
   where,
   getDocs,
+  writeBatch,
 } from "firebase/firestore";
 import { firestore, auth, storage } from "../../firebase";
 import { useNavigate } from "react-router-dom";
@@ -109,6 +110,14 @@ const UserInform = ({ isEdit }) => {
     setIntroduction(e.target.value);
   };
 
+  const onSelectCountry = (selectedOption) => {
+    // 선택된 옵션의 키(한국어 국가명)를 찾아 저장
+    const countryKey = Object.keys(t('nationality', { returnObjects: true })).find(
+      key => t(`nationality.${key}`) === selectedOption
+    );
+    setCountry(countryKey);
+  };
+
   // 언어 추가하기 버튼 클릭 시
   const addLanguage = () => {
     setLanguages((prev) => [...prev, { language: "", proficiency: "" }]);
@@ -118,6 +127,10 @@ const UserInform = ({ isEdit }) => {
   const updateLanguage = (index, type, value) => {
     setLanguages((prev) => {
       const updatedLanguages = [...prev];
+      // 선택된 옵션의 키(한국어 언어명)를 찾아 저장
+      const languageKey = Object.keys(t('language', { returnObjects: true })).find(
+        key => t(`language.${key}`) === value
+      );
       updatedLanguages[index][type] = value;
       return updatedLanguages;
     });
@@ -210,7 +223,7 @@ const UserInform = ({ isEdit }) => {
         introduction,
         email,
         usingLanguage,
-        isValidated: "unverified",
+        verificationStatus: "unverified",
         lastConnectDate: new Date().toISOString(), // 현재 시간 저장
       });
 
@@ -321,6 +334,11 @@ const UserInform = ({ isEdit }) => {
     try {
       const docRef = doc(firestore, "users", user.uid);
       await updateDoc(docRef, updatedData);
+
+          // 프로필 이미지, 닉네임, 국가 중 하나라도 변경되었다면 채팅 문서도 업데이트
+    if (updatedData.profileImg || updatedData.nickname || updatedData.country) {
+      await updateChatsWithNewUserInfo(user.uid, updatedData);
+    }
       // 'update' 메서드를 사용하여 문서 필드 업데이트
       setIsModalOpen3(true);
       navigate("/mypage");
@@ -330,6 +348,41 @@ const UserInform = ({ isEdit }) => {
       console.log(error);
     }
   };
+
+  //채팅 문서 속 유저 정보 업데이트
+  const updateChatsWithNewUserInfo = async (userId, updatedData) => {
+    try {
+      const chatsRef = collection(firestore, "chats");
+      const q = query(chatsRef, where(`participantsId`, "array-contains", userId));
+      const querySnapshot = await getDocs(q);
+
+      const batch = writeBatch(firestore);
+
+      querySnapshot.forEach((doc) => {
+        const chatData = doc.data();
+        if (chatData.participantsInfo && chatData.participantsInfo[userId]){
+          const updatedParticipantInfo = {
+            ...chatData.participantsInfo[userId],
+            ...(updatedData.profileImg && { profileImg: updatedData.profileImg }),
+            ...(updatedData.nickname && { nickname: updatedData.nickname }),
+            ...(updatedData.country && { country: updatedData.country })
+          };
+
+          const updatedParticipantsInfo = {
+            ...chatData.participantsInfo,
+            [userId]: updatedParticipantInfo
+          };
+
+          batch.update(doc.ref, { participantsInfo: updatedParticipantsInfo });
+        }
+      });
+
+      await batch.commit();
+      console.log("Chat documents successfully updated with new user info!");
+    } catch(error) {
+      console.error("Error updating chat documents: ", error);
+    }
+  }
 
   // 저장하기 버튼 눌렀을 떄
   const onClickEdit = async () => {
@@ -390,6 +443,7 @@ const UserInform = ({ isEdit }) => {
   const onClickNicknameCheck = () => {
     checkNicknameDuplicate(nickname);
   };
+
 
   return (
     <>
@@ -457,61 +511,9 @@ const UserInform = ({ isEdit }) => {
         <DropDown
           isLong={true}
           placeholder={t("signup2.국적을 선택해주세요")}
-          options={[
-            t("nationality.대한민국 🇰🇷"),
-            t("nationality.미국 🇺🇸"),
-            t("nationality.일본 🇯🇵"),
-            t("nationality.중국 🇨🇳"),
-            t("nationality.브라질 🇧🇷"),
-            t("nationality.과테말라 🇬🇹"),
-            t("nationality.자메이카 🇯🇲"),
-            t("nationality.파라과이 🇵🇾"),
-            t("nationality.멕시코 🇲🇽"),
-            t("nationality.방글라데시 🇧🇩"),
-            t("nationality.브루나이 🇧🇳"),
-            t("nationality.캄보디아 🇰🇭"),
-            t("nationality.홍콩 🇭🇰"),
-            t("nationality.인도 🇮🇳"),
-            t("nationality.인도네시아 🇮🇩"),
-            t("nationality.카자흐스탄 🇰🇿"),
-            t("nationality.말레이시아 🇲🇾"),
-            t("nationality.파키스탄 🇵🇰"),
-            t("nationality.필리핀 🇵🇭"),
-            t("nationality.사우디아라비아 🇸🇦"),
-            t("nationality.싱가포르 🇸🇬"),
-            t("nationality.수단 🇸🇩"),
-            t("nationality.대만 🇹🇼"),
-            t("nationality.태국 🇹🇭"),
-            t("nationality.아랍에미리트 🇦🇪"),
-            t("nationality.베트남 🇻🇳"),
-            t("nationality.핀란드 🇫🇮"),
-            t("nationality.오스트리아 🇦🇹"),
-            t("nationality.벨기에 🇧🇪"),
-            t("nationality.덴마크 🇩🇰"),
-            t("nationality.프랑스 🇫🇷"),
-            t("nationality.스페인 🇪🇸"),
-            t("nationality.독일 🇩🇪"),
-            t("nationality.영국 🇬🇧"),
-            t("nationality.아이슬란드 🇮🇸"),
-            t("nationality.아일랜드 🇮🇪"),
-            t("nationality.이탈리아 🇮🇹"),
-            t("nationality.라투아니아 🇱🇹"),
-            t("nationality.네덜란드 🇳🇱"),
-            t("nationality.노르웨이 🇳🇴"),
-            t("nationality.폴란드 🇵🇱"),
-            t("nationality.루마니아 🇷🇴"),
-            t("nationality.러시아 🇷🇺"),
-            t("nationality.스웨덴 🇸🇪"),
-            t("nationality.스위스 🇨🇭"),
-            t("nationality.캐나다 🇨🇦"),
-            t("nationality.호주 🇦🇺"),
-            t("nationality.뉴질랜드 🇳🇿"),
-          ]}
-          onSelect={(selectedOption) => {
-            console.log(`Selected: ${selectedOption}`);
-            setCountry(selectedOption);
-          }}
-          evalue={isEdit ? country : null}
+          options={Object.keys(t('nationality', { returnObjects: true })).map(key => t(`nationality.${key}`))}
+          onSelect={onSelectCountry}
+          evalue={isEdit ? t(`nationality.${country}`) : null}
         />
         <div style={{ marginBottom: "16px" }} />
 
@@ -519,14 +521,13 @@ const UserInform = ({ isEdit }) => {
         <DropDown
           isLong={true}
           placeholder={t("signup2.성별을 선택해주세요.")}
-          options={[
-            t("signup2.여성"),
-            t("signup2.남성"),
-            t("signup2.알리고 싶지 않음"),
-          ]}
+          options={Object.keys(t('gender', { returnObjects: true })).map(key => t(`gender.${key}`))}
           onSelect={(selectedOption) => {
             console.log(`Selected: ${selectedOption}`);
-            setGender(selectedOption);
+            const genderKey = Object.keys(t('gender', { returnObjects: true })).find(
+              key => t(`gender.${key}`) === selectedOption
+            );
+            setGender(genderKey);
           }}
           evalue={isEdit ? gender : null}
         />
@@ -554,7 +555,7 @@ const UserInform = ({ isEdit }) => {
             <DropDown
               isLong={false}
               placeholder={t("level.언어 선택")}
-              options={filteredOptions}
+              options={Object.keys(t('language', { returnObjects: true })).map(key => t(`language.${key}`))}
               onSelect={(selectedOption) => {
                 console.log(`Selected: ${selectedOption}`);
                 updateLanguage(index, "language", selectedOption);

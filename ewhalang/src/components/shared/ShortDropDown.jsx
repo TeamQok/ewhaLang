@@ -18,7 +18,7 @@ const ShortDropDown = ({ options, onSelect, isOpen }) => {
 };
 
 const DropDownContainer = styled.div`
-  position: absolute;
+  position: fixed;
   min-width: 116px;
   background-color: white;
   border-radius: 12px;
