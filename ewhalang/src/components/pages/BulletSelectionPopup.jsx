@@ -16,9 +16,9 @@ const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption,
     <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
       <OptionList>
         {options.map((option) => (
-          <OptionItem key={option} onClick={() => toggleOption(option)} isSelected={selectedOption === option}>
-            <Bullet isSelected={selectedOption === option} />
-            <span>{option}</span>
+          <OptionItem key={option.key} onClick={() => toggleOption(option.key)} isSelected={selectedOption === option.key}>
+            <Bullet isSelected={selectedOption === option.key} />
+            <span>{option.value}</span>
           </OptionItem>
         ))}
       </OptionList>

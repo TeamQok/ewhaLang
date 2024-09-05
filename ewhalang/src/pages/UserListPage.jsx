@@ -20,7 +20,7 @@ const UserListPage = () => {
   const [filterCriteria, setFilterCriteria] = useState({
     languages: [],
     countries: [],
-    gender: t("filters.all"),
+    gender: "전체",
     birthdateRange: { start: 1996, end: 2005 },
   });
 
@@ -70,7 +70,7 @@ const UserListPage = () => {
         filterCriteria.countries.includes(user.country);
 
       const genderMatch =
-        filterCriteria.gender === t("filters.all") ||
+        filterCriteria.gender === "전체" ||
         user.gender === filterCriteria.gender;
 
       const birthYearMatch =
