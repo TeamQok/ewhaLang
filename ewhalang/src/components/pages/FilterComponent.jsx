@@ -20,8 +20,11 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const [appliedFilters, setAppliedFilters] = useState(initialFilterCriteria);
   const { i18n, t } = useTranslation();
 
-  const genderOptions = [t("filters.all"), t('filters.female'), t('filters.male')];
-  
+  const genderOptions = Object.keys(t('gender', { returnObjects: true })).map(key => ({
+    key: key,
+    value: t(`gender.${key}`)
+  }))
+
   // 언어 옵션 객체 배열
   const languageOptions = Object.keys(t('language', { returnObjects: true })).map(key => ({
     key: key,
@@ -99,7 +102,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   };
 
   const toggleGender = (gender) => {
-    setCurrentFilters((prev) => ({...prev, gender: gender === prev.gender ? t("filters.all") : gender}));
+    setCurrentFilters((prev) => ({...prev, gender: gender}));
   };
 
   const filteredCountries = countryOptions.filter(country =>
@@ -132,7 +135,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const getCurrentCountriesText = () => getFormattedText(currentFilters.countries, 'countries');
 
   const getCurrentGenderText = () =>
-    currentFilters.gender !== t('filters.all') ? currentFilters.gender : null;
+    currentFilters.gender !== '전체' ? t(`gender.${currentFilters.gender}`) : null;
 
   const getCurrentBirthdateRangeText = () => {
     const { start, end } = currentFilters.birthdateRange;
@@ -146,7 +149,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const getAppliedCountriesText = () => getFormattedText(appliedFilters.countries, 'countries');
 
   const getAppliedGenderText = () =>
-    appliedFilters.gender !== t("filters.all") ? appliedFilters.gender : null;
+    appliedFilters.gender !== "전체" ? t(`gender.${appliedFilters.gender}`) : null;
 
   const getAppliedBirthdateRangeText = () => {
     const { start, end } = appliedFilters.birthdateRange;
@@ -161,7 +164,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
       languages: [],
       countries: [],
 
-      gender: t("filters.all"),
+      gender: "전체",
       birthdateRange: { start: 1996, end: 2005 },
     };
     setCurrentFilters(resetFilters);

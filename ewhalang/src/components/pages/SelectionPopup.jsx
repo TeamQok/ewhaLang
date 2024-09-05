@@ -33,8 +33,6 @@ const SelectionPopup = ({
     onClose();
   };
 
-  console.log(searchTerm);
-
   return (
     <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
       <StickyContainer>
