@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 import Message from './Message';
 import DateSeparator from './DateSeparator';
 import UserLeftNotification from './UserLeftNotification';
 
-const MessageList = ({ messages, currentUserId, userProfileImage, chatData }) => {
+const MessageList = forwardRef(({ messages, currentUserId, userProfileImage, chatData }, ref) => {
   const otherUserId = chatData.participantsId.find(id => id !== currentUserId);
   const otherUserLeftDate = chatData.deletedDate[otherUserId];
 
@@ -69,6 +69,6 @@ const MessageList = ({ messages, currentUserId, userProfileImage, chatData }) =>
       ))}
     </div>
   );
-};
+});
 
 export default MessageList;
