@@ -717,7 +717,6 @@ const UserInform = ({ isEdit }) => {
         isSingleButton={true}
         showTextInput={false}
       />
-      {isEdit ? <BottomBar isOnMypage={true} /> : <></>}
     </>
   );
 };

@@ -4,8 +4,8 @@ import styled from 'styled-components';
 export const PageWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 141px);
     overflow: hidden;
+    padding-top: 38px;
 `;
 
 export const ContentWrapper = styled.div`

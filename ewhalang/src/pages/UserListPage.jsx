@@ -133,7 +133,6 @@ const ContentsWrapper = styled.div`
   flex-grow: 1;
   justify-content: center;
   align-content: flex-start;
-  min-height: calc(100vh - 60px);
 `;
 
 export default UserListPage;
