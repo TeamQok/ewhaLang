@@ -1,5 +1,10 @@
 import styled from "styled-components";
 
+export const Wrapper = styled.div`
+  padding-top: 48px;
+  padding-bottom: 90px;
+`
+
 export const Container = styled.div`
   border-bottom: 1px solid var(--grey4);
   box-sizing: border-box;

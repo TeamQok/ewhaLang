@@ -3,7 +3,8 @@ import styled from "styled-components";
 export const Wrapper = styled.div`
   padding-left: 23px;
   padding-right: 23px;
-  padding-top: 20px;
+  padding-top: 65px;
+  padding-bottom: 90px;
   position: relative; /* 자식 컴포넌트의 기준점 */
 `;
 export const Info = styled.div`
@@ -87,14 +88,14 @@ export const Box = styled.div`
   line-height: 24px; /* 171.429% */
   z-index: 1;
   position: fixed;
-  top: 20;
+  top: 45px;
   right: 0;
   margin-right: 10px;
 `;
 
 export const Eye = styled.img`
   position: absolute;
-  top: 275px; // 원하는 위치로 조정
+  top: 317px; // 원하는 위치로 조정
   z-index: 1;
   right: 33px;
   cursor: pointer;
@@ -102,7 +103,7 @@ export const Eye = styled.img`
 
 export const Eye1 = styled.img`
   position: absolute;
-  top: 363px; // 원하는 위치로 조정
+  top: 405px; // 원하는 위치로 조정
   z-index: 1;
   right: 33px;
   cursor: pointer;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  padding: 20px 23px;
+  padding: 68px 23px 90px;
 `;
 
 export const InputTitle = styled.div`
