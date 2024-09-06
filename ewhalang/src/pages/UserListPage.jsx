@@ -118,8 +118,8 @@ const UserListPage = () => {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  padding-bottom: 60px;
+  padding-top: 48px;
+  padding-bottom: 90px;
 `;
 
 const ContentsWrapper = styled.div`

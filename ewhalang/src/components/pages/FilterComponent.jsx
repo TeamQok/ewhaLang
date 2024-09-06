@@ -18,6 +18,7 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
   const [isFullScreenSubFilter, setIsFullScreenSubFilter] = useState(false);
   const [currentFilters, setCurrentFilters] = useState(initialFilterCriteria);
   const [appliedFilters, setAppliedFilters] = useState(initialFilterCriteria);
+  const [countrySearchTerm, setCountrySearchTerm] = useState('');
   const { i18n, t } = useTranslation();
 
   const genderOptions = Object.keys(t('gender', { returnObjects: true })).map(key => ({
@@ -36,9 +37,6 @@ const FilterComponent = ({ onFilterChange, initialFilterCriteria }) => {
     key: key,
     value: t(`nationality.${key}`)
   }));
-
-  const [countrySearchTerm, setCountrySearchTerm] = useState('');
-
 
   useEffect(() => {
     if (activeFilter !== null || isFullScreenFilterOpen) {
