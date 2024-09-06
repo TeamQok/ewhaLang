@@ -12,6 +12,7 @@ import { LongButton, ButtonType } from "../components/common/LongButton";
 import ShortDropDown from "../components/shared/ShortDropDown";
 import Modal from "../components/common/Modal";
 import { useTranslation } from "react-i18next";
+import Spinner from "../components/common/Spinner";
 
 const UserDetailPage = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
@@ -87,12 +88,7 @@ const UserDetailPage = () => {
         navigate(`/chats/new`, { 
           state: { 
             otherUser: userInfo,
-            loggedUser: {
-              userId: loggedUser.id,
-              nickname: loggedUser.nickname,
-              profileImg: loggedUser.profileImg,
-              country: loggedUser.country
-            }
+            loggedUser: loggedUser
           } 
         });
       }
@@ -102,7 +98,7 @@ const UserDetailPage = () => {
   };
   
   if (!user || !loggedUser){
-    return <div>Loading...</div>;
+    return <Spinner/>;
   }
 
   const options = [t("actions.report")];
