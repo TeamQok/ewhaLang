@@ -35,7 +35,7 @@ const ChatBox = ({ chat, loggedInUserId }) => {
         <S.UserInfoWrapper>
           <S.Nickname>{otherUser.nickname}</S.Nickname>
           <S.Separator>|</S.Separator>
-          <S.Country>{otherUser.country}</S.Country>
+          <S.Country>{t(`nationality.${otherUser.country}`)}</S.Country>
         </S.UserInfoWrapper>
         <S.LastMessage>{chat.lastMessage.content}</S.LastMessage>
       </S.ChatInfo>
