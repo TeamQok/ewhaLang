@@ -153,6 +153,7 @@
     "unknownUser": "You cannot send a message to an unknown user"
   },
   "gender": {
+    "전체": "All",
     "여성": "Female",
     "남성": "Male",
     "알리고 싶지 않음": "Prefer not to say"
