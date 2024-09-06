@@ -25,6 +25,9 @@ export const PageDescription = styled.p`
     width: 225px;
     height: 48px;
     margin-bottom: 32px;
+    overflow-wrap: break-word;
+    word-break: keep-all;
+    white-space: normal;
 `;
 
 export const EmailInfoWrapper = styled.div`

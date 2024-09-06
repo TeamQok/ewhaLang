@@ -2,9 +2,9 @@
 import styled from 'styled-components';
 
 export const ListContainer = styled.div`
-  height: 100vh; /* 화면 전체 높이 */
   overflow-y: auto;
-  padding-bottom: 60px;
+  padding-top: 40px;
+  padding-bottom: 86px;
 `;
 
 export const ChatItemWrapper = styled.div`
