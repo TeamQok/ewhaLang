@@ -5,7 +5,8 @@ export const Wrapper = styled.div`
     flex-direction: column;
     font-size: 16px;
     font-weight: 600;
-    min-height: 100vh;
+    padding-top: 45px;
+    padding-bottom: 100px;
 `;
 
 export const ContentWrapper = styled.div`
