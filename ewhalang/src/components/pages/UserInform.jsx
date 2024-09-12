@@ -165,6 +165,7 @@ const UserInform = ({ isEdit }) => {
   // 저장하기 버튼 눌렀을 때
   const onClickSignin = async () => {
     // 해당 항목들이 입력 되어있어야 넘어갈 수 있음
+
     // 모든 languages 배열의 각 항목이 유효한지 확인
     const isLanguagesValid = languages.every(
       (languageObj) => languageObj.language && languageObj.proficiency
@@ -565,8 +566,16 @@ const UserInform = ({ isEdit }) => {
                 console.log(`Selected language key: ${selectedLanguageKey}`);
                 updateLanguage(index, "language", selectedLanguageKey);
               }}
-              value={t(`language.${languageObj.language}`)}
-              evalue={t(`language.${languageObj.language}`)}
+              value={
+                languageObj.language
+                  ? t(`language.${languageObj.language}`)
+                  : ""
+              }
+              evalue={
+                languageObj.language
+                  ? t(`language.${languageObj.language}`)
+                  : ""
+              }
             />
             <DropDown
               isLong={false}
