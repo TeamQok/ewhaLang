@@ -57,6 +57,7 @@
   "user": {
     "unknown": "(알 수 없음)"
   },
+
   "userInfo":{
     "gender": "성별",
     "birth": "출생년도",
@@ -79,7 +80,7 @@
     "native": "원어민"
   },
 
-  "filters":{
+  "filters": {
     "filter": "필터",
     "lang": "언어",
     "country": "국적",
@@ -132,7 +133,7 @@
     "resignedUserInform": "탈퇴한 사용자와는 채팅할 수 없습니다. 채팅방을 나가시겠습니까?"
   },
 
-  "pageTitles":{
+  "pageTitles": {
     "mypage": "마이페이지",
     "userList": "이화랑 친구 찾기",
     "filter": "전체 필터",
@@ -329,5 +330,4 @@
     "확인": "확인",
     "예": "예"
   }
-
 }
