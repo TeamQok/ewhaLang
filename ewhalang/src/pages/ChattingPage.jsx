@@ -69,7 +69,9 @@ const ChattingPage = () => {
   }, [navigate]);
 
   useEffect(() => {
+
     if (chatId === 'new') {
+
       setIsNewChat(true);
       const { otherUser: newOtherUser, loggedUser } = location.state;
       setOtherUser(newOtherUser);
@@ -85,12 +87,14 @@ const ChattingPage = () => {
             if (chatDoc.exists()) {
               const data = chatDoc.data();
               setChatData(data);
+
   
               const newOtherUserId = data.participantsId.find(id => id !== currentUser.id);
               setOtherUserId(newOtherUserId);
   
               if (newOtherUserId === RESIGNED_USER.id) {
                 setOtherUser({ ...RESIGNED_USER, nickname: t('user.unknown') });
+
                 setIsResignedUser(true);
               } else {
                 const otherUserInfo = data.participantsInfo[newOtherUserId];
@@ -108,6 +112,7 @@ const ChattingPage = () => {
                   }
                   return { id: doc.id, ...messageData };
                 });
+
     
                 await batch.commit();
     
@@ -124,6 +129,7 @@ const ChattingPage = () => {
                 // 채팅 페이지에 들어왔을 때만 unreadCount를 초기화합니다.
                 await updateDoc(doc(firestore, "chats", chatId), {
                   [`unreadCounts.${currentUser.id}`]: 0
+
                 });
               });
             } else {
@@ -136,9 +142,11 @@ const ChattingPage = () => {
           }
         }
       };
+
     
       fetchChatData();
   
+
       // 컴포넌트가 언마운트될 때 실행될 클린업 함수
       return () => {
         unsubscribe();
@@ -146,7 +154,6 @@ const ChattingPage = () => {
     }
   }, [chatId, currentUser, location]);
 
-  //새 메시지가 추가될 때 스크롤 최하단으로 이동
   useEffect(() => {
     const messageContainer = document.querySelector('.message-list-container');
     if(messageContainer){
@@ -211,17 +218,20 @@ const ChattingPage = () => {
         }
       } else {
         // 기존 채팅에 메시지 추가
+
         await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
   
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", chatId), {
           [`unreadCounts.${otherUserId}`]: increment(1),
           lastMessage: newMessage
+
         });
       }
     } catch (error) {
       console.error("Error sending message: ", error);
     }
+
   };
 
   const options = [t("actions.leaveChat"), t("actions.report")];
@@ -233,16 +243,16 @@ const ChattingPage = () => {
     setIsDropDownOpen(false);
     if(option === t("actions.leaveChat")){
       setIsChatOutModalOpen(true);
-    } else if(option === t("actions.report")){
+    } else if (option === t("actions.report")) {
       setIsReportModalOpen(true);
     }
   };
   const leaveChat = async (chatId, currentUserId) => {
     try {
       await updateDoc(doc(firestore, "chats", chatId), {
-        [`deletedDate.${currentUserId}`]: new Date().toISOString()
+        [`deletedDate.${currentUserId}`]: new Date().toISOString(),
       });
-      navigate('/chats');
+      navigate("/chats");
     } catch (error) {
       console.error("Error leaving chat:", error);
     }
@@ -261,7 +271,13 @@ const ChattingPage = () => {
       <S.ContentWrapper>
         <S.MessageListContainer className="message-list-container">  
           {!isNewChat && (
-            <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData} />
+            <MessageList
+              messages={messages}
+              currentUserId={currentUser.id}
+              userProfileImage={otherUser.profileImg}
+              chatData={chatData}
+            />
+
           )}
         </S.MessageListContainer>
       </S.ContentWrapper>
@@ -269,8 +285,21 @@ const ChattingPage = () => {
           <InputArea ref={inputAreaRef} onSendMessage={handleSendMessage} disabled={isResignedUser} placeholder={isResignedUser ? t("placeholder.unknownUser") : null} />
         </S.InputAreaContainer>
       {!isNewChat && (
-        <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
+
+        <ShortDropDown
+          options={options}
+          onSelect={handleSelect}
+          isOpen={isDropDownOpen}
+        />
       )}
+
+      <InputArea
+        onSendMessage={handleSendMessage}
+        disabled={isResignedUser}
+        placeholder={isResignedUser ? t("placeholder.unknownUser") : null}
+      />
+
+      {/* 여기서부터 모달 */}
       <Modal
         isOpen={isReportModalOpen}
         guideText={t("messages.reportReason")}
@@ -313,8 +342,8 @@ const ChattingPage = () => {
         confirmText={t("common.confirm")}
         onConfirm={() => {
           setIsChatOutConfirmOpen(false);
-          leaveChat(chatId, currentUser.id)
-          navigate('/chats');
+          leaveChat(chatId, currentUser.id);
+          navigate("/chats");
         }}
         isSingleButton={true}
         showTextInput={false}

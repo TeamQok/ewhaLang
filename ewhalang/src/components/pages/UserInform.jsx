@@ -112,9 +112,12 @@ const UserInform = ({ isEdit }) => {
 
   const onSelectCountry = (selectedOption) => {
     // 선택된 옵션의 키(한국어 국가명)를 찾아 저장
-    const countryKey = Object.keys(t('nationality', { returnObjects: true })).find(
-      key => t(`nationality.${key}`) === selectedOption
-    );
+
+    const countryKey = Object.keys(
+      t("nationality", { returnObjects: true })
+    ).find((key) => t(`nationality.${key}`) === selectedOption);
+
+
     setCountry(countryKey);
   };
 
@@ -128,9 +131,12 @@ const UserInform = ({ isEdit }) => {
     setLanguages((prev) => {
       const updatedLanguages = [...prev];
       // 선택된 옵션의 키(한국어 언어명)를 찾아 저장
-      const languageKey = Object.keys(t('language', { returnObjects: true })).find(
-        key => t(`language.${key}`) === value
-      );
+
+      const languageKey = Object.keys(
+        t("language", { returnObjects: true })
+      ).find((key) => t(`language.${key}`) === value);
+
+
       updatedLanguages[index][type] = value;
       return updatedLanguages;
     });
@@ -143,51 +149,27 @@ const UserInform = ({ isEdit }) => {
     });
   };
 
-  // 언어 중복선택 안 되도록 언어 목록에서 제외
+  // 이미 선택된 언어를 가져옴
   const selectedLanguages = languages.map((langObj) => langObj.language);
 
-  const filteredOptions = [
-    t("language.한국어"),
-    t("language.영어"),
-    t("language.일본어"),
-    t("language.중국어"),
-    t("language.프랑스어"),
-    t("language.스페인어"),
-    t("language.독일어"),
-    t("language.이탈리아어"),
-    t("language.러시아어"),
-    t("language.포르투갈어"),
-    t("language.아랍어"),
-    t("language.힌디어"),
-    t("language.베트남어"),
-    t("language.태국어"),
-    t("language.터키어"),
-    t("language.폴란드어"),
-    t("language.네덜란드어"),
-    t("language.스웨덴어"),
-    t("language.그리스어"),
-    t("language.체코어"),
-    t("language.헝가리어"),
-    t("language.핀란드어"),
-    t("language.덴마크어"),
-    t("language.노르웨이어"),
-    t("language.히브리어"),
-    t("language.벵골어"),
-    t("language.말레이어"),
-    t("language.크메르어"),
-    t("language.인도네시아어"),
-    t("language.카자흐어"),
-    t("language.우르두어"),
-    t("language.필리핀어(타갈로그어)"),
-    t("language.아이슬란드어"),
-    t("language.라트비아어"),
-    t("language.루마니아어"),
-  ].filter((option) => !selectedLanguages.includes(option));
+  // 모든 언어의 한국어 키와 시스템 언어 번역된 이름을 가져옴
+  const allLanguages = Object.keys(t("language", { returnObjects: true })).map(
+    (key) => ({
+      key, // 한국어 키 (예: "Korean")
+      label: t(`language.${key}`), // 시스템 언어로 번역된 값 (예: "English" 또는 "영어")
+    })
+  );
+
+  // 선택된 언어를 제외한 옵션 필터링
+  const filteredOptions = allLanguages.filter(
+    (option) => !selectedLanguages.includes(option.key) // 선택된 언어는 제외
+  );
 
   // 회원가입 시
   // 저장하기 버튼 눌렀을 때
   const onClickSignin = async () => {
     // 해당 항목들이 입력 되어있어야 넘어갈 수 있음
+
     // 모든 languages 배열의 각 항목이 유효한지 확인
     const isLanguagesValid = languages.length > 0 && languages.every(
       (languageObj) => languageObj.language && languageObj.proficiency
@@ -335,10 +317,16 @@ const UserInform = ({ isEdit }) => {
       const docRef = doc(firestore, "users", user.uid);
       await updateDoc(docRef, updatedData);
 
-          // 프로필 이미지, 닉네임, 국가 중 하나라도 변경되었다면 채팅 문서도 업데이트
-    if (updatedData.profileImg || updatedData.nickname || updatedData.country) {
-      await updateChatsWithNewUserInfo(user.uid, updatedData);
-    }
+
+      // 프로필 이미지, 닉네임, 국가 중 하나라도 변경되었다면 채팅 문서도 업데이트
+      if (
+        updatedData.profileImg ||
+        updatedData.nickname ||
+        updatedData.country
+      ) {
+        await updateChatsWithNewUserInfo(user.uid, updatedData);
+      }
+
       // 'update' 메서드를 사용하여 문서 필드 업데이트
       setIsModalOpen3(true);
       navigate("/mypage");
@@ -353,24 +341,37 @@ const UserInform = ({ isEdit }) => {
   const updateChatsWithNewUserInfo = async (userId, updatedData) => {
     try {
       const chatsRef = collection(firestore, "chats");
-      const q = query(chatsRef, where(`participantsId`, "array-contains", userId));
+
+      const q = query(
+        chatsRef,
+        where(`participantsId`, "array-contains", userId)
+      );
+
+
       const querySnapshot = await getDocs(q);
 
       const batch = writeBatch(firestore);
 
       querySnapshot.forEach((doc) => {
         const chatData = doc.data();
-        if (chatData.participantsInfo && chatData.participantsInfo[userId]){
+
+        if (chatData.participantsInfo && chatData.participantsInfo[userId]) {
           const updatedParticipantInfo = {
             ...chatData.participantsInfo[userId],
-            ...(updatedData.profileImg && { profileImg: updatedData.profileImg }),
+            ...(updatedData.profileImg && {
+              profileImg: updatedData.profileImg,
+            }),
+
             ...(updatedData.nickname && { nickname: updatedData.nickname }),
-            ...(updatedData.country && { country: updatedData.country })
+            ...(updatedData.country && { country: updatedData.country }),
+
           };
 
           const updatedParticipantsInfo = {
             ...chatData.participantsInfo,
-            [userId]: updatedParticipantInfo
+
+            [userId]: updatedParticipantInfo,
+
           };
 
           batch.update(doc.ref, { participantsInfo: updatedParticipantsInfo });
@@ -379,10 +380,12 @@ const UserInform = ({ isEdit }) => {
 
       await batch.commit();
       console.log("Chat documents successfully updated with new user info!");
-    } catch(error) {
+
+    } catch (error) {
       console.error("Error updating chat documents: ", error);
     }
-  }
+  };
+
 
   // 저장하기 버튼 눌렀을 떄
   const onClickEdit = async () => {
@@ -511,7 +514,11 @@ const UserInform = ({ isEdit }) => {
         <DropDown
           isLong={true}
           placeholder={t("signup2.국적을 선택해주세요")}
-          options={Object.keys(t('nationality', { returnObjects: true })).map(key => t(`nationality.${key}`))}
+
+          options={Object.keys(t("nationality", { returnObjects: true })).map(
+            (key) => t(`nationality.${key}`)
+          )}
+
           onSelect={onSelectCountry}
           evalue={isEdit ? t(`nationality.${country}`) : null}
         />
@@ -521,12 +528,17 @@ const UserInform = ({ isEdit }) => {
         <DropDown
           isLong={true}
           placeholder={t("signup2.성별을 선택해주세요.")}
-          options={Object.keys(t('gender', { returnObjects: true })).map(key => t(`gender.${key}`))}
+
+          options={Object.keys(t("gender", { returnObjects: true })).map(
+            (key) => t(`gender.${key}`)
+          )}
           onSelect={(selectedOption) => {
             console.log(`Selected: ${selectedOption}`);
-            const genderKey = Object.keys(t('gender', { returnObjects: true })).find(
-              key => t(`gender.${key}`) === selectedOption
-            );
+
+            const genderKey = Object.keys(
+              t("gender", { returnObjects: true })
+            ).find((key) => t(`gender.${key}`) === selectedOption);
+
             setGender(genderKey);
           }}
           evalue={isEdit ? gender : null}
@@ -555,13 +567,28 @@ const UserInform = ({ isEdit }) => {
             <DropDown
               isLong={false}
               placeholder={t("level.언어 선택")}
-              options={Object.keys(t('language', { returnObjects: true })).map(key => t(`language.${key}`))}
+
+              options={filteredOptions.map((option) => option.label)} //번역된 이름이 들어감
+
               onSelect={(selectedOption) => {
-                console.log(`Selected: ${selectedOption}`);
-                updateLanguage(index, "language", selectedOption);
+                // 선택된 번역된 언어 이름에 해당하는 키 값을 찾음
+                const selectedLanguageKey = allLanguages.find(
+                  (option) => option.label === selectedOption
+                )?.key;
+
+                console.log(`Selected language key: ${selectedLanguageKey}`);
+                updateLanguage(index, "language", selectedLanguageKey);
               }}
-              value={languageObj.language}
-              evalue={languageObj.language}
+              value={
+                languageObj.language
+                  ? t(`language.${languageObj.language}`)
+                  : ""
+              }
+              evalue={
+                languageObj.language
+                  ? t(`language.${languageObj.language}`)
+                  : ""
+              }
             />
             <DropDown
               isLong={false}

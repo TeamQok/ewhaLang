@@ -71,7 +71,7 @@ export const Bar = styled.div`
 
 export const Eye = styled.img`
   position: absolute;
-  top: 27rem;
+  top: 27.1rem;
   z-index: 1;
   right: 33px;
   cursor: pointer;
