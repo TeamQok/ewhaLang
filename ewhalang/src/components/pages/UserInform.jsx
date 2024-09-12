@@ -189,7 +189,7 @@ const UserInform = ({ isEdit }) => {
   const onClickSignin = async () => {
     // 해당 항목들이 입력 되어있어야 넘어갈 수 있음
     // 모든 languages 배열의 각 항목이 유효한지 확인
-    const isLanguagesValid = languages.every(
+    const isLanguagesValid = languages.length > 0 && languages.every(
       (languageObj) => languageObj.language && languageObj.proficiency
     );
 
