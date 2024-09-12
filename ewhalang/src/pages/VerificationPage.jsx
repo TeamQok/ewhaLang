@@ -12,6 +12,7 @@ import {
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, firestore } from "../firebase";
 import { useTranslation } from 'react-i18next';
+import Spinner from '../components/common/Spinner';
 
 const VerificationPage = () => {
     const { t } = useTranslation();
@@ -83,11 +84,7 @@ const VerificationPage = () => {
     };
 
     if (!user) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
+        return <Spinner/>;
     }
 
     return (

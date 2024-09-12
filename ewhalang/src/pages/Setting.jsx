@@ -23,6 +23,7 @@ const Setting = () => {
   return (
     <>
       <Topbar title={t("setting.설정")} left={"back"} />
+      <S.Wrapper>
       <S.Container onClick={goLangSetting}>
         <S.SmallTitle>{t("setting.언어 설정")}</S.SmallTitle>
         <S.Title>{t("setting.언어 설정하기")}</S.Title>
@@ -37,6 +38,7 @@ const Setting = () => {
         <S.SmallTitle>{t("setting.기타")}</S.SmallTitle>
         <S.Title>{t("setting.개발자에게 피드백 보내기")}</S.Title>
       </S.Container>
+      </S.Wrapper>
       <BottomBar isOnMypage={true} />
     </>
   );

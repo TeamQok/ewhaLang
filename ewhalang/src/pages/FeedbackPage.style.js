@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Wrapper = styled.div`
   padding-left: 23px;
   padding-right: 23px;
-  padding-top: 20px;
+  padding-top: 63px;
 `;
 
 export const Title = styled.div`
