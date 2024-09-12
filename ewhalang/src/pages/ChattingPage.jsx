@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { RESIGNED_USER } from "../constants";
 import Spinner from "../components/common/Spinner";
 
+
 const ChattingPage = () => {
   const { chatId } = useParams();
   const location = useLocation();
@@ -69,7 +70,9 @@ const ChattingPage = () => {
   }, [navigate]);
 
   useEffect(() => {
-    if (chatId === "new") {
+
+    if (chatId === 'new') {
+
       setIsNewChat(true);
       const { otherUser: newOtherUser, loggedUser } = location.state;
       setOtherUser(newOtherUser);
@@ -86,13 +89,13 @@ const ChattingPage = () => {
               const data = chatDoc.data();
               setChatData(data);
 
-              const newOtherUserId = data.participantsId.find(
-                (id) => id !== currentUser.id
-              );
+  
+              const newOtherUserId = data.participantsId.find(id => id !== currentUser.id);
               setOtherUserId(newOtherUserId);
-
+  
               if (newOtherUserId === RESIGNED_USER.id) {
-                setOtherUser({ ...RESIGNED_USER, nickname: t("user.unknown") });
+                setOtherUser({ ...RESIGNED_USER, nickname: t('user.unknown') });
+
                 setIsResignedUser(true);
               } else {
                 const otherUserInfo = data.participantsInfo[newOtherUserId];
@@ -101,40 +104,35 @@ const ChattingPage = () => {
               }
               setLoading(false);
 
-              const messagesRef = collection(
-                firestore,
-                `chats/${chatId}/messages`
-              );
+    
+              const messagesRef = collection(firestore, `chats/${chatId}/messages`);
               unsubscribe = onSnapshot(messagesRef, async (snapshot) => {
                 const batch = writeBatch(firestore);
-                let messagesData = snapshot.docs.map((doc) => {
+                let messagesData = snapshot.docs.map(doc => {
                   const messageData = doc.data();
-                  if (
-                    messageData.senderId !== currentUser.id &&
-                    !messageData.isRead
-                  ) {
+                  if (messageData.senderId !== currentUser.id && !messageData.isRead) {
                     batch.update(doc.ref, { isRead: true });
                   }
                   return { id: doc.id, ...messageData };
                 });
 
+    
                 await batch.commit();
                 setLoading(false);
-
+    
                 const userDeletedDate = data.deletedDate[currentUser.id];
                 if (userDeletedDate) {
-                  messagesData = messagesData.filter(
-                    (msg) => new Date(msg.timestamp) > new Date(userDeletedDate)
+                  messagesData = messagesData.filter(msg => 
+                    new Date(msg.timestamp) > new Date(userDeletedDate)
                   );
                 }
-
-                messagesData.sort(
-                  (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
-                );
+    
+                messagesData.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
                 setMessages(messagesData);
                 // 채팅 페이지에 들어왔을 때만 unreadCount를 초기화합니다.
                 await updateDoc(doc(firestore, "chats", chatId), {
-                  [`unreadCounts.${currentUser.id}`]: 0,
+                  [`unreadCounts.${currentUser.id}`]: 0
+
                 });
               });
               setLoading(false);
@@ -149,7 +147,9 @@ const ChattingPage = () => {
         }
       };
 
+    
       fetchChatData();
+  
 
       // 컴포넌트가 언마운트될 때 실행될 클린업 함수
       return () => {
@@ -190,41 +190,42 @@ const ChattingPage = () => {
     handleResize();
 
     // 이벤트 리스너 등록
-    window.visualViewport.addEventListener("resize", handleResize);
+    window.visualViewport.addEventListener('resize', handleResize);
 
     // 클린업 함수
     return () => {
-      window.visualViewport.removeEventListener("resize", handleResize);
+      window.visualViewport.removeEventListener('resize', handleResize);
     };
   }, []);
 
   useEffect(() => {
     // isKeyboard 값이 변경될 때마다 실행될 로직
-    console.log("Keyboard state changed:", isKeyboard);
+    console.log('Keyboard state changed:', isKeyboard);
     // 여기에 키보드 상태 변경에 따른 추가 로직을 구현할 수 있습니다.
   }, [isKeyboard]);
 
-  // // 가상 영역까지 스크롤 내려가는 것을 방지
-  // if(window.scrollY + visualViewport.height > document.body.offsetHeight - 2){
-  //   window.scrollTo(0, document.body.offsetHeight - visualViewport.height);
-  // }
+
+// // 가상 영역까지 스크롤 내려가는 것을 방지
+// if(window.scrollY + visualViewport.height > document.body.offsetHeight - 2){ 
+//   window.scrollTo(0, document.body.offsetHeight - visualViewport.height);
+// }
 
   if (loading) {
-    return <Spinner />;
+    return <Spinner/>
   }
 
   const handleSendMessage = async (text) => {
     if (!currentUser) return;
-
+  
     const newMessage = {
       senderId: currentUser.id,
       content: text,
       timestamp: new Date().toISOString(),
-      isRead: false,
+      isRead: false
     };
-
+  
     try {
-      if (chatId === "new") {
+      if (chatId === 'new') {
         // 새 채팅 문서 생성
         const newChatData = {
           participantsId: [currentUser.id, otherUserId],
@@ -233,69 +234,63 @@ const ChattingPage = () => {
               userId: currentUser.id,
               nickname: currentUser.nickname,
               profileImg: currentUser.profileImg,
-              country: currentUser.country,
+              country: currentUser.country
             },
-            [otherUserId]: otherUser,
+            [otherUserId]: otherUser
           },
           lastMessage: newMessage,
           unreadCounts: {
             [currentUser.id]: 0,
-            [otherUserId]: 1,
+            [otherUserId]: 1
           },
           deletedDate: {
             [currentUser.id]: null,
-            [otherUserId]: null,
-          },
+            [otherUserId]: null
+          }
         };
 
-        const newChatRef = await addDoc(
-          collection(firestore, "chats"),
-          newChatData
-        );
-
+        const newChatRef = await addDoc(collection(firestore, "chats"), newChatData);
+  
         // 새 채팅에 첫 메시지 추가
-        await addDoc(
-          collection(firestore, `chats/${newChatRef.id}/messages`),
-          newMessage
-        );
+        await addDoc(collection(firestore, `chats/${newChatRef.id}/messages`), newMessage);
 
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", newChatRef.id), {
           [`unreadCounts.${otherUserId}`]: increment(1),
-          lastMessage: newMessage,
+          lastMessage: newMessage
         });
 
         setChatData(newChatData);
-
+  
         // URL 업데이트
         navigate(`/chats/${newChatRef.id}`, { replace: true });
 
-        if (isNewChat) {
+        if(isNewChat){
           setIsNewChat(false);
         }
       } else {
         // 기존 채팅에 메시지 추가
-        await addDoc(
-          collection(firestore, `chats/${chatId}/messages`),
-          newMessage
-        );
 
+        await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
+  
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", chatId), {
           [`unreadCounts.${otherUserId}`]: increment(1),
-          lastMessage: newMessage,
+          lastMessage: newMessage
+
         });
       }
     } catch (error) {
       console.error("Error sending message: ", error);
     }
+
   };
 
-  const options = [t("actions.leaveChat"), t("actions.report")];
-
-  const handleDotClick = () => {
-    setIsDropDownOpen(!isDropDownOpen);
-  };
+const options = [t("actions.leaveChat"), t("actions.report")];
+  
+const handleDotClick = () => {
+  setIsDropDownOpen(!isDropDownOpen);
+};
 
   const handleSelect = (option) => {
     setIsDropDownOpen(false);
@@ -321,6 +316,7 @@ const ChattingPage = () => {
   return (
     <S.Wrapper height={height}>
       <S.ContentWrapper>
+
         <Topbar
           title={
             <S.Title>
@@ -343,10 +339,12 @@ const ChattingPage = () => {
               userProfileImage={otherUser.profileImg}
               chatData={chatData}
             />
+
           )}
         </S.MessageListContainer>
       </S.ContentWrapper>
       {!isNewChat && (
+
         <ShortDropDown
           options={options}
           onSelect={handleSelect}
@@ -409,6 +407,7 @@ const ChattingPage = () => {
         isSingleButton={true}
         showTextInput={false}
       />
+
     </S.Wrapper>
   );
 };

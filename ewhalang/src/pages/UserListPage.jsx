@@ -35,16 +35,12 @@ const UserListPage = () => {
           ...doc.data(),
         }));
         setAllUsers(users);
-        const currentLoggedUser = users.find(
-          (user) => user.id === currentUser.uid
-        );
+\
+        const currentLoggedUser = users.find(user => user.id === currentUser.uid);
         setLoggedUser(currentLoggedUser);
 
         // 사용자 검증 상태 확인 및 리다이렉트
-        if (
-          currentLoggedUser &&
-          currentLoggedUser.verificationStatus !== "verified"
-        ) {
+        if (currentLoggedUser && (currentLoggedUser.verificationStatus !== "verified")) {
           navigate("/verify");
         }
       } else {
@@ -94,9 +90,12 @@ const UserListPage = () => {
       ...newFilterCriteria,
     }));
   };
+  
 
   if (!loggedUser) {
+
     return <Spinner />;
+
   }
 
   return (

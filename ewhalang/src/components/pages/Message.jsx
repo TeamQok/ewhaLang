@@ -82,11 +82,12 @@ const Message = ({
     <MessageContainer isCurrentUser={isCurrentUser} showTime={showTime}>
       {!isCurrentUser ? (
         showTime ? (
-          <UserImage
-            profilePicture={userProfileImage}
-            alt="User profile"
-            width={40}
-            height={40}
+
+          <UserImage 
+            profilePicture={userProfileImage} 
+            alt="User profile" 
+            width={40} 
+            height={40} 
             onClick={handleImageClick}
           />
         ) : (

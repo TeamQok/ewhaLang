@@ -112,9 +112,11 @@ const UserInform = ({ isEdit }) => {
 
   const onSelectCountry = (selectedOption) => {
     // 선택된 옵션의 키(한국어 국가명)를 찾아 저장
+
     const countryKey = Object.keys(
       t("nationality", { returnObjects: true })
     ).find((key) => t(`nationality.${key}`) === selectedOption);
+
 
     setCountry(countryKey);
   };
@@ -129,9 +131,11 @@ const UserInform = ({ isEdit }) => {
     setLanguages((prev) => {
       const updatedLanguages = [...prev];
       // 선택된 옵션의 키(한국어 언어명)를 찾아 저장
+
       const languageKey = Object.keys(
         t("language", { returnObjects: true })
       ).find((key) => t(`language.${key}`) === value);
+
 
       updatedLanguages[index][type] = value;
       return updatedLanguages;
@@ -313,6 +317,7 @@ const UserInform = ({ isEdit }) => {
       const docRef = doc(firestore, "users", user.uid);
       await updateDoc(docRef, updatedData);
 
+
       // 프로필 이미지, 닉네임, 국가 중 하나라도 변경되었다면 채팅 문서도 업데이트
       if (
         updatedData.profileImg ||
@@ -321,14 +326,7 @@ const UserInform = ({ isEdit }) => {
       ) {
         await updateChatsWithNewUserInfo(user.uid, updatedData);
       }
-      // 프로필 이미지, 닉네임, 국가 중 하나라도 변경되었다면 채팅 문서도 업데이트
-      if (
-        updatedData.profileImg ||
-        updatedData.nickname ||
-        updatedData.country
-      ) {
-        await updateChatsWithNewUserInfo(user.uid, updatedData);
-      }
+
       // 'update' 메서드를 사용하여 문서 필드 업데이트
       setIsModalOpen3(true);
       navigate("/mypage");
@@ -343,10 +341,12 @@ const UserInform = ({ isEdit }) => {
   const updateChatsWithNewUserInfo = async (userId, updatedData) => {
     try {
       const chatsRef = collection(firestore, "chats");
+
       const q = query(
         chatsRef,
         where(`participantsId`, "array-contains", userId)
       );
+
 
       const querySnapshot = await getDocs(q);
 
@@ -354,6 +354,7 @@ const UserInform = ({ isEdit }) => {
 
       querySnapshot.forEach((doc) => {
         const chatData = doc.data();
+
         if (chatData.participantsInfo && chatData.participantsInfo[userId]) {
           const updatedParticipantInfo = {
             ...chatData.participantsInfo[userId],
@@ -363,11 +364,14 @@ const UserInform = ({ isEdit }) => {
 
             ...(updatedData.nickname && { nickname: updatedData.nickname }),
             ...(updatedData.country && { country: updatedData.country }),
+
           };
 
           const updatedParticipantsInfo = {
             ...chatData.participantsInfo,
+
             [userId]: updatedParticipantInfo,
+
           };
 
           batch.update(doc.ref, { participantsInfo: updatedParticipantsInfo });
@@ -376,10 +380,12 @@ const UserInform = ({ isEdit }) => {
 
       await batch.commit();
       console.log("Chat documents successfully updated with new user info!");
+
     } catch (error) {
       console.error("Error updating chat documents: ", error);
     }
   };
+
 
   // 저장하기 버튼 눌렀을 떄
   const onClickEdit = async () => {
@@ -440,6 +446,7 @@ const UserInform = ({ isEdit }) => {
   const onClickNicknameCheck = () => {
     checkNicknameDuplicate(nickname);
   };
+
 
   return (
     <>
@@ -507,9 +514,11 @@ const UserInform = ({ isEdit }) => {
         <DropDown
           isLong={true}
           placeholder={t("signup2.국적을 선택해주세요")}
+
           options={Object.keys(t("nationality", { returnObjects: true })).map(
             (key) => t(`nationality.${key}`)
           )}
+
           onSelect={onSelectCountry}
           evalue={isEdit ? t(`nationality.${country}`) : null}
         />
@@ -519,6 +528,7 @@ const UserInform = ({ isEdit }) => {
         <DropDown
           isLong={true}
           placeholder={t("signup2.성별을 선택해주세요.")}
+
           options={Object.keys(t("gender", { returnObjects: true })).map(
             (key) => t(`gender.${key}`)
           )}
@@ -528,6 +538,7 @@ const UserInform = ({ isEdit }) => {
             const genderKey = Object.keys(
               t("gender", { returnObjects: true })
             ).find((key) => t(`gender.${key}`) === selectedOption);
+
             setGender(genderKey);
           }}
           evalue={isEdit ? gender : null}
@@ -556,7 +567,9 @@ const UserInform = ({ isEdit }) => {
             <DropDown
               isLong={false}
               placeholder={t("level.언어 선택")}
+
               options={filteredOptions.map((option) => option.label)} //번역된 이름이 들어감
+
               onSelect={(selectedOption) => {
                 // 선택된 번역된 언어 이름에 해당하는 키 값을 찾음
                 const selectedLanguageKey = allLanguages.find(

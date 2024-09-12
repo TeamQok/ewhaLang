@@ -56,10 +56,12 @@
     "pwOkmessage": "* The password is correct.",
     "next": "Next"
   },
+
   "user": {
     "unknown": "(Unknown User)"
   },
   "userInfo": {
+
     "gender": "Gender",
     "birth": "Birth Date",
     "major": "Major",
