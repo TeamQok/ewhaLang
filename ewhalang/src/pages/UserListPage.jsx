@@ -35,7 +35,6 @@ const UserListPage = () => {
           ...doc.data(),
         }));
         setAllUsers(users);
-\
         const currentLoggedUser = users.find(user => user.id === currentUser.uid);
         setLoggedUser(currentLoggedUser);
 
