@@ -50,6 +50,7 @@ const MessageList = forwardRef(({ messages, currentUserId, userProfileImage, cha
             return (
               <React.Fragment key={msg.messageId}>
                 <Message
+                  id={msg.id}
                   content={msg.content}
                   senderId={msg.senderId}
                   currentUserId={currentUserId}

@@ -49,6 +49,7 @@ const MessageInfo = styled.div`
 `;
 
 const Message = ({
+  id,
   content,
   senderId,
   currentUserId,
@@ -79,10 +80,9 @@ const Message = ({
   };
 
   return (
-    <MessageContainer isCurrentUser={isCurrentUser} showTime={showTime}>
+    <MessageContainer id={id} isCurrentUser={isCurrentUser} showTime={showTime}>
       {!isCurrentUser ? (
         showTime ? (
-
           <UserImage 
             profilePicture={userProfileImage} 
             alt="User profile" 

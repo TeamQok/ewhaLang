@@ -3,15 +3,16 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  max-height: 100vh;
+  height: 100svh;
   overflow: hidden;
 `;
 
 export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 100px);
+  flex: 1;
   overflow: hidden;
+  height: calc(100% - 48px);
 `;
 
 export const Title = styled.div`
@@ -28,11 +29,13 @@ export const TopbarWrapper = styled.div`
 export const MessageListContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 5px 24px 0px;
+  padding: 0px 24px;
+  height: calc(100% - 54px);
 `;
 
 export const InputAreaContainer = styled.div`
   padding: 7px 24px;
   background-color: white; /* 배경색 설정 */
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+  height: 54px;
 `;
