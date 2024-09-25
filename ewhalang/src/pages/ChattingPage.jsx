@@ -11,6 +11,10 @@ import {
   updateDoc,
   increment,
   writeBatch,
+  query,
+  orderBy,
+  limit,
+  startAfter,
 } from "firebase/firestore";
 import { auth, firestore } from "../firebase";
 import Topbar from "../components/layout/Topbar";
@@ -43,9 +47,189 @@ const ChattingPage = () => {
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [isChatOutConfirmOpen, setIsChatOutConfirmOpen] = useState(false);
+  const [lastVisible, setLastVisible] = useState(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const inputAreaRef = useRef(null);
+
+  const fetchChatData = async () => {
+    if (chatId && currentUser && !isResignedUser) {
+      try {
+        const chatDoc = await getDoc(doc(firestore, "chats", chatId));
+        if (chatDoc.exists()) {
+          const data = chatDoc.data();
+          setChatData(data);
+
+          const newOtherUserId = data.participantsId.find(
+            (id) => id !== currentUser.id
+          );
+          setOtherUserId(newOtherUserId);
+
+          if (newOtherUserId === RESIGNED_USER.id) {
+            setOtherUser({ ...RESIGNED_USER, nickname: t("user.unknown") });
+            setIsResignedUser(true);
+          } else {
+            const otherUserInfo = data.participantsInfo[newOtherUserId];
+            setOtherUser(otherUserInfo);
+            setIsResignedUser(false);
+          }
+
+          await fetchMessages();
+        } else {
+          console.error("No such chat document!");
+        }
+      } catch (error) {
+        console.error("Error fetching chat data: ", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const fetchMessages = async (loadMore = false) => {
+    if (isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const messagesRef = collection(firestore, `chats/${chatId}/messages`);
+      let q;
+      if (loadMore && lastVisible) {
+        q = query(
+          messagesRef,
+          orderBy("timestamp", "desc"),
+          startAfter(lastVisible),
+          limit(30)
+        );
+      } else {
+        q = query(messagesRef, orderBy("timestamp", "desc"), limit(30));
+      }
+      const snapshot = await getDocs(q);
+      if (snapshot.empty) {
+        setHasMore(false);
+        setIsLoadingMore(false);
+        return;
+      }
+      const newMessages = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+
+      if (loadMore) {
+        setMessages((prevMessages) => {
+          const combinedMessages = [...newMessages.reverse(), ...prevMessages];
+          return combinedMessages.sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+          );
+        });
+        // 이전 메시지 로딩 후 스크롤 위치 조정
+        setTimeout(() => {
+          const messageContainer = document.querySelector(
+            ".message-list-container"
+          );
+          if (messageContainer) {
+            const lastVisibleElement = document.getElementById(lastVisible.id);
+            if (lastVisibleElement) {
+              lastVisibleElement.scrollIntoView({
+                behavior: "auto",
+                block: "start",
+              });
+            }
+          }
+        }, 100);
+      } else {
+        setMessages(newMessages.reverse());
+        setTimeout(scrollToBottom, 0);
+      }
+
+      // 읽지 않은 메시지 처리
+      const batch = writeBatch(firestore);
+      newMessages.forEach((msg) => {
+        if (msg.senderId !== currentUser.id && !msg.isRead) {
+          batch.update(doc(messagesRef, msg.id), { isRead: true });
+        }
+      });
+      await batch.commit();
+
+      // 채팅 페이지에 들어왔을 때만 unreadCount 초기화
+      await updateDoc(doc(firestore, "chats", chatId), {
+        [`unreadCounts.${currentUser.id}`]: 0,
+      });
+    } catch (error) {
+      console.error("Error fetching messages: ", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
+  const loadMoreMessages = () => {
+    if (hasMore && !isLoadingMore) {
+      fetchMessages(true);
+    }
+  };
+
+  const handleScroll = useCallback(() => {
+    const messageContainer = document.querySelector(".message-list-container");
+    if (messageContainer) {
+      const { scrollTop } = messageContainer;
+      if (scrollTop === 0 && hasMore && !isLoadingMore) {
+        loadMoreMessages();
+      }
+    }
+  }, [hasMore, isLoadingMore, loadMoreMessages]);
+
+  const scrollToBottom = useCallback(() => {
+    requestAnimationFrame(() => {
+      const messageContainer = document.querySelector(
+        ".message-list-container"
+      );
+      if (messageContainer) {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading && messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (chatId && currentUser && !isNewChat) {
+      const messagesRef = collection(firestore, `chats/${chatId}/messages`);
+      const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
+
+      const unsubscribe = onSnapshot(q, async (snapshot) => {
+        if (!snapshot.empty) {
+          const newMessage = {
+            id: snapshot.docs[0].id,
+            ...snapshot.docs[0].data(),
+          };
+          setMessages((prevMessages) => {
+            if (prevMessages.find((msg) => msg.id === newMessage.id)) {
+              return prevMessages;
+            }
+            return [...prevMessages, newMessage].sort(
+              (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+            );
+          });
+
+          // 새 메시지가 현재 사용자의 것이 아닐 때만 스크롤
+          if (newMessage.senderId !== currentUser.id) {
+            setTimeout(scrollToBottom, 0);
+          }
+        }
+      });
+
+      return () => unsubscribe();
+    }
+  }, [chatId, currentUser, isNewChat]);
+
+  useEffect(() => {
+    fetchChatData();
+  }, [chatId, currentUser]);
 
   useEffect(() => {
     const handleTouchMove = (e) => {
@@ -91,75 +275,6 @@ const ChattingPage = () => {
       setLoading(false);
     } else {
       let unsubscribe = () => {};
-      const fetchChatData = async () => {
-        if (chatId && currentUser && !isResignedUser) {
-          try {
-            const chatDoc = await getDoc(doc(firestore, "chats", chatId));
-            if (chatDoc.exists()) {
-              const data = chatDoc.data();
-              setChatData(data);
-
-              const newOtherUserId = data.participantsId.find(
-                (id) => id !== currentUser.id
-              );
-              setOtherUserId(newOtherUserId);
-
-              if (newOtherUserId === RESIGNED_USER.id) {
-                setOtherUser({ ...RESIGNED_USER, nickname: t("user.unknown") });
-
-                setIsResignedUser(true);
-              } else {
-                const otherUserInfo = data.participantsInfo[newOtherUserId];
-                setOtherUser(otherUserInfo);
-                setIsResignedUser(false);
-              }
-
-              const messagesRef = collection(
-                firestore,
-                `chats/${chatId}/messages`
-              );
-              unsubscribe = onSnapshot(messagesRef, async (snapshot) => {
-                const batch = writeBatch(firestore);
-                let messagesData = snapshot.docs.map((doc) => {
-                  const messageData = doc.data();
-                  if (
-                    messageData.senderId !== currentUser.id &&
-                    !messageData.isRead
-                  ) {
-                    batch.update(doc.ref, { isRead: true });
-                  }
-                  return { id: doc.id, ...messageData };
-                });
-
-                await batch.commit();
-
-                const userDeletedDate = data.deletedDate[currentUser.id];
-                if (userDeletedDate) {
-                  messagesData = messagesData.filter(
-                    (msg) => new Date(msg.timestamp) > new Date(userDeletedDate)
-                  );
-                }
-
-                messagesData.sort(
-                  (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
-                );
-                setMessages(messagesData);
-
-                // 채팅 페이지에 들어왔을 때만 unreadCount를 초기화합니다.
-                await updateDoc(doc(firestore, "chats", chatId), {
-                  [`unreadCounts.${currentUser.id}`]: 0,
-                });
-              });
-            } else {
-              console.error("No such chat document!");
-            }
-          } catch (error) {
-            console.error("Error fetching chat data: ", error);
-          } finally {
-            setLoading(false);
-          }
-        }
-      };
 
       fetchChatData();
 
@@ -170,13 +285,17 @@ const ChattingPage = () => {
     }
   }, [chatId, currentUser, location]);
 
-  //새 메시지가 추가될 때 스크롤 최하단으로 이동
   useEffect(() => {
     const messageContainer = document.querySelector(".message-list-container");
     if (messageContainer) {
-      messageContainer.scrollTop = messageContainer.scrollHeight;
+      messageContainer.addEventListener("scroll", handleScroll);
     }
-  }, [messages]);
+    return () => {
+      if (messageContainer) {
+        messageContainer.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [handleScroll]);
 
   if (loading || !currentUser) {
     return <Spinner />;
@@ -193,7 +312,7 @@ const ChattingPage = () => {
     };
 
     try {
-      if (chatId === "new") {
+      if (isNewChat) {
         // 새 채팅 문서 생성
         const newChatData = {
           participantsId: [currentUser.id, otherUserId],
@@ -241,7 +360,6 @@ const ChattingPage = () => {
         }
       } else {
         // 기존 채팅에 메시지 추가
-
         await addDoc(
           collection(firestore, `chats/${chatId}/messages`),
           newMessage
@@ -256,6 +374,8 @@ const ChattingPage = () => {
     } catch (error) {
       console.error("Error sending message: ", error);
     }
+
+    setTimeout(scrollToBottom, 0);
   };
 
   const options = [t("actions.leaveChat"), t("actions.report")];
@@ -305,6 +425,9 @@ const ChattingPage = () => {
               currentUserId={currentUser.id}
               userProfileImage={otherUser.profileImg}
               chatData={chatData}
+              loadMoreMessages={loadMoreMessages}
+              hasMore={hasMore}
+              isLoadingMore={isLoadingMore}
             />
           )}
         </S.MessageListContainer>
@@ -324,14 +447,6 @@ const ChattingPage = () => {
           isOpen={isDropDownOpen}
         />
       )}
-
-      <InputArea
-        onSendMessage={handleSendMessage}
-        disabled={isResignedUser}
-        placeholder={isResignedUser ? t("placeholder.unknownUser") : null}
-      />
-
-      {/* 여기서부터 모달 */}
       <Modal
         isOpen={isReportModalOpen}
         guideText={t("messages.reportReason")}

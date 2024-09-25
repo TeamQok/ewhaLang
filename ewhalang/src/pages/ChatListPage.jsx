@@ -6,14 +6,13 @@ import BottomBar from '../components/layout/BottomBar';
 import { useTranslation } from 'react-i18next';
 
 const ChatListPage = () => {
-    const [totalUnreadCount, setTotalUnreadCount] = useState(0);
     const { t } = useTranslation();
 
     return (
         <Wrapper>
             <Topbar title={t("pageTitles.chatting")}/>
-            <ChatList setTotalUnreadCount={setTotalUnreadCount} />
-            <BottomBar isOnChat={true} unreadCount={totalUnreadCount} />
+            <ChatList />
+            <BottomBar isOnChat={true} />
         </Wrapper>
     )
 }
