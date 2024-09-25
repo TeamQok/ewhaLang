@@ -14,9 +14,9 @@ import chatGreen from "../../assets/chatGreen.svg";
 import userGreen from "../../assets/userGreen.svg";
 import { useState, useEffect } from "react";
 import { getUnreadCount } from "../common/UnreadCountManager";
-import { doc, getDoc } from "firebase/firestore";
+import { onSnapshot, collection, query, where, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { firestore } from "../../firebase";
+import { firestore, auth } from "../../firebase";
 
 const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
   const navigate = useNavigate();
@@ -63,6 +63,25 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const chatsRef = collection(firestore, "chats");
+    const q = query(chatsRef, where("participantsId", "array-contains", user.uid));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let count = 0;
+      snapshot.docs.forEach((doc) => {
+        const chatData = doc.data();
+        count += chatData.unreadCounts[user.uid] || 0;
+      });
+      setUnreadCount(count);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const fetchUserLanguage = async () => {
     try {
       const auth = getAuth();
@@ -96,11 +115,6 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
       fetchUserLanguage();
     }
   }, [lang]);
-
-  // useEffect(() => {
-  //   // 초기 로딩 시 사용자 언어 가져오기
-  //   fetchUserLanguage();
-  // }, []);
 
   // 로컬 스토리지에서 초기 언어 설정 가져오기
   useEffect(() => {
