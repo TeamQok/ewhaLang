@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import sendIcon from "../../assets/sendMessage.svg";
@@ -66,10 +65,9 @@ const InputArea = ({ onSendMessage, disabled, placeholder }) => {
 
 export default InputArea;
 
-
 const InputContainer = styled.div`
   display: flex;
-  align-items: center;
+  justify-content: center;
   background-color: var(--grey5);
   border-radius: 24px;
   padding: 5px;
@@ -82,7 +80,9 @@ const Input = styled.textarea`
   width: 88vw;
   border: none;
   border-radius: 24px;
-  padding: 10px 10px;
+  padding-left: 13px;
+  padding-bottom: 10px;
+  padding-top: 2px;
   outline: none;
   background-color: transparent;
   font-size: 16px;
@@ -100,7 +100,6 @@ const Input = styled.textarea`
   box-sizing: border-box;
 
   &::placeholder {
-
     font-size: 12px;
     color: #999;
   }
@@ -113,7 +112,6 @@ const SendButton = styled.button`
   border: none;
   cursor: pointer;
 `;
-
 
 const InputAreaContainer = styled.div`
   padding: 7px 24px;
