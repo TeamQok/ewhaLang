@@ -1,31 +1,74 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import translationEN from "./locales/en/translation.json";
 import translationKO from "./locales/ko/translation.json";
 
-// 로컬 스토리지에서 초기 언어 설정 가져오기
-const storedLang = localStorage.getItem("usingLanguage") || "en"; // 기본값은 'en'
+// Firebase Firestore와 Auth 가져오기
+const firestore = getFirestore();
+const auth = getAuth();
 
-i18n.use(initReactI18next).init({
-  resources: {
-    en: {
-      translation: translationEN,
-    },
-    ko: {
-      translation: translationKO,
-    },
-  },
-  lng: storedLang,
-  fallbackLng: "en", // 선택한 언어가 없을 때 사용할 언어
-  interpolation: {
-    escapeValue: false, // React는 이미 XSS를 보호하므로 escape가 필요하지 않음
-  },
-});
+// Firestore에서 사용자의 언어 설정을 가져오는 함수
+const fetchUserLanguage = async () => {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      const userID = user.uid;
+      const userRef = doc(firestore, "users", userID);
+      const userDoc = await getDoc(userRef);
 
-// 언어 변경 시 로컬 스토리지에 저장
-i18n.on("languageChanged", (lng) => {
-  localStorage.setItem("usingLanguage", lng);
-});
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return userData.usingLanguage || "en"; // 'usingLanguage' 필드가 없으면 기본값으로 'en'
+      }
+    }
+    return null; // 사용자가 없으면 null 반환
+  } catch (error) {
+    console.error("Failed to fetch user language: ", error);
+    return null;
+  }
+};
+
+// i18n 초기화 함수
+const initI18n = async () => {
+  const storedLang = localStorage.getItem("usingLanguage") || "en"; // 기본값 'en'
+
+  onAuthStateChanged(auth, async (user) => {
+    let userLang;
+
+    if (user) {
+      // 로그인한 사용자의 경우 Firestore에서 언어 설정 가져오기
+      userLang = await fetchUserLanguage();
+    }
+
+    const finalLang = userLang || storedLang; // 로그인한 사용자 언어가 있으면 사용, 아니면 로컬스토리지 값 사용
+
+    i18n.use(initReactI18next).init({
+      resources: {
+        en: {
+          translation: translationEN,
+        },
+        ko: {
+          translation: translationKO,
+        },
+      },
+      lng: finalLang,
+      fallbackLng: "en",
+      interpolation: {
+        escapeValue: false,
+      },
+    });
+
+    // 언어 변경 시 로컬 스토리지에 저장
+    i18n.on("languageChanged", (lng) => {
+      localStorage.setItem("usingLanguage", lng);
+    });
+  });
+};
+
+// i18n 초기화 실행
+initI18n();
 
 export default i18n;
