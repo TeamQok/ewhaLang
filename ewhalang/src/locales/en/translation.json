@@ -61,7 +61,6 @@
     "unknown": "(Unknown User)"
   },
   "userInfo": {
-
     "gender": "Gender",
     "birth": "Birth Date",
     "major": "Major",
@@ -332,5 +331,10 @@
     "아니오": "No",
     "확인": "Ok",
     "예": "Yes"
+  },
+  "bottomBar": {
+    "친구목록": "Friends",
+    "채팅목록": "Chat List",
+    "마이페이지": "Mypage"
   }
 }

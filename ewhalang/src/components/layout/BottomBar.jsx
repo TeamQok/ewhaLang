@@ -1,22 +1,24 @@
 import styled from "styled-components";
-import chatGrey from "../../assets/chatGrey.svg";
-import mypageGrey from "../../assets/mypageGrey.svg";
-import userGrey from "../../assets/userGrey.svg";
+import chatGray from "../../assets/chatGray.svg";
+import mypageGray from "../../assets/mypageGray.svg";
 import { useNavigate } from "react-router-dom";
-import chatGrayEn from "../../assets/chatGrayEn.svg";
-import chatGreenEn from "../../assets/chatGreenEn.svg";
-import mypageGrayEn from "../../assets/mypageGrayEn.svg";
-import mypageGreenEn from "../../assets/mypageGreenEn.svg";
-import userGrayEn from "../../assets/userGrayEn.svg";
-import userGreenEn from "../../assets/userGreenEn.svg";
+import userGray from "../../assets/userGray.svg";
 import mypageGreen from "../../assets/mypageGreen.svg";
 import chatGreen from "../../assets/chatGreen.svg";
 import userGreen from "../../assets/userGreen.svg";
 import { useState, useEffect } from "react";
 import { getUnreadCount } from "../common/UnreadCountManager";
-import { onSnapshot, collection, query, where, doc, getDoc } from "firebase/firestore";
+import {
+  onSnapshot,
+  collection,
+  query,
+  where,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { firestore, auth } from "../../firebase";
+import { useTranslation } from "react-i18next";
 
 const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
   const navigate = useNavigate();
@@ -25,6 +27,8 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
   const [chat, setChat] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [lang, setLang] = useState("");
+
+  const { i18n, t } = useTranslation();
 
   const goFriends = () => {
     navigate("/users");
@@ -68,7 +72,10 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
     if (!user) return;
 
     const chatsRef = collection(firestore, "chats");
-    const q = query(chatsRef, where("participantsId", "array-contains", user.uid));
+    const q = query(
+      chatsRef,
+      where("participantsId", "array-contains", user.uid)
+    );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       let count = 0;
@@ -130,59 +137,47 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
   return (
     <>
       <Wrapper>
-        {lang === "ko" ? (
-          <>
-            {/* 한국어 버전 */}
-            <Item onClick={goFriends}>
-              {friend || isOnFriend ? (
-                <img src={userGreen} />
-              ) : (
-                <img src={userGrey} />
-              )}
-            </Item>
-            <Item onClick={goChat}>
-              {chat || isOnChat ? (
-                <img src={chatGreen} />
-              ) : (
-                <img src={chatGrey} />
-              )}
-              {unreadCount > 0 && <UnreadBadge>{unreadCount}</UnreadBadge>}
-            </Item>
-            <Item onClick={goMypage}>
-              {mypage || isOnMypage ? (
-                <img src={mypageGreen} />
-              ) : (
-                <img src={mypageGrey} />
-              )}
-            </Item>
-          </>
-        ) : (
-          <>
-            {/* 영어 버전 */}
-            <Item onClick={goFriends}>
-              {friend || isOnFriend ? (
-                <img src={userGreenEn} />
-              ) : (
-                <img src={userGrayEn} />
-              )}
-            </Item>
-            <Item onClick={goChat}>
-              {chat || isOnChat ? (
-                <img src={chatGreenEn} />
-              ) : (
-                <img src={chatGrayEn} />
-              )}
-              {unreadCount > 0 && <UnreadBadge>{unreadCount}</UnreadBadge>}
-            </Item>
-            <Item onClick={goMypage}>
-              {mypage || isOnMypage ? (
-                <img src={mypageGreenEn} />
-              ) : (
-                <img src={mypageGrayEn} />
-              )}
-            </Item>
-          </>
-        )}
+        <Item onClick={goFriends}>
+          {friend || isOnFriend ? (
+            <ImgWrp>
+              <img src={userGreen} />
+              <Text>{t("bottomBar.친구목록")}</Text>
+            </ImgWrp>
+          ) : (
+            <ImgWrp>
+              <img src={userGray} />
+              <Text2>{t("bottomBar.친구목록")}</Text2>
+            </ImgWrp>
+          )}
+        </Item>
+
+        <Item onClick={goChat}>
+          {chat || isOnChat ? (
+            <ImgWrp>
+              <img src={chatGreen} />
+              <Text>{t("bottomBar.채팅목록")}</Text>
+            </ImgWrp>
+          ) : (
+            <ImgWrp>
+              <img src={chatGray} />
+              <Text2>{t("bottomBar.채팅목록")}</Text2>
+            </ImgWrp>
+          )}
+          {unreadCount > 0 && <UnreadBadge>{unreadCount}</UnreadBadge>}
+        </Item>
+        <Item onClick={goMypage}>
+          {mypage || isOnMypage ? (
+            <ImgWrp>
+              <img src={mypageGreen} />
+              <Text>{t("bottomBar.마이페이지")}</Text>
+            </ImgWrp>
+          ) : (
+            <ImgWrp>
+              <img src={mypageGray} />
+              <Text2>{t("bottomBar.마이페이지")}</Text2>
+            </ImgWrp>
+          )}
+        </Item>
       </Wrapper>
     </>
   );
@@ -221,4 +216,30 @@ const UnreadBadge = styled.div`
   padding: 2px 6px;
   font-size: 12px;
   font-weight: bold;
+`;
+
+const ImgWrp = styled.div`
+  margin-top: 0.72rem;
+`;
+
+const Text = styled.div`
+  text-align: center;
+  color: var(--Sub-1, #33936d);
+
+  font-family: var(--korean);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+`;
+
+const Text2 = styled.div`
+  text-align: center;
+  color: var(--Grey-1, #7f7f7f);
+
+  font-family: var(--korean);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 `;
