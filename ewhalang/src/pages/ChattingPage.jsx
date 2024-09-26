@@ -47,6 +47,7 @@ const ChattingPage = () => {
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [isChatOutConfirmOpen, setIsChatOutConfirmOpen] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const inputAreaRef = useRef(null);
@@ -85,6 +86,160 @@ const ChattingPage = () => {
     }
   };
 
+  const updateMessageReadStatus = useCallback(
+    async (messages) => {
+      if (!isInChatRoom || !currentUser) return;
+
+      const batch = writeBatch(firestore);
+      const unreadMessages = messages.filter(
+        (msg) => msg.senderId !== currentUser.id && !msg.isRead
+      );
+      unreadMessages.forEach((msg) => {
+        batch.update(doc(firestore, `chats/${chatId}/messages`, msg.id), {
+          isRead: true,
+        });
+      });
+      if (unreadMessages.length > 0) {
+        batch.update(doc(firestore, "chats", chatId), {
+          [`unreadCounts.${currentUser.id}`]: 0,
+        });
+      }
+      await batch.commit();
+    },
+    [isInChatRoom, currentUser, chatId]
+  );
+
+  const setupMessageListener = (chatData) => {
+    const messagesRef = collection(firestore, `chats/${chatId}/messages`);
+    const userDeletedDate = chatData.deletedDate[currentUser.id];
+
+    let q = query(messagesRef, orderBy("timestamp", "desc"), limit(30));
+
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      let newMessages = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      if (userDeletedDate) {
+        newMessages = newMessages.filter(
+          (msg) => new Date(msg.timestamp) > new Date(userDeletedDate)
+        );
+      }
+
+      setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+
+      setMessages((prevMessages) => {
+        const combinedMessages = [...newMessages.reverse(), ...prevMessages];
+        const uniqueMessages = combinedMessages
+          .filter(
+            (msg, index, self) =>
+              index === self.findIndex((t) => t.id === msg.id)
+          )
+          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+        // 새 메시지가 있는 경우에만 scrollToBottom 실행
+        if (uniqueMessages.length > prevMessages.length) {
+          setTimeout(scrollToBottom, 100);
+        }
+
+        return uniqueMessages;
+      });
+
+      //읽지 않은 메시지 처리
+      updateMessageReadStatus(newMessages);
+    });
+
+    return unsubscribe;
+  };
+
+  const loadMoreMessages = useCallback(() => {
+    if (hasMore && !isLoadingMore && lastVisible) {
+      setIsLoadingMore(true);
+      const messagesRef = collection(firestore, `chats/${chatId}/messages`);
+      const userDeletedDate = chatData.deletedDate[currentUser.id];
+
+      const q = query(
+        messagesRef,
+        orderBy("timestamp", "desc"),
+        startAfter(lastVisible),
+        limit(30)
+      );
+
+      getDocs(q)
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            setHasMore(false);
+          } else {
+            let newMessages = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            if (userDeletedDate) {
+              newMessages = newMessages.filter(
+                (msg) => new Date(msg.timestamp) > new Date(userDeletedDate)
+              );
+            }
+
+            const newLastVisible = snapshot.docs[snapshot.docs.length - 1];
+            setLastVisible(newLastVisible);
+            setMessages((prevMessages) => {
+              const combinedMessages = [
+                ...newMessages.reverse(),
+                ...prevMessages,
+              ];
+              const uniqueMessages = combinedMessages
+                .filter(
+                  (msg, index, self) =>
+                    index === self.findIndex((t) => t.id === msg.id)
+                )
+                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+              // 새 메시지가 있는 경우에만 스크롤 이동
+              if (uniqueMessages.length > prevMessages.length) {
+                setTimeout(() => {
+                  const messageContainer = document.querySelector(
+                    ".message-list-container"
+                  );
+                  if (messageContainer) {
+                    const lastVisibleElement = document.getElementById(
+                      lastVisible.id
+                    );
+                    if (lastVisibleElement) {
+                      lastVisibleElement.scrollIntoView({
+                        behavior: "auto",
+                        block: "start",
+                      });
+                    }
+                  }
+                }, 100);
+              }
+
+              return uniqueMessages;
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading more messages: ", error);
+        })
+        .finally(() => {
+          setIsLoadingMore(false);
+        });
+    }
+  }, [hasMore, isLoadingMore, lastVisible, chatData]);
+
+  const handleScroll = useCallback(() => {
+    const messageContainer = document.querySelector(".message-list-container");
+
+    if (messageContainer) {
+      const { scrollTop } = messageContainer;
+      if (scrollTop === 0 && hasMore && !isLoadingMore) {
+        loadMoreMessages();
+      }
+    }
+  }, [hasMore, isLoadingMore, loadMoreMessages]);
+
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
       const messageContainer = document.querySelector(
@@ -105,7 +260,7 @@ const ChattingPage = () => {
   }, [loading]);
 
   useEffect(() => {
-    if (chatId && currentUser && !isNewChat && chatData) {
+    if (chatId && currentUser && !isNewChat) {
       const messagesRef = collection(firestore, `chats/${chatId}/messages`);
       const q = query(messagesRef, orderBy("timestamp", "asc"));
 
