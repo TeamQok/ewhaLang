@@ -13,7 +13,7 @@ const FindContainer = () => {
   const location = useLocation();
 
   const navigate = useNavigate();
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const goLogin = () => {
     navigate("/login");

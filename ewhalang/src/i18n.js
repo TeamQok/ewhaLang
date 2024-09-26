@@ -35,36 +35,35 @@ const fetchUserLanguage = async () => {
 const initI18n = async () => {
   const storedLang = localStorage.getItem("usingLanguage") || "en"; // 기본값 'en'
 
+  i18n.use(initReactI18next).init({
+    resources: {
+      en: {
+        translation: translationEN,
+      },
+      ko: {
+        translation: translationKO,
+      },
+    },
+    lng: storedLang, // 초기 언어를 설정
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false,
+    },
+    // i18n 초기화 완료 후 실행
+    initImmediate: false,
+  });
+
   onAuthStateChanged(auth, async (user) => {
-    let userLang;
-
     if (user) {
-      // 로그인한 사용자의 경우 Firestore에서 언어 설정 가져오기
-      userLang = await fetchUserLanguage();
+      const userLang = await fetchUserLanguage();
+      const finalLang = userLang || storedLang; // 로그인한 사용자 언어가 있으면 사용, 아니면 로컬스토리지 값 사용
+      i18n.changeLanguage(finalLang); // 언어 변경 호출
     }
+  });
 
-    const finalLang = userLang || storedLang; // 로그인한 사용자 언어가 있으면 사용, 아니면 로컬스토리지 값 사용
-
-    i18n.use(initReactI18next).init({
-      resources: {
-        en: {
-          translation: translationEN,
-        },
-        ko: {
-          translation: translationKO,
-        },
-      },
-      lng: finalLang,
-      fallbackLng: "en",
-      interpolation: {
-        escapeValue: false,
-      },
-    });
-
-    // 언어 변경 시 로컬 스토리지에 저장
-    i18n.on("languageChanged", (lng) => {
-      localStorage.setItem("usingLanguage", lng);
-    });
+  // 언어 변경 시 로컬 스토리지에 저장
+  i18n.on("languageChanged", (lng) => {
+    localStorage.setItem("usingLanguage", lng);
   });
 };
 

@@ -1,22 +1,40 @@
-import React from 'react';
-import styled from 'styled-components';
-import Popup from './Popup';
-import { LongButton, ButtonType } from '../common/LongButton';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import styled from "styled-components";
+import Popup from "./Popup";
+import { LongButton, ButtonType } from "../common/LongButton";
+import { useTranslation } from "react-i18next";
 
-const BulletSelectionPopup = ({ isOpen, onClose, title, options, selectedOption, toggleOption, fullScreen, onApply }) => {
+const BulletSelectionPopup = ({
+  isOpen,
+  onClose,
+  title,
+  options,
+  selectedOption,
+  toggleOption,
+  fullScreen,
+  onApply,
+}) => {
   const handleApply = () => {
     onApply(selectedOption);
     onClose();
   };
 
-  const { t } = useTranslation();
-  
+  const { t, i18n } = useTranslation();
+
   return (
-    <Popup isOpen={isOpen} onClose={onClose} title={title} fullScreen={fullScreen}>
+    <Popup
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      fullScreen={fullScreen}
+    >
       <OptionList>
         {options.map((option) => (
-          <OptionItem key={option.key} onClick={() => toggleOption(option.key)} isSelected={selectedOption === option.key}>
+          <OptionItem
+            key={option.key}
+            onClick={() => toggleOption(option.key)}
+            isSelected={selectedOption === option.key}
+          >
             <Bullet isSelected={selectedOption === option.key} />
             <span>{option.value}</span>
           </OptionItem>
@@ -48,7 +66,8 @@ const Bullet = styled.div`
   height: 16px;
   margin-right: 12px;
   border-radius: 50%;
-  background-color: ${props => props.isSelected ? 'var(--sub1)' : 'var(--grey4)'};
+  background-color: ${(props) =>
+    props.isSelected ? "var(--sub1)" : "var(--grey4)"};
 `;
 
 const ButtonWrapper = styled.div`

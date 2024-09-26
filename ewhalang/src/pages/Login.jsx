@@ -19,7 +19,7 @@ const Login = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [eye, setEye] = useState(false);
 
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const goSignin = () => {
     navigate("/signup1");

@@ -12,7 +12,7 @@ const FindPw = () => {
   const [isModalOpen2, setIsModalOpen2] = useState(false);
 
   const [email, setEmail] = useState("");
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const goRePw = () => {
     navigate("/repw");

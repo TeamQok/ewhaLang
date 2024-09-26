@@ -12,7 +12,16 @@ import {
   updatePassword,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { deleteDoc, doc, getDoc, query, where, getDocs, writeBatch, collection } from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  query,
+  where,
+  getDocs,
+  writeBatch,
+  collection,
+} from "firebase/firestore";
 import { firestore } from "../firebase";
 import cloeye from "../assets/cloeye.svg";
 import eyeImg from "../assets/eye.svg";
@@ -29,7 +38,7 @@ const AccountManagePage = () => {
   // 조건에 따라 ButtonType을 설정합니다.
   const buttonType = btn ? ButtonType.GREEN : ButtonType.LONG_GREY_BLACK;
 
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // firebase 연결용
   const [userName, setUserName] = useState("");
@@ -128,15 +137,18 @@ const AccountManagePage = () => {
 
         // chats 컬렉션에서 participantsId에 해당 uid를 포함하는 문서 찾기
         const chatsRef = collection(firestore, "chats");
-        const q = query(chatsRef, where("participantsId", "array-contains", uid));
+        const q = query(
+          chatsRef,
+          where("participantsId", "array-contains", uid)
+        );
         const querySnapshot = await getDocs(q);
         console.log(querySnapshot);
         // 찾은 문서들의 participantsId 업데이트
         const batch = writeBatch(firestore);
         querySnapshot.forEach((doc) => {
-          const updatedParticipantsId = doc.data().participantsId.map(id => 
-            id === uid ? 'resignedUser' : id
-          );
+          const updatedParticipantsId = doc
+            .data()
+            .participantsId.map((id) => (id === uid ? "resignedUser" : id));
           batch.update(doc.ref, { participantsId: updatedParticipantsId });
         });
 

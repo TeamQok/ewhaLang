@@ -28,7 +28,7 @@ const Signup1 = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const goNext = () => {
     navigate("/signup2");
