@@ -52,6 +52,7 @@ const ChattingPage = () => {
   const [isChatOutConfirmOpen, setIsChatOutConfirmOpen] = useState(false);
   const [lastVisible, setLastVisible] = useState(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -210,21 +211,19 @@ const ChattingPage = () => {
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         if (!snapshot.empty) {
           const newMessage = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+          
           setMessages(prevMessages => {
             if (prevMessages.find(msg => msg.id === newMessage.id)) {
               return prevMessages;
             }
             return [...prevMessages, newMessage].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
           });
-          
-
-          // 새 메시지가 현재 사용자의 것이 아닐 때만 스크롤
           if (newMessage.senderId !== currentUser.id) {
+            await updateDoc(doc(messagesRef, newMessage.id), { isRead: true });
             setTimeout(scrollToBottom, 0);
           }
         }
       });
-
       return () => unsubscribe();
     }
   }, [chatId, currentUser, isNewChat]);
@@ -235,23 +234,27 @@ const ChattingPage = () => {
 
   useEffect(() => {
     const handleTouchMove = (e) => {
-
-      if (e.target.closest('.message-list-container')) {
-
-        if (document.activeElement === inputAreaRef.current) {
-          inputAreaRef.current.blur();
-        }
+      if (isInputFocused && e.target.closest('.message-list-container')) {
+        inputAreaRef.current.blur();
       }
     };
 
-  
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-  
+    if (isInputFocused) {
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    }
+
     return () => {
       document.removeEventListener('touchmove', handleTouchMove);
-
     };
-  }, []);
+  }, [isInputFocused]);
+
+  const handleInputFocus = () => {
+    setIsInputFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setIsInputFocused(false);
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -358,7 +361,7 @@ const ChattingPage = () => {
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", newChatRef.id), {
           [`unreadCounts.${otherUserId}`]: increment(1),
-          lastMessage: newMessage,
+          lastMessage: newMessage
         });
         setChatData(newChatData);
 
@@ -371,14 +374,11 @@ const ChattingPage = () => {
         }
       } else {
         // 기존 채팅에 메시지 추가
-
         await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
-  
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", chatId), {
           [`unreadCounts.${otherUserId}`]: increment(1),
           lastMessage: newMessage
-
         });
       }
     } catch (error) {
@@ -435,7 +435,7 @@ const ChattingPage = () => {
       </S.ContentWrapper>
       <S.InputAreaContainer>
 
-          <InputArea ref={inputAreaRef} onSendMessage={handleSendMessage} disabled={isResignedUser} placeholder={isResignedUser ? t("placeholder.unknownUser") : null} />
+          <InputArea ref={inputAreaRef} onFocus={handleInputFocus} onBlur={handleInputBlur} onSendMessage={handleSendMessage} disabled={isResignedUser} placeholder={isResignedUser ? t("placeholder.unknownUser") : null} />
         </S.InputAreaContainer>
       {!isNewChat && (
         <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
