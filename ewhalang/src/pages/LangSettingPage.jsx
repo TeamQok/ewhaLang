@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 const LangSettingPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [lang, setLang] = useState("");
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const firestore = getFirestore();
   const auth = getAuth();

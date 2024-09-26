@@ -49,7 +49,7 @@ const UserInform = ({ isEdit }) => {
   const [profileImg, setProfileImg] = useState(profile); // 프로필 이미지를 저장할 상태
   const fileInputRef = useRef(null); // 파일 입력 요소에 대한 참조
 
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const goNext = () => {
     navigate("/login");

@@ -12,13 +12,18 @@ const Onboarding = () => {
   const [lang, setLang] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    const selectedLanguage = localStorage.getItem("usingLanguage");
+    const selectedLanguage = localStorage.getItem("usingLanguage") || "en";
     if (selectedLanguage) {
       setLang(selectedLanguage);
       i18n.changeLanguage(selectedLanguage);
+    } else {
+      i18n.on("initialized", () => {
+        i18n.changeLanguage(selectedLanguage);
+        setLang(selectedLanguage);
+      });
     }
   }, [i18n]);
 
