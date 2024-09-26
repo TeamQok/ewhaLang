@@ -1,7 +1,6 @@
-
 import * as S from "./ChattingPage.style";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Div100vh from 'react-div-100vh';
+import Div100vh from "react-div-100vh";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   collection,
@@ -34,9 +33,7 @@ import { useTranslation } from "react-i18next";
 import { RESIGNED_USER } from "../constants";
 import Spinner from "../components/common/Spinner";
 
-
 const ChattingPage = () => {
-
   const { chatId } = useParams();
   const location = useLocation();
   const [isNewChat, setIsNewChat] = useState(false);
@@ -55,9 +52,6 @@ const ChattingPage = () => {
   const [lastVisible, setLastVisible] = useState(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const messageListenerUnsubscribe = useRef(() => {});
-  const [isInChatRoom, setIsInChatRoom] = useState(false);
-
   const [hasMore, setHasMore] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -71,11 +65,13 @@ const ChattingPage = () => {
           const data = chatDoc.data();
           setChatData(data);
 
-          const newOtherUserId = data.participantsId.find(id => id !== currentUser.id);
+          const newOtherUserId = data.participantsId.find(
+            (id) => id !== currentUser.id
+          );
           setOtherUserId(newOtherUserId);
 
           if (newOtherUserId === RESIGNED_USER.id) {
-            setOtherUser({ ...RESIGNED_USER, nickname: t('user.unknown') });
+            setOtherUser({ ...RESIGNED_USER, nickname: t("user.unknown") });
             setIsResignedUser(true);
           } else {
             const otherUserInfo = data.participantsInfo[newOtherUserId];
@@ -95,67 +91,70 @@ const ChattingPage = () => {
     }
   };
 
-  const updateMessageReadStatus = useCallback(async (messages) => {
-    if (!isInChatRoom || !currentUser) return;
+  const updateMessageReadStatus = useCallback(
+    async (messages) => {
+      if (!isInChatRoom || !currentUser) return;
 
-    const batch = writeBatch(firestore);
-    const unreadMessages = messages.filter(msg => msg.senderId !== currentUser.id && !msg.isRead);
-    unreadMessages.forEach(msg => {
-      batch.update(doc(firestore, `chats/${chatId}/messages`, msg.id), { isRead: true });
-    });
-    if (unreadMessages.length > 0) {
-      batch.update(doc(firestore, "chats", chatId), {
-        [`unreadCounts.${currentUser.id}`]: 0
+      const batch = writeBatch(firestore);
+      const unreadMessages = messages.filter(
+        (msg) => msg.senderId !== currentUser.id && !msg.isRead
+      );
+      unreadMessages.forEach((msg) => {
+        batch.update(doc(firestore, `chats/${chatId}/messages`, msg.id), {
+          isRead: true,
+        });
       });
-    }
-    await batch.commit();
-  }, [isInChatRoom, currentUser, chatId]);
+      if (unreadMessages.length > 0) {
+        batch.update(doc(firestore, "chats", chatId), {
+          [`unreadCounts.${currentUser.id}`]: 0,
+        });
+      }
+      await batch.commit();
+    },
+    [isInChatRoom, currentUser, chatId]
+  );
 
   const setupMessageListener = (chatData) => {
     const messagesRef = collection(firestore, `chats/${chatId}/messages`);
     const userDeletedDate = chatData.deletedDate[currentUser.id];
-    
-    let q = query(
-      messagesRef, 
-      orderBy('timestamp', 'desc'),
-      limit(30)
-    );
-  
+
+    let q = query(messagesRef, orderBy("timestamp", "desc"), limit(30));
+
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      let newMessages = snapshot.docs.map(doc => ({
+      let newMessages = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
-  
+
       if (userDeletedDate) {
-        newMessages = newMessages.filter(msg =>
-          new Date(msg.timestamp) > new Date(userDeletedDate)
+        newMessages = newMessages.filter(
+          (msg) => new Date(msg.timestamp) > new Date(userDeletedDate)
         );
       }
 
       setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-  
-      setMessages(prevMessages => {
+
+      setMessages((prevMessages) => {
         const combinedMessages = [...newMessages.reverse(), ...prevMessages];
         const uniqueMessages = combinedMessages
-          .filter((msg, index, self) => 
-            index === self.findIndex((t) => t.id === msg.id)
+          .filter(
+            (msg, index, self) =>
+              index === self.findIndex((t) => t.id === msg.id)
           )
           .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
         // 새 메시지가 있는 경우에만 scrollToBottom 실행
-      if (uniqueMessages.length > prevMessages.length) {
-        setTimeout(scrollToBottom, 100);
-      }
+        if (uniqueMessages.length > prevMessages.length) {
+          setTimeout(scrollToBottom, 100);
+        }
 
         return uniqueMessages;
       });
-  
+
       //읽지 않은 메시지 처리
       updateMessageReadStatus(newMessages);
-  
     });
-  
+
     return unsubscribe;
   };
 
@@ -164,64 +163,79 @@ const ChattingPage = () => {
       setIsLoadingMore(true);
       const messagesRef = collection(firestore, `chats/${chatId}/messages`);
       const userDeletedDate = chatData.deletedDate[currentUser.id];
-  
+
       const q = query(
         messagesRef,
-        orderBy('timestamp', 'desc'),
+        orderBy("timestamp", "desc"),
         startAfter(lastVisible),
         limit(30)
       );
-  
-      getDocs(q).then((snapshot) => {
-        if (snapshot.empty) {
-          setHasMore(false);
-        } else {
-          let newMessages = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }));
-  
-          if (userDeletedDate) {
-            newMessages = newMessages.filter(msg =>
-              new Date(msg.timestamp) > new Date(userDeletedDate)
-            );
-          }
 
-          const newLastVisible = snapshot.docs[snapshot.docs.length - 1];
-          setLastVisible(newLastVisible);
-          setMessages(prevMessages => {
-            const combinedMessages = [...newMessages.reverse(), ...prevMessages];
-            const uniqueMessages = combinedMessages
-              .filter((msg, index, self) => index === self.findIndex((t) => t.id === msg.id))
-              .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-            
-            // 새 메시지가 있는 경우에만 스크롤 이동
-            if (uniqueMessages.length > prevMessages.length) {
-              setTimeout(() => {
-                const messageContainer = document.querySelector('.message-list-container');
-                if (messageContainer) {
-                  const lastVisibleElement = document.getElementById(lastVisible.id);
-                  if (lastVisibleElement) {
-                    lastVisibleElement.scrollIntoView({ behavior: 'auto', block: 'start' });
-                  }
-                }
-              }, 100);
+      getDocs(q)
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            setHasMore(false);
+          } else {
+            let newMessages = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            if (userDeletedDate) {
+              newMessages = newMessages.filter(
+                (msg) => new Date(msg.timestamp) > new Date(userDeletedDate)
+              );
             }
-            
-            return uniqueMessages;
-          });
-        }
-      }).catch(error => {
-        console.error("Error loading more messages: ", error);
-      }).finally(() => {
-        setIsLoadingMore(false);
-      });
+
+            const newLastVisible = snapshot.docs[snapshot.docs.length - 1];
+            setLastVisible(newLastVisible);
+            setMessages((prevMessages) => {
+              const combinedMessages = [
+                ...newMessages.reverse(),
+                ...prevMessages,
+              ];
+              const uniqueMessages = combinedMessages
+                .filter(
+                  (msg, index, self) =>
+                    index === self.findIndex((t) => t.id === msg.id)
+                )
+                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+              // 새 메시지가 있는 경우에만 스크롤 이동
+              if (uniqueMessages.length > prevMessages.length) {
+                setTimeout(() => {
+                  const messageContainer = document.querySelector(
+                    ".message-list-container"
+                  );
+                  if (messageContainer) {
+                    const lastVisibleElement = document.getElementById(
+                      lastVisible.id
+                    );
+                    if (lastVisibleElement) {
+                      lastVisibleElement.scrollIntoView({
+                        behavior: "auto",
+                        block: "start",
+                      });
+                    }
+                  }
+                }, 100);
+              }
+
+              return uniqueMessages;
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading more messages: ", error);
+        })
+        .finally(() => {
+          setIsLoadingMore(false);
+        });
     }
   }, [hasMore, isLoadingMore, lastVisible, chatData]);
 
   const handleScroll = useCallback(() => {
-
-    const messageContainer = document.querySelector('.message-list-container');
+    const messageContainer = document.querySelector(".message-list-container");
 
     if (messageContainer) {
       const { scrollTop } = messageContainer;
@@ -233,7 +247,6 @@ const ChattingPage = () => {
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
-
       const messageContainer = document.querySelector(
         ".message-list-container"
       );
@@ -252,6 +265,37 @@ const ChattingPage = () => {
   }, [loading]);
 
   useEffect(() => {
+    if (chatId && currentUser && !isNewChat) {
+      const messagesRef = collection(firestore, `chats/${chatId}/messages`);
+
+      const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
+
+      const unsubscribe = onSnapshot(q, async (snapshot) => {
+        if (!snapshot.empty) {
+          const newMessage = {
+            id: snapshot.docs[0].id,
+            ...snapshot.docs[0].data(),
+          };
+
+          setMessages((prevMessages) => {
+            if (prevMessages.find((msg) => msg.id === newMessage.id)) {
+              return prevMessages;
+            }
+            return [...prevMessages, newMessage].sort(
+              (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+            );
+          });
+          if (newMessage.senderId !== currentUser.id) {
+            await updateDoc(doc(messagesRef, newMessage.id), { isRead: true });
+            setTimeout(scrollToBottom, 0);
+          }
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [chatId, currentUser, isNewChat]);
+
+  useEffect(() => {
     fetchChatData();
   }, [chatId, currentUser]);
 
@@ -264,17 +308,19 @@ const ChattingPage = () => {
 
   useEffect(() => {
     const handleTouchMove = (e) => {
-      if (isInputFocused && e.target.closest('.message-list-container')) {
+      if (isInputFocused && e.target.closest(".message-list-container")) {
         inputAreaRef.current.blur();
       }
     };
 
     if (isInputFocused) {
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
     }
 
     return () => {
-      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener("touchmove", handleTouchMove);
     };
   }, [isInputFocused]);
 
@@ -306,7 +352,7 @@ const ChattingPage = () => {
 
   useEffect(() => {
     setIsInChatRoom(true);
-    if (chatId === 'new') {
+    if (chatId === "new") {
       setIsNewChat(true);
       const { otherUser: newOtherUser, loggedUser } = location.state;
       setOtherUser(newOtherUser);
@@ -316,46 +362,42 @@ const ChattingPage = () => {
     } else {
       fetchChatData();
     }
-      // 컴포넌트가 언마운트될 때 실행될 클린업 함수
-      return () => {
-        setIsInChatRoom(false);
-        if (messageListenerUnsubscribe.current) {
-          messageListenerUnsubscribe.current();
-          messageListenerUnsubscribe.current = null;
-        }
-      };
+    // 컴포넌트가 언마운트될 때 실행될 클린업 함수
+    return () => {
+      setIsInChatRoom(false);
+      if (messageListenerUnsubscribe.current) {
+        messageListenerUnsubscribe.current();
+        messageListenerUnsubscribe.current = null;
+      }
+    };
   }, [chatId, location]);
 
-   useEffect(() => {
+  useEffect(() => {
     const handleVisibilityChange = () => {
       setIsInChatRoom(!document.hidden);
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
-
-   useEffect(() => {
-    const messageContainer = document.querySelector('.message-list-container');
+  useEffect(() => {
+    const messageContainer = document.querySelector(".message-list-container");
     if (messageContainer) {
-      messageContainer.addEventListener('scroll', handleScroll);
+      messageContainer.addEventListener("scroll", handleScroll);
     }
     return () => {
       if (messageContainer) {
-        messageContainer.removeEventListener('scroll', handleScroll);
-
+        messageContainer.removeEventListener("scroll", handleScroll);
       }
     };
   }, [handleScroll]);
 
   if (loading || !currentUser) {
-
-    return <Spinner/>
-
+    return <Spinner />;
   }
 
   const handleSendMessage = async (text) => {
@@ -393,33 +435,40 @@ const ChattingPage = () => {
           },
         };
 
+        const newChatRef = await addDoc(
+          collection(firestore, "chats"),
+          newChatData
+        );
 
-        const newChatRef = await addDoc(collection(firestore, "chats"), newChatData);
-  
         // 새 채팅에 첫 메시지 추가
-        await addDoc(collection(firestore, `chats/${newChatRef.id}/messages`), newMessage);
+        await addDoc(
+          collection(firestore, `chats/${newChatRef.id}/messages`),
+          newMessage
+        );
 
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", newChatRef.id), {
           [`unreadCounts.${otherUserId}`]: increment(1),
-          lastMessage: newMessage
+          lastMessage: newMessage,
         });
         setChatData(newChatData);
 
         // URL 업데이트
         navigate(`/chats/${newChatRef.id}`, { replace: true });
 
-        if(isNewChat){
-
+        if (isNewChat) {
           setIsNewChat(false);
         }
       } else {
         // 기존 채팅에 메시지 추가
-        await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
+        await addDoc(
+          collection(firestore, `chats/${chatId}/messages`),
+          newMessage
+        );
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", chatId), {
           [`unreadCounts.${otherUserId}`]: increment(1),
-          lastMessage: newMessage
+          lastMessage: newMessage,
         });
       }
 
@@ -437,19 +486,18 @@ const ChattingPage = () => {
   const handleSelect = (option) => {
     setIsDropDownOpen(false);
 
-    if(option === t("actions.leaveChat")){
-
+    if (option === t("actions.leaveChat")) {
       setIsChatOutModalOpen(true);
-    } else if(option === t("actions.report")){
+    } else if (option === t("actions.report")) {
       setIsReportModalOpen(true);
     }
   };
   const leaveChat = async (chatId, currentUserId) => {
     try {
       await updateDoc(doc(firestore, "chats", chatId), {
-        [`deletedDate.${currentUserId}`]: new Date().toISOString()
+        [`deletedDate.${currentUserId}`]: new Date().toISOString(),
       });
-      navigate('/chats');
+      navigate("/chats");
     } catch (error) {
       console.error("Error leaving chat:", error);
     }
@@ -457,30 +505,58 @@ const ChattingPage = () => {
   return (
     <S.Wrapper>
       <S.TopbarWrapper>
-
-        <Topbar title={
-          <S.Title>
-            <Nickname>{otherUser.nickname}</Nickname>
-            <Separator>|</Separator>
-            <Country>{t(`nationality.${otherUser.country}`)}</Country>
-          </S.Title>
-        } left={"back"} right="dot" rightonClick={handleDotClick} />
+        <Topbar
+          title={
+            <S.Title>
+              <Nickname>{otherUser.nickname}</Nickname>
+              <Separator>|</Separator>
+              <Country>{t(`nationality.${otherUser.country}`)}</Country>
+            </S.Title>
+          }
+          left={"back"}
+          right="dot"
+          rightonClick={handleDotClick}
+        />
       </S.TopbarWrapper>
       <S.ContentWrapper>
-        <S.MessageListContainer className="message-list-container">  
+        <S.MessageListContainer className="message-list-container">
           {!isNewChat && (
-            <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData} loadMoreMessages={loadMoreMessages} hasMore={hasMore} isLoadingMore={isLoadingMore} />
-
+            <MessageList
+              messages={messages}
+              currentUserId={currentUser.id}
+              userProfileImage={otherUser.profileImg}
+              chatData={chatData}
+              loadMoreMessages={loadMoreMessages}
+              hasMore={hasMore}
+              isLoadingMore={isLoadingMore}
+            />
           )}
         </S.MessageListContainer>
       </S.ContentWrapper>
       <S.InputAreaContainer>
-
-          <InputArea ref={inputAreaRef} onFocus={handleInputFocus} onBlur={handleInputBlur} onSendMessage={handleSendMessage} disabled={isResignedUser} placeholder={isResignedUser ? t("placeholder.unknownUser") : null} />
-        </S.InputAreaContainer>
+        <InputArea
+          ref={inputAreaRef}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          onSendMessage={handleSendMessage}
+          disabled={isResignedUser}
+          placeholder={isResignedUser ? t("placeholder.unknownUser") : null}
+        />
+        <InputArea
+          ref={inputAreaRef}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          onSendMessage={handleSendMessage}
+          disabled={isResignedUser}
+          placeholder={isResignedUser ? t("placeholder.unknownUser") : null}
+        />
+      </S.InputAreaContainer>
       {!isNewChat && (
-        <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
-
+        <ShortDropDown
+          options={options}
+          onSelect={handleSelect}
+          isOpen={isDropDownOpen}
+        />
       )}
       <Modal
         isOpen={isReportModalOpen}
@@ -524,8 +600,8 @@ const ChattingPage = () => {
         confirmText={t("common.confirm")}
         onConfirm={() => {
           setIsChatOutConfirmOpen(false);
-          leaveChat(chatId, currentUser.id)
-          navigate('/chats');
+          leaveChat(chatId, currentUser.id);
+          navigate("/chats");
         }}
         isSingleButton={true}
         showTextInput={false}
