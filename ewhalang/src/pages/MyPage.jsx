@@ -20,7 +20,7 @@ const MyPage = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -61,14 +61,17 @@ const MyPage = () => {
   };
 
   if (!user) {
-    return <Spinner/>;
+    return <Spinner />;
   }
 
   return (
     <S.Wrapper>
       <S.ContentWrapper>
-
-        <Topbar title={t("pageTitles.mypage")} right="setting" rightonClick={goSetting} />
+        <Topbar
+          title={t("pageTitles.mypage")}
+          right="setting"
+          rightonClick={goSetting}
+        />
 
         <S.EditButtonWrapper onClick={goEditMypage}>
           <EditButton>{t("mypage.edit")}</EditButton>
