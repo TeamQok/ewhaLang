@@ -1,12 +1,18 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, forwardRef } from "react";
 import styled from "styled-components";
 import sendIcon from "../../assets/sendMessage.svg";
 
-const InputArea = ({ onSendMessage, disabled, placeholder }) => {
+const InputArea = forwardRef(({ onSendMessage, disabled, placeholder, onFocus, onBlur }, ref) => {
   const [inputText, setInputText] = useState("");
   const [containerHeight, setContainerHeight] = useState(40);
   const inputRef = useRef(null);
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (ref) {
+      ref.current = inputRef.current;
+    }
+  }, [ref]);
 
   const handleSend = () => {
     if (inputText.trim() && !disabled) {
@@ -16,14 +22,14 @@ const InputArea = ({ onSendMessage, disabled, placeholder }) => {
       inputRef.current.focus();
     }
   };
-  //줄바꿈 처리
+
   const handleKeyDown = (e) => {
-    // Ctrl + Enter로 메시지 전송
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       handleSend();
     }
   };
+
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.style.height = `${containerHeight}px`;
@@ -32,15 +38,18 @@ const InputArea = ({ onSendMessage, disabled, placeholder }) => {
 
   const handleInputChange = (e) => {
     setInputText(e.target.value);
-
-    // 텍스트 높이에 따라 textarea 높이 동적으로 조절
-    inputRef.current.style.height = "40px"; // 초기 높이 설정
-
-    const newHeight = Math.min(inputRef.current.scrollHeight, 120); // 최대 높이 120px
+    inputRef.current.style.height = "40px";
+    const newHeight = Math.min(inputRef.current.scrollHeight, 120);
     inputRef.current.style.height = `${newHeight}px`;
+    setContainerHeight(newHeight + 5);
+  };
 
-    // InputContainer 높이도 textarea에 맞춰 조절
-    setContainerHeight(newHeight + 5); // 패딩 고려
+  const handleFocus = () => {
+    if (onFocus) onFocus();
+  };
+
+  const handleBlur = () => {
+    if (onBlur) onBlur();
   };
 
   return (
@@ -54,6 +63,8 @@ const InputArea = ({ onSendMessage, disabled, placeholder }) => {
           disabled={disabled}
           placeholder={placeholder}
           onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
         <SendButton onClick={handleSend}>
           <img src={sendIcon} alt="Send" width="24" height="24" />
@@ -61,7 +72,7 @@ const InputArea = ({ onSendMessage, disabled, placeholder }) => {
       </InputContainer>
     </InputAreaContainer>
   );
-};
+});
 
 export default InputArea;
 
