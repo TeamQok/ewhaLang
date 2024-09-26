@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const Wrapper = styled.div`
   margin-right: 23px;
   margin-left: 23px;
+  padding-top: 48px;
 `;
 
 export const Menu1 = styled.div`

@@ -18,7 +18,7 @@ const FindEmail = () => {
   const [birthdate, setBirthdate] = useState("");
   const [Semail, setSEmail] = useState("");
 
-  const { i18n, t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const onChangeName = (e) => {
     setName(e.target.value);
@@ -83,35 +83,16 @@ const FindEmail = () => {
       <S.Title>{t("findEmail.country")}</S.Title>
       <DropDown
         isLong={true}
-        placeholder={t("findEmail.countryp")}
-        options={[
-          "대한민국",
-          "미국",
-          "일본",
-          "중국",
-          "프랑스",
-          "스페인",
-          "영국",
-          "독일",
-          "이탈리아",
-          "캐나다",
-          "호주",
-          "인도",
-          "브라질",
-          "멕시코",
-          "남아프리카 공화국",
-          "러시아",
-          "네덜란드",
-          "스웨덴",
-          "스위스",
-          "벨기에",
-          "오스트리아",
-        ]}
+        placeholder={t("signup2.국적을 선택해주세요")}
+        options={Object.keys(t("nationality", { returnObjects: true })).map(
+          (key) => t(`nationality.${key}`)
+        )}
         onSelect={(selectedOption) => {
           console.log(`Selected: ${selectedOption}`);
           setCountry(selectedOption);
         }}
       />
+
       <div style={{ marginBottom: "16px" }} />
 
       <InputBox
