@@ -10,7 +10,8 @@
     "login": "Login",
     "modal": "Please set the initial language!",
     "modalOk": "OK",
-    "언어로 연결되는 이화의 다채로운 세계": "A vibrant world of Ewha, connected through language"
+    "언어로 연결되는": "A vibrant world of Ewha, ",
+    "이화의 다채로운 세계": "connected through language"
   },
   "login": {
     "email": "Email",
