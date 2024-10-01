@@ -267,30 +267,48 @@ const ChattingPage = () => {
   useEffect(() => {
     if (chatId && currentUser && !isNewChat) {
       const messagesRef = collection(firestore, `chats/${chatId}/messages`);
-
-      const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
+      const q = query(messagesRef, orderBy("timestamp", "desc"));
 
       const unsubscribe = onSnapshot(q, async (snapshot) => {
-        if (!snapshot.empty) {
-          const newMessage = {
-            id: snapshot.docs[0].id,
-            ...snapshot.docs[0].data(),
-          };
+        const changes = snapshot.docChanges();
 
-          setMessages((prevMessages) => {
-            if (prevMessages.find((msg) => msg.id === newMessage.id)) {
-              return prevMessages;
+        for (const change of changes) {
+          if (change.type === "added" || change.type === "modified") {
+            const messageData = { id: change.doc.id, ...change.doc.data() };
+
+            setMessages((prevMessages) => {
+              const existingIndex = prevMessages.findIndex(
+                (msg) => msg.id === messageData.id
+              );
+              if (existingIndex !== -1) {
+                // 기존 메시지 업데이트
+                const updatedMessages = [...prevMessages];
+                updatedMessages[existingIndex] = messageData;
+                return updatedMessages;
+              } else {
+                // 새 메시지 추가
+                return [...prevMessages, messageData].sort(
+                  (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+                );
+              }
+            });
+
+            if (
+              messageData.senderId !== currentUser.id &&
+              !messageData.isRead
+            ) {
+              await updateDoc(doc(messagesRef, messageData.id), {
+                isRead: true,
+              });
+              await updateDoc(doc(firestore, "chats", chatId), {
+                [`unreadCounts.${currentUser.id}`]: 0,
+              });
             }
-            return [...prevMessages, newMessage].sort(
-              (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
-            );
-          });
-          if (newMessage.senderId !== currentUser.id) {
-            await updateDoc(doc(messagesRef, newMessage.id), { isRead: true });
             setTimeout(scrollToBottom, 0);
           }
         }
       });
+
       return () => unsubscribe();
     }
   }, [chatId, currentUser, isNewChat]);
