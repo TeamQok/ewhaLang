@@ -136,6 +136,7 @@ const ChattingPage = () => {
 
         setTimeout(scrollToBottom, 0);
       });
+
       return () => unsubscribe();
     }
   }, [chatId, currentUser, isNewChat, chatData]);
