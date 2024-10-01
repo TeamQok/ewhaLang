@@ -46,7 +46,7 @@ const Onboarding = () => {
           {t("onboarding.언어로 연결되는")}
           <br />
           <div style={{ height: "10px" }} />
-          <div style={{ paddingLeft: "40px" }}>
+          <div style={{ paddingLeft: "20px" }}>
             {t("onboarding.이화의 다채로운 세계")}
           </div>
         </S.Title>
