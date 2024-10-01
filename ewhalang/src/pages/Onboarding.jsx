@@ -43,7 +43,12 @@ const Onboarding = () => {
     <>
       <S.Wrapper>
         <S.Title>
-          여기에 카피라이팅, 슬로건 등{<br />} 넣으면 좋을 것 같아요
+          {t("onboarding.언어로 연결되는")}
+          <br />
+          <div style={{ height: "10px" }} />
+          <div style={{ paddingLeft: "40px" }}>
+            {t("onboarding.이화의 다채로운 세계")}
+          </div>
         </S.Title>
         <S.Name>{t("onboarding.title")}</S.Name>
         <S.Container>
