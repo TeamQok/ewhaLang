@@ -39,6 +39,7 @@ const UserInform = ({ isEdit }) => {
   const [isModalOpen3, setIsModalOpen3] = useState(false);
   const [isModalOpen4, setIsModalOpen4] = useState(false);
   const [isModalOpen5, setIsModalOpen5] = useState(false);
+  const [isModalOpen6, setIsModalOpen6] = useState(false);
   const navigate = useNavigate();
 
   // 카메라 옵션용
@@ -48,6 +49,9 @@ const UserInform = ({ isEdit }) => {
   // 이미지 업로드용
   const [profileImg, setProfileImg] = useState(profile); // 프로필 이미지를 저장할 상태
   const fileInputRef = useRef(null); // 파일 입력 요소에 대한 참조
+
+  // 닉네임 중복 검사 확인용
+  const [nickCheck, setNickCheck] = useState(false);
 
   const { t, i18n } = useTranslation();
 
@@ -88,15 +92,23 @@ const UserInform = ({ isEdit }) => {
   const [hobby, setHobby] = useState("");
   const [introduction, setIntroduction] = useState("");
 
+  // 성별 검사 err
+  const [birtherr, setBirtherr] = useState(true);
   const inputName = (e) => {
     setName(e.target.value);
   };
   const inputNickname = (e) => {
     setNickname(e.target.value);
+    setNickCheck(false);
   };
 
   const inputBirthdate = (e) => {
     setBirthdate(e.target.value);
+    if (e.target.value.length != 8 || isNaN(Number(e.target.value))) {
+      setBirtherr(true);
+    } else {
+      setBirtherr(false);
+    }
   };
 
   const inputMajor = (e) => {
@@ -175,6 +187,12 @@ const UserInform = ({ isEdit }) => {
         (languageObj) => languageObj.language && languageObj.proficiency
       );
 
+    if (!nickCheck) {
+      // 닉네임 중복 검사했는지 확인
+      setIsModalOpen6(true);
+      return; // 저장 작업 중단
+    }
+
     if (
       name &&
       nickname &&
@@ -182,7 +200,7 @@ const UserInform = ({ isEdit }) => {
       gender &&
       major &&
       isLanguagesValid &&
-      birthdate
+      !birtherr
     ) {
       const sortedLanguages = sortLanguagesByProficiency(languages);
       const user = auth.currentUser;
@@ -294,9 +312,11 @@ const UserInform = ({ isEdit }) => {
           const userData = docSnap.data();
           setProfileImg(userData?.profileImg);
           setBirthdate(userData?.birthdate);
+          setBirtherr(false);
           setCountry(userData?.country);
           setGender(userData?.gender);
           setNickname(userData?.nickname);
+          setNickCheck(true);
           setMajor(userData?.major);
           setHobby(userData?.hobby);
           setIntroduction(userData?.introduction);
@@ -381,24 +401,30 @@ const UserInform = ({ isEdit }) => {
     }
   };
 
-  // 저장하기 버튼 눌렀을 떄
+  // 저장하기 버튼 눌렀을 떄 (edit)
   const onClickEdit = async () => {
     // 모든 languages 배열의 각 항목이 유효한지 확인
-    const isLanguagesValid = languages.every(
-      (languageObj) => languageObj.language && languageObj.proficiency
-    );
+    const isLanguagesValid =
+      languages.length > 0 &&
+      languages.every(
+        (languageObj) => languageObj.language && languageObj.proficiency
+      );
 
     // 각 필드에 대한 유효성 검사
     if (
-      !profileImg || // 프로필 이미지가 있는지 확인
       !nickname || // 닉네임이 있는지 확인
       !country || // 국가가 있는지 확인
-      !birthdate || // 생년월일이 있는지 확인
+      birtherr || // 생년월일이 있는지 확인
       !gender || // 성별이 있는지 확인
       !major || // 전공이 있는지 확인
-      !isLanguagesValid // 언어 배열이 유효한지 확인
+      !isLanguagesValid
     ) {
       setIsModalOpen2(true);
+      return; // 저장 작업 중단
+    }
+    if (!nickCheck) {
+      // 닉네임 중복 검사했는지 확인
+      setIsModalOpen6(true);
       return; // 저장 작업 중단
     }
     const sortedLanguages = sortLanguagesByProficiency(languages);
@@ -428,8 +454,10 @@ const UserInform = ({ isEdit }) => {
       // 중복 검사 결과
       if (!querySnapshot.empty && nickname) {
         setIsModalOpen5(true);
+        setNickCheck(false);
       } else {
         setIsModalOpen4(true);
+        setNickCheck(true);
       }
     } catch (error) {
       console.error("Error checking nickname: ", error);
@@ -450,7 +478,6 @@ const UserInform = ({ isEdit }) => {
         rightonClick={onClickX}
         leftOnClick={isEdit ? undefined : onClickX}
       />
-
       <S.Container>
         <S.ProfileWrapper>
           <S.ProfileImg src={profileImg ? profileImg : profile} />
@@ -541,7 +568,9 @@ const UserInform = ({ isEdit }) => {
           onChange={inputBirthdate}
           value={isEdit ? birthdate : null}
         />
-        <S.Info>{t("signup2.* YYYYMMDD로 입력해주세요.")}</S.Info>
+        <S.InfoBirth err={birtherr}>
+          {t("signup2.* YYYYMMDD로 입력해주세요.")}
+        </S.InfoBirth>
 
         <InputBox
           title={t("signup2.전공")}
@@ -676,7 +705,6 @@ const UserInform = ({ isEdit }) => {
         isSingleButton={true}
         showTextInput={false}
       />
-
       <Modal
         isOpen={isModalOpen4}
         onClose={() => setIsModalOpen4(false)}
@@ -701,6 +729,20 @@ const UserInform = ({ isEdit }) => {
         }}
         onCancel={() => {
           setIsModalOpen5(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+      <Modal
+        isOpen={isModalOpen6}
+        onClose={() => setIsModalOpen6(false)}
+        guideText={"닉네임 중복을 확인해주세요."}
+        confirmText={t("signup2.확인")}
+        onConfirm={() => {
+          setIsModalOpen6(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen6(false);
         }}
         isSingleButton={true}
         showTextInput={false}

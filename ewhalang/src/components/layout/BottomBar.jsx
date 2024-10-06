@@ -102,7 +102,7 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
           const userData = docSnap.data();
           const usingLanguage = userData?.usingLanguage; // usingLanguage 값 가져오기
 
-          console.log("User's usingLanguage:", usingLanguage);
+          // console.log("User's usingLanguage:", usingLanguage);
           setLang(usingLanguage);
           return usingLanguage; // 가져온 값을 반환
         } else {
