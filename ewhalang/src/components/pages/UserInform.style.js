@@ -51,6 +51,17 @@ export const Info = styled.div`
   margin-bottom: 16px;
 `;
 
+export const InfoBirth = styled.div`
+  color: ${(props) => (props.err ? "red" : "var(--Grey-2, #a8a8a8)")};
+  font-family: var(--korean);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 16.5px */
+  margin-top: 8px;
+  margin-bottom: 16px;
+`;
+
 export const InputTitle = styled.div`
   color: #000;
 
@@ -146,6 +157,7 @@ export const Introduce = styled.textarea`
   font-style: normal;
   font-weight: 400;
   line-height: 24px;
+  outline: none;
 `;
 
 export const ImgOptionWrp = styled.div`
