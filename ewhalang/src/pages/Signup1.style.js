@@ -45,7 +45,7 @@ export const Container = styled.div`
 
 export const Eye = styled.img`
   position: absolute;
-  top: 218px; // 원하는 위치로 조정
+  top: 214px; // 원하는 위치로 조정
   z-index: 1;
   right: 33px;
   cursor: pointer;

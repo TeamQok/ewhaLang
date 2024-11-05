@@ -134,6 +134,7 @@ const AccountManagePage = () => {
         // Firestore에서 해당 uid의 문서 삭제
         const userDocRef = doc(firestore, "users", uid);
         await deleteDoc(userDocRef);
+        setIsModalOpen3(true);
 
         // chats 컬렉션에서 participantsId에 해당 uid를 포함하는 문서 찾기
         const chatsRef = collection(firestore, "chats");
@@ -326,7 +327,7 @@ const AccountManagePage = () => {
           cancelText={t("rePw.아니오")}
           onConfirm={() => {
             setIsModalOpen2(false);
-            setIsModalOpen3(true);
+
             deleteAccount();
           }}
           onCancel={() => {
