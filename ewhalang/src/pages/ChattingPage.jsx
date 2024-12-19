@@ -1,6 +1,7 @@
 
 import * as S from "./ChattingPage.style";
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import Div100vh from 'react-div-100vh';
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   collection,
@@ -66,7 +67,6 @@ const ChattingPage = () => {
 
           if (newOtherUserId === RESIGNED_USER.id) {
             setOtherUser({ ...RESIGNED_USER, nickname: t('user.unknown') });
-
             setIsResignedUser(true);
           } else {
             const otherUserInfo = data.participantsInfo[newOtherUserId];
@@ -102,7 +102,8 @@ const ChattingPage = () => {
 
   useEffect(() => {
     if (!loading && messages.length > 0) {
-      scrollToBottom();
+      const timer = setTimeout(scrollToBottom, 100);
+      return () => clearTimeout(timer);
     }
   }, [loading]);
 
@@ -144,6 +145,13 @@ const ChattingPage = () => {
   useEffect(() => {
     fetchChatData();
   }, [chatId, currentUser]);
+
+  useEffect(() => {
+    if (chatData && isInChatRoom) {
+      const unsubscribe = setupMessageListener(chatData);
+      return () => unsubscribe();
+    }
+  }, [setupMessageListener, chatData, isInChatRoom]);
 
   useEffect(() => {
     const handleTouchMove = (e) => {
@@ -188,9 +196,8 @@ const ChattingPage = () => {
   }, [navigate]);
 
   useEffect(() => {
-
+    setIsInChatRoom(true);
     if (chatId === 'new') {
-
       setIsNewChat(true);
       const { otherUser: newOtherUser, loggedUser } = location.state;
       setOtherUser(newOtherUser);
@@ -198,17 +205,29 @@ const ChattingPage = () => {
       setOtherUserId(newOtherUser.userId);
       setLoading(false);
     } else {
-      let unsubscribe = () => {};
-
-    
       fetchChatData();
-  
+    }
       // 컴포넌트가 언마운트될 때 실행될 클린업 함수
       return () => {
-        unsubscribe();
+        setIsInChatRoom(false);
+        if (messageListenerUnsubscribe.current) {
+          messageListenerUnsubscribe.current();
+          messageListenerUnsubscribe.current = null;
+        }
       };
-    }
-  }, [chatId, currentUser, location]);
+  }, [chatId, location]);
+
+   useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsInChatRoom(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   if (loading || !currentUser) {
 
@@ -280,11 +299,11 @@ const ChattingPage = () => {
           lastMessage: newMessage
         });
       }
+
+      setTimeout(scrollToBottom, 0);
     } catch (error) {
       console.error("Error sending message: ", error);
     }
-
-    setTimeout(scrollToBottom, 0);
   };
 
   const options = [t("actions.leaveChat"), t("actions.report")];
