@@ -14,8 +14,6 @@ import {
   writeBatch,
   query,
   orderBy,
-  limit,
-  startAfter,
 } from "firebase/firestore";
 import { auth, firestore } from "../firebase";
 import Topbar from "../components/layout/Topbar";
@@ -50,10 +48,7 @@ const ChattingPage = () => {
   const [isReportConfirmOpen, setIsReportConfirmOpen] = useState(false);
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [isChatOutConfirmOpen, setIsChatOutConfirmOpen] = useState(false);
-  const [lastVisible, setLastVisible] = useState(null);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const inputAreaRef = useRef(null);
@@ -79,109 +74,18 @@ const ChattingPage = () => {
             setIsResignedUser(false);
           }
 
-          await fetchMessages();
         } else {
           console.error("No such chat document!");
+          setChatData(null);
         }
       } catch (error) {
         console.error("Error fetching chat data: ", error);
+        setChatData(null);
       } finally {
         setLoading(false);
       }
     }
   };
-
-  const fetchMessages = async (loadMore = false) => {
-    if (isLoadingMore) return;
-    setIsLoadingMore(true);
-    try {
-      const messagesRef = collection(firestore, `chats/${chatId}/messages`);
-      let q;
-      if (loadMore && lastVisible) {
-
-        q = query(messagesRef, orderBy('timestamp', 'desc'), startAfter(lastVisible), limit(30));
-      } else {
-        q = query(messagesRef, orderBy('timestamp', 'desc'), limit(30));
-
-      }
-      const snapshot = await getDocs(q);
-      if (snapshot.empty) {
-        setHasMore(false);
-        setIsLoadingMore(false);
-        return;
-      }
-
-      const newMessages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-
-      }));
-      setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-
-      if (loadMore) {
-
-        setMessages(prevMessages => {
-          const combinedMessages = [...newMessages.reverse(), ...prevMessages];
-          return combinedMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-        });
-        // 이전 메시지 로딩 후 스크롤 위치 조정
-        setTimeout(() => {
-          const messageContainer = document.querySelector('.message-list-container');
-          if (messageContainer) {
-            const lastVisibleElement = document.getElementById(lastVisible.id);
-            if (lastVisibleElement) {
-              lastVisibleElement.scrollIntoView({ behavior: 'auto', block: 'start' });
-
-            }
-          }
-        }, 100);
-      } else {
-        setMessages(newMessages.reverse());
-        setTimeout(scrollToBottom, 0);
-      }
-
-      // 읽지 않은 메시지 처리
-      const batch = writeBatch(firestore);
-
-      newMessages.forEach(msg => {
-
-        if (msg.senderId !== currentUser.id && !msg.isRead) {
-          batch.update(doc(messagesRef, msg.id), { isRead: true });
-        }
-      });
-      await batch.commit();
-
-      // 채팅 페이지에 들어왔을 때만 unreadCount 초기화
-      await updateDoc(doc(firestore, "chats", chatId), {
-
-        [`unreadCounts.${currentUser.id}`]: 0
-
-      });
-    } catch (error) {
-      console.error("Error fetching messages: ", error);
-    } finally {
-      setIsLoadingMore(false);
-    }
-  };
-
-  const loadMoreMessages = () => {
-    if (hasMore && !isLoadingMore) {
-      fetchMessages(true);
-
-    }
-  };
-
-  const handleScroll = useCallback(() => {
-
-    const messageContainer = document.querySelector('.message-list-container');
-
-    if (messageContainer) {
-      const { scrollTop } = messageContainer;
-      if (scrollTop === 0 && hasMore && !isLoadingMore) {
-        loadMoreMessages();
-      }
-    }
-  }, [hasMore, isLoadingMore, loadMoreMessages]);
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
@@ -203,46 +107,39 @@ const ChattingPage = () => {
   }, [loading]);
 
   useEffect(() => {
-    if (chatId && currentUser && !isNewChat) {
+    if (chatId && currentUser && !isNewChat && chatData) {
       const messagesRef = collection(firestore, `chats/${chatId}/messages`);
-      const q = query(messagesRef, orderBy('timestamp', 'desc'));
-      
+      const q = query(messagesRef, orderBy('timestamp', 'asc'));
+  
       const unsubscribe = onSnapshot(q, async (snapshot) => {
-        const changes = snapshot.docChanges();
-        
-        for (const change of changes) {
-          if (change.type === "added" || change.type === "modified") {
-            const messageData = { id: change.doc.id, ...change.doc.data() };
-            
-            setMessages(prevMessages => {
-              const existingIndex = prevMessages.findIndex(msg => msg.id === messageData.id);
-              if (existingIndex !== -1) {
-                // 기존 메시지 업데이트
-                const updatedMessages = [...prevMessages];
-                updatedMessages[existingIndex] = messageData;
-                return updatedMessages;
-              } else {
-                // 새 메시지 추가
-                return [...prevMessages, messageData].sort((a, b) => 
-                  new Date(a.timestamp) - new Date(b.timestamp)
-                );
-              }
-            });
-            
-            if (messageData.senderId !== currentUser.id && !messageData.isRead) {
-              await updateDoc(doc(messagesRef, messageData.id), { isRead: true });
-              await updateDoc(doc(firestore, "chats", chatId), {
-                [`unreadCounts.${currentUser.id}`]: 0
-              });
-            }
-            setTimeout(scrollToBottom, 0);
+        const deletedDate = chatData.deletedDate[currentUser.id];
+        const newMessages = snapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(msg => !deletedDate || new Date(msg.timestamp) > new Date(deletedDate));
+
+        setMessages(newMessages);
+  
+        // 읽지 않은 메시지 처리
+        const batch = writeBatch(firestore);
+        newMessages.forEach(msg => {
+          if (msg.senderId !== currentUser.id && !msg.isRead) {
+            batch.update(doc(messagesRef, msg.id), { isRead: true });
           }
-        }
+        });
+        await batch.commit();
+  
+        // 채팅 페이지에 들어왔을 때 unreadCount 초기화
+        await updateDoc(doc(firestore, "chats", chatId), {
+          [`unreadCounts.${currentUser.id}`]: 0
+        });
+  
+        setTimeout(scrollToBottom, 0);
       });
   
       return () => unsubscribe();
     }
-  }, [chatId, currentUser, isNewChat]);
+  }, [chatId, currentUser, isNewChat, chatData]);
+  
 
   useEffect(() => {
     fetchChatData();
@@ -312,20 +209,6 @@ const ChattingPage = () => {
       };
     }
   }, [chatId, currentUser, location]);
-
-
-   useEffect(() => {
-    const messageContainer = document.querySelector('.message-list-container');
-    if (messageContainer) {
-      messageContainer.addEventListener('scroll', handleScroll);
-    }
-    return () => {
-      if (messageContainer) {
-        messageContainer.removeEventListener('scroll', handleScroll);
-
-      }
-    };
-  }, [handleScroll]);
 
   if (loading || !currentUser) {
 
@@ -444,7 +327,7 @@ const ChattingPage = () => {
       <S.ContentWrapper>
         <S.MessageListContainer className="message-list-container">  
           {!isNewChat && (
-            <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData} loadMoreMessages={loadMoreMessages} hasMore={hasMore} isLoadingMore={isLoadingMore} />
+            <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData}/>
 
           )}
         </S.MessageListContainer>
