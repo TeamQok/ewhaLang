@@ -55,10 +55,16 @@ const UserListPage = () => {
     if (!loggedUser) return;
 
     const filtered = allUsers.filter((user) => {
+      //자기 자신 제외
       if (user.id === loggedUser.id) {
         return false;
       }
 
+      //미검증 사용자 제외
+      if (user.verificationStatus !== "verified"){
+        return false;
+      }
+      
       const languageMatch =
         filterCriteria.languages.length === 0 ||
         filterCriteria.languages.some((lang) =>

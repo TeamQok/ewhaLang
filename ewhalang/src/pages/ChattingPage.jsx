@@ -147,13 +147,6 @@ const ChattingPage = () => {
   }, [chatId, currentUser]);
 
   useEffect(() => {
-    if (chatData && isInChatRoom) {
-      const unsubscribe = setupMessageListener(chatData);
-      return () => unsubscribe();
-    }
-  }, [setupMessageListener, chatData, isInChatRoom]);
-
-  useEffect(() => {
     const handleTouchMove = (e) => {
       if (isInputFocused && e.target.closest('.message-list-container')) {
         inputAreaRef.current.blur();
@@ -196,7 +189,6 @@ const ChattingPage = () => {
   }, [navigate]);
 
   useEffect(() => {
-    setIsInChatRoom(true);
     if (chatId === 'new') {
       setIsNewChat(true);
       const { otherUser: newOtherUser, loggedUser } = location.state;
@@ -205,29 +197,15 @@ const ChattingPage = () => {
       setOtherUserId(newOtherUser.userId);
       setLoading(false);
     } else {
+      let unsubscribe = () => {};
       fetchChatData();
-    }
+
       // 컴포넌트가 언마운트될 때 실행될 클린업 함수
       return () => {
-        setIsInChatRoom(false);
-        if (messageListenerUnsubscribe.current) {
-          messageListenerUnsubscribe.current();
-          messageListenerUnsubscribe.current = null;
-        }
+        unsubscribe();
       };
-  }, [chatId, location]);
-
-   useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsInChatRoom(!document.hidden);
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
+    }
+  }, [chatId, currentUser, location]);
 
   if (loading || !currentUser) {
 
@@ -299,11 +277,11 @@ const ChattingPage = () => {
           lastMessage: newMessage
         });
       }
-
-      setTimeout(scrollToBottom, 0);
     } catch (error) {
       console.error("Error sending message: ", error);
     }
+
+    setTimeout(scrollToBottom, 0);
   };
 
   const options = [t("actions.leaveChat"), t("actions.report")];
