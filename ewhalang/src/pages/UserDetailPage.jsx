@@ -78,13 +78,7 @@ const UserDetailPage = () => {
       for (const doc of querySnapshot.docs) {
         const chatData = doc.data();
         if (chatData.participantsId.includes(user.id)) {
-          const deletedDate = chatData.deletedDate[loggedUser.id];
-          const lastMessageTimestamp = chatData.lastMessage.timestamp;
-
-          if(!deletedDate || new Date(lastMessageTimestamp) > new Date(deletedDate)){
-            existingChatId = doc.id;
-            break;
-          }
+          existingChatId = doc.id;
         }
       };
 
