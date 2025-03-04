@@ -1,6 +1,7 @@
 import "./style/common.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import styled from "styled-components";
+import i18n from "./i18n";
 
 // 페이지 임포트
 import MainPage from "./pages/MainPage";
@@ -28,6 +29,7 @@ import logo from "./assets/logo.svg";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
 
 function App() {
+  const [isLanguageSet, setIsLanguageSet] = useState(false);
   const auth = getAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);

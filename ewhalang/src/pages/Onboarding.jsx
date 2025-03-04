@@ -17,12 +17,15 @@ const Onboarding = () => {
   useEffect(() => {
     const selectedLanguage = localStorage.getItem("usingLanguage") || "en";
     if (selectedLanguage) {
-      setLang(selectedLanguage);
-      i18n.changeLanguage(selectedLanguage);
+      i18n.changeLanguage(selectedLanguage).then(() => {
+        // 언어 변경이 완료된 후에 setLang 호출
+        setLang(selectedLanguage);
+      });
     } else {
       i18n.on("initialized", () => {
-        i18n.changeLanguage(selectedLanguage);
-        setLang(selectedLanguage);
+        i18n.changeLanguage(selectedLanguage).then(() => {
+          setLang(selectedLanguage);
+        });
       });
     }
   }, [i18n]);

@@ -1,3 +1,4 @@
+import { app } from "./firebase";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
@@ -31,6 +32,8 @@ const fetchUserLanguage = async () => {
   }
 };
 
+let isLanguageInitialized = false;
+
 // i18n 초기화 함수
 const initI18n = async () => {
   const storedLang = localStorage.getItem("usingLanguage") || "en"; // 기본값 'en'
@@ -45,7 +48,7 @@ const initI18n = async () => {
       },
     },
     lng: storedLang, // 초기 언어를 설정
-    fallbackLng: "en",
+    // fallbackLng: "en",
     interpolation: {
       escapeValue: false,
     },
@@ -58,12 +61,16 @@ const initI18n = async () => {
       const userLang = await fetchUserLanguage();
       const finalLang = userLang || storedLang; // 로그인한 사용자 언어가 있으면 사용, 아니면 로컬스토리지 값 사용
       i18n.changeLanguage(finalLang); // 언어 변경 호출
+      isLanguageInitialized = true; // 중복 초기화 방지
     }
   });
 
   // 언어 변경 시 로컬 스토리지에 저장
   i18n.on("languageChanged", (lng) => {
-    localStorage.setItem("usingLanguage", lng);
+    if (!isLanguageInitialized) {
+      localStorage.setItem("usingLanguage", lng);
+      isLanguageInitialized = true; // 중복 저장 방지
+    }
   });
 };
 
