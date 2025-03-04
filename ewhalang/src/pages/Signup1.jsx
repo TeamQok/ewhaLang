@@ -33,6 +33,7 @@ const Signup1 = () => {
   const goNext = () => {
     navigate("/signup2");
   };
+  console.log("현재 설정된 언어 로그인1:", i18n.language);
 
   const confirmPw = (e) => {
     setConPw(e.target.value);

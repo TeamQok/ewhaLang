@@ -1,4 +1,3 @@
-
 import * as S from "./ChattingPage.style";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Div100vh from 'react-div-100vh';
@@ -31,9 +30,7 @@ import { useTranslation } from "react-i18next";
 import { RESIGNED_USER } from "../constants";
 import Spinner from "../components/common/Spinner";
 
-
 const ChattingPage = () => {
-
   const { chatId } = useParams();
   const location = useLocation();
   const [isNewChat, setIsNewChat] = useState(false);
@@ -62,7 +59,9 @@ const ChattingPage = () => {
           const data = chatDoc.data();
           setChatData(data);
 
-          const newOtherUserId = data.participantsId.find(id => id !== currentUser.id);
+          const newOtherUserId = data.participantsId.find(
+            (id) => id !== currentUser.id
+          );
           setOtherUserId(newOtherUserId);
 
           if (newOtherUserId === RESIGNED_USER.id) {
@@ -89,7 +88,6 @@ const ChattingPage = () => {
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
-
       const messageContainer = document.querySelector(
         ".message-list-container"
       );
@@ -136,11 +134,11 @@ const ChattingPage = () => {
   
         setTimeout(scrollToBottom, 0);
       });
-  
+
       return () => unsubscribe();
     }
   }, [chatId, currentUser, isNewChat, chatData]);
-  
+
 
   useEffect(() => {
     fetchChatData();
@@ -148,17 +146,19 @@ const ChattingPage = () => {
 
   useEffect(() => {
     const handleTouchMove = (e) => {
-      if (isInputFocused && e.target.closest('.message-list-container')) {
+      if (isInputFocused && e.target.closest(".message-list-container")) {
         inputAreaRef.current.blur();
       }
     };
 
     if (isInputFocused) {
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
     }
 
     return () => {
-      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener("touchmove", handleTouchMove);
     };
   }, [isInputFocused]);
 
@@ -189,6 +189,7 @@ const ChattingPage = () => {
   }, [navigate]);
 
   useEffect(() => {
+
     if (chatId === 'new') {
       setIsNewChat(true);
       const { otherUser: newOtherUser, loggedUser } = location.state;
@@ -208,9 +209,7 @@ const ChattingPage = () => {
   }, [chatId, currentUser, location]);
 
   if (loading || !currentUser) {
-
-    return <Spinner/>
-
+    return <Spinner />;
   }
 
   const handleSendMessage = async (text) => {
@@ -248,33 +247,40 @@ const ChattingPage = () => {
           },
         };
 
+        const newChatRef = await addDoc(
+          collection(firestore, "chats"),
+          newChatData
+        );
 
-        const newChatRef = await addDoc(collection(firestore, "chats"), newChatData);
-  
         // 새 채팅에 첫 메시지 추가
-        await addDoc(collection(firestore, `chats/${newChatRef.id}/messages`), newMessage);
+        await addDoc(
+          collection(firestore, `chats/${newChatRef.id}/messages`),
+          newMessage
+        );
 
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", newChatRef.id), {
           [`unreadCounts.${otherUserId}`]: increment(1),
-          lastMessage: newMessage
+          lastMessage: newMessage,
         });
         setChatData(newChatData);
 
         // URL 업데이트
         navigate(`/chats/${newChatRef.id}`, { replace: true });
 
-        if(isNewChat){
-
+        if (isNewChat) {
           setIsNewChat(false);
         }
       } else {
         // 기존 채팅에 메시지 추가
-        await addDoc(collection(firestore, `chats/${chatId}/messages`), newMessage);
+        await addDoc(
+          collection(firestore, `chats/${chatId}/messages`),
+          newMessage
+        );
         // 채팅 문서 업데이트
         await updateDoc(doc(firestore, "chats", chatId), {
           [`unreadCounts.${otherUserId}`]: increment(1),
-          lastMessage: newMessage
+          lastMessage: newMessage,
         });
       }
     } catch (error) {
@@ -292,19 +298,18 @@ const ChattingPage = () => {
   const handleSelect = (option) => {
     setIsDropDownOpen(false);
 
-    if(option === t("actions.leaveChat")){
-
+    if (option === t("actions.leaveChat")) {
       setIsChatOutModalOpen(true);
-    } else if(option === t("actions.report")){
+    } else if (option === t("actions.report")) {
       setIsReportModalOpen(true);
     }
   };
   const leaveChat = async (chatId, currentUserId) => {
     try {
       await updateDoc(doc(firestore, "chats", chatId), {
-        [`deletedDate.${currentUserId}`]: new Date().toISOString()
+        [`deletedDate.${currentUserId}`]: new Date().toISOString(),
       });
-      navigate('/chats');
+      navigate("/chats");
     } catch (error) {
       console.error("Error leaving chat:", error);
     }
@@ -312,30 +317,52 @@ const ChattingPage = () => {
   return (
     <S.Wrapper>
       <S.TopbarWrapper>
-
-        <Topbar title={
-          <S.Title>
-            <Nickname>{otherUser.nickname}</Nickname>
-            <Separator>|</Separator>
-            <Country>{t(`nationality.${otherUser.country}`)}</Country>
-          </S.Title>
-        } left={"back"} right="dot" rightonClick={handleDotClick} />
+        <Topbar
+          title={
+            <S.Title>
+              <Nickname>{otherUser.nickname}</Nickname>
+              <Separator>|</Separator>
+              <Country>{t(`nationality.${otherUser.country}`)}</Country>
+            </S.Title>
+          }
+          left={"back"}
+          right="dot"
+          rightonClick={handleDotClick}
+        />
       </S.TopbarWrapper>
       <S.ContentWrapper>
-        <S.MessageListContainer className="message-list-container">  
+        <S.MessageListContainer className="message-list-container">
           {!isNewChat && (
+
             <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData}/>
 
           )}
         </S.MessageListContainer>
       </S.ContentWrapper>
       <S.InputAreaContainer>
-
-          <InputArea ref={inputAreaRef} onFocus={handleInputFocus} onBlur={handleInputBlur} onSendMessage={handleSendMessage} disabled={isResignedUser} placeholder={isResignedUser ? t("placeholder.unknownUser") : null} />
-        </S.InputAreaContainer>
+        <InputArea
+          ref={inputAreaRef}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          onSendMessage={handleSendMessage}
+          disabled={isResignedUser}
+          placeholder={isResignedUser ? t("placeholder.unknownUser") : null}
+        />
+        <InputArea
+          ref={inputAreaRef}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          onSendMessage={handleSendMessage}
+          disabled={isResignedUser}
+          placeholder={isResignedUser ? t("placeholder.unknownUser") : null}
+        />
+      </S.InputAreaContainer>
       {!isNewChat && (
-        <ShortDropDown options={options} onSelect={handleSelect} isOpen={isDropDownOpen} />
-
+        <ShortDropDown
+          options={options}
+          onSelect={handleSelect}
+          isOpen={isDropDownOpen}
+        />
       )}
       <Modal
         isOpen={isReportModalOpen}
@@ -379,8 +406,8 @@ const ChattingPage = () => {
         confirmText={t("common.confirm")}
         onConfirm={() => {
           setIsChatOutConfirmOpen(false);
-          leaveChat(chatId, currentUser.id)
-          navigate('/chats');
+          leaveChat(chatId, currentUser.id);
+          navigate("/chats");
         }}
         isSingleButton={true}
         showTextInput={false}

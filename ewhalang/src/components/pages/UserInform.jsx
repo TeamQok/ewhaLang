@@ -1,3 +1,4 @@
+import { app } from "../../firebase";
 import Topbar from "../layout/Topbar";
 import * as S from "./UserInform.style";
 import profile from "../../assets/profile.svg";
@@ -25,6 +26,7 @@ import BottomBar from "../layout/BottomBar";
 import imageCompression from "browser-image-compression";
 import { useTranslation } from "react-i18next";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import i18n from "i18next";
 
 const proficiencyOrder = {
   "원어민 (Native)": 4,
@@ -33,7 +35,7 @@ const proficiencyOrder = {
   "기초(Basic)": 1,
 };
 
-const UserInform = ({ isEdit }) => {
+const UserInform = ({ isEdit, language }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
@@ -54,6 +56,17 @@ const UserInform = ({ isEdit }) => {
   const [nickCheck, setNickCheck] = useState(false);
 
   const { t, i18n } = useTranslation();
+
+  console.log("현재 설정된 언어:", language);
+
+  useEffect(() => {
+    // 언어가 props로 변경되면 i18n을 갱신
+    if (i18n.language !== language) {
+      console.log(
+        `언어 변경 (UserInform - useEffect): ${i18n.language} -> ${language}`
+      );
+    }
+  }, [language]);
 
   const goNext = () => {
     navigate("/login");
@@ -472,7 +485,7 @@ const UserInform = ({ isEdit }) => {
   return (
     <>
       <Topbar
-        title={isEdit ? t("signup2.수정하기") : t("signup2.title")}
+        title={isEdit ? t("signup2.수정하기") : "회원가입 / Signin"}
         right={"x"}
         left={"back"}
         rightonClick={onClickX}
@@ -510,7 +523,7 @@ const UserInform = ({ isEdit }) => {
         ) : (
           <>
             <InputBox
-              title={t("signup2.이름")}
+              title={"이름 / Name"}
               placeholder={t("signup2.이름을입력해주세요")}
               onChange={inputName}
               value={name}
