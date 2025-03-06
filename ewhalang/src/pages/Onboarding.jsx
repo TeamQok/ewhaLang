@@ -42,6 +42,12 @@ const Onboarding = () => {
     navigate("/login");
   };
 
+  const handleLanguageChange = (selectedOption) => {
+    const selectedLangCode = selectedOption === t("onboarding.ko") ? "ko" : "en";
+    localStorage.setItem("usingLanguage", selectedLangCode);
+    i18n.changeLanguage(selectedLangCode);
+  };
+
   return (
     <>
       <S.Wrapper>
@@ -67,14 +73,7 @@ const Onboarding = () => {
               isLong={false}
               placeholder={t("onboarding.option")}
               options={[t("onboarding.ko"), t("onboarding.en")]}
-              onSelect={(selectedOption) => {
-                console.log(`Selected: ${selectedOption}`);
-                const selectedLangCode =
-                  selectedOption === t("onboarding.ko") ? "ko" : "en";
-                localStorage.setItem("usingLanguage", selectedLangCode);
-                setLang(selectedOption);
-                i18n.changeLanguage(selectedLangCode); // 언어 변경 호출
-              }}
+              onSelect={handleLanguageChange}
             />
           </S.Setting>
           <LongButton type={ButtonType.WHITE} onClick={goSignin}>

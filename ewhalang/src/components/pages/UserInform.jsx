@@ -35,7 +35,7 @@ const proficiencyOrder = {
   "기초(Basic)": 1,
 };
 
-const UserInform = ({ isEdit, language }) => {
+const UserInform = ({ isEdit, onSave }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
@@ -56,17 +56,6 @@ const UserInform = ({ isEdit, language }) => {
   const [nickCheck, setNickCheck] = useState(false);
 
   const { t, i18n } = useTranslation();
-
-  console.log("현재 설정된 언어:", language);
-
-  useEffect(() => {
-    // 언어가 props로 변경되면 i18n을 갱신
-    if (i18n.language !== language) {
-      console.log(
-        `언어 변경 (UserInform - useEffect): ${i18n.language} -> ${language}`
-      );
-    }
-  }, [language]);
 
   const goNext = () => {
     navigate("/login");
@@ -216,14 +205,10 @@ const UserInform = ({ isEdit, language }) => {
       !birtherr
     ) {
       const sortedLanguages = sortLanguagesByProficiency(languages);
-      const user = auth.currentUser;
-      const uid = user?.uid;
-      const email = user?.email;
       const usingLanguage = localStorage.getItem("usingLanguage");
       // 1. 프로필 이미지를 업로드하고 URL 받아오기
 
-      const docRef = await setDoc(doc(firestore, "users", uid), {
-        uid,
+      const userData = {
         profileImg,
         name,
         nickname,
@@ -234,13 +219,13 @@ const UserInform = ({ isEdit, language }) => {
         languages: sortedLanguages,
         hobby,
         introduction,
-        email,
         usingLanguage,
         verificationStatus: "unverified",
         lastConnectDate: new Date().toISOString(), // 현재 시간 저장
-      });
+      };
 
-      console.log("Document written with ID: ", uid);
+      onSave(userData);
+
       setIsModalOpen(true);
     } else {
       setIsModalOpen2(true);
@@ -485,7 +470,7 @@ const UserInform = ({ isEdit, language }) => {
   return (
     <>
       <Topbar
-        title={isEdit ? t("signup2.수정하기") : "회원가입 / Signin"}
+        title={isEdit ? t("signup2.수정하기") : t("signup2.title")}
         right={"x"}
         left={"back"}
         rightonClick={onClickX}
@@ -523,7 +508,7 @@ const UserInform = ({ isEdit, language }) => {
         ) : (
           <>
             <InputBox
-              title={"이름 / Name"}
+              title={t("signup2.이름")}
               placeholder={t("signup2.이름을입력해주세요")}
               onChange={inputName}
               value={name}
