@@ -2,19 +2,37 @@ import UserInform from "../components/pages/UserInform";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import i18n from "i18next";
+import {app, firestore} from "../firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const Signup2 = () => {
-  const [language, setLanguage] = useState(
-    localStorage.getItem("usingLanguage")
-  );
-  const { i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { email, pw } = location.state;
 
-  console.log("현재 설정된 언어 부모컴포넌트:", i18n.language);
+  const handleSave = async (userData) => {
+    try{
+      const auth = getAuth(app);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, pw);
+      const userId = userCredential.user.uid;
 
+      await setDoc(doc(firestore, "users", userId), {
+        ...userData,
+        email,
+      });
+
+      console.log("success");
+    } catch(error){
+      console.error("회원가입 실패: ", error.message);
+    }
+  }
+  
   return (
     <Wrapper>
-      <UserInform isEdit={false} language={i18n.language} />
+      <UserInform isEdit={false} onSave={handleSave}/>
     </Wrapper>
   );
 };

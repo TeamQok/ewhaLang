@@ -3,7 +3,6 @@ import * as S from "./Signup1.style";
 import InputBox from "../components/common/InputBox";
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import { useNavigate } from "react-router-dom";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { app, firestore } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -27,11 +26,12 @@ const Signup1 = () => {
   const [eye, setEye] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({guideText: "", confirmText: "확인"});
 
   const { t, i18n } = useTranslation();
 
   const goNext = () => {
-    navigate("/signup2");
+    navigate("/signup2", {state:{email, pw}});
   };
   console.log("현재 설정된 언어 로그인1:", i18n.language);
 
@@ -81,25 +81,20 @@ const Signup1 = () => {
   // 이메일 중복 검사 함수
   const checkEmailDuplicate = async (email) => {
     try {
-      // 'users' 컬렉션에 있는 이메일과 일치하는 문서 찾기
       const usersRef = collection(firestore, "users");
       const q = query(usersRef, where("email", "==", email));
       const querySnapshot = await getDocs(q);
-
-      // 중복 검사 결과
-      if (!querySnapshot.empty) {
-        setIsModalOpen(true);
-      }
+      return !querySnapshot.empty;
     } catch (error) {
-      console.error("Error checking nickname: ", error);
-
-      throw error; // 오류 처리
+      console.error("Error checking email:", error);
+      throw error;
     }
   };
 
-  const onClickEmailCheck = () => {
-    checkEmailDuplicate(email);
-  };
+  const openModal = (guideText) => {
+    setModalContent({guideText, confirmText:"확인"});
+    setIsModalOpen(true);
+  }
 
   return (
     <>
@@ -140,34 +135,24 @@ const Signup1 = () => {
           onChange={confirmPw}
           type="password"
         />
-        {authpw ? <S.Info>{t("signup1.pwOkmessage")}</S.Info> : <></>}
+        {authpw && !err ? <S.Info>{t("signup1.pwOkmessage")}</S.Info> : <></>}
       </S.Wrapper>
 
       <S.Container>
-        {authpw ? (
+        {authpw && !err && emailValid ? (
           <LongButton
             type={ButtonType.GREEN}
             onClick={async (e) => {
               e.preventDefault();
-              onClickEmailCheck(email);
-
-              try {
-                const auth = getAuth(app);
-                const userCredential = await createUserWithEmailAndPassword(
-                  auth,
-                  email,
-                  pw
-                );
-                const user = userCredential.user;
-                console.log("회원가입 성공", user);
-
-                goNext(); // 회원가입 성공 후에 goNext 호출
-              } catch (error) {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(
-                  `회원가입 실패: ${errorMessage} (Error Code: ${errorCode})`
-                );
+              if(pw !== conPw){
+                openModal("비밀번호가 일치하지 않습니다.")
+              }else{
+                const isDuplicate = await checkEmailDuplicate(email);
+                if(isDuplicate){
+                  openModal("이미 존재하는 이메일입니다.");
+                }else{
+                  goNext();
+                }
               }
             }}
           >
