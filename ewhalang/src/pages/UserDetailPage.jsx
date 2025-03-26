@@ -1,7 +1,15 @@
 import * as S from "./UserDetailPage.style";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { collection, addDoc, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { auth, firestore } from "../firebase";
 import Topbar from "../components/layout/Topbar";
 import UserImage from "../components/shared/UserImage";
@@ -63,7 +71,7 @@ const UserDetailPage = () => {
         userId: user.id,
         nickname: user.nickname,
         profileImg: user.profileImg,
-        country: user.country
+        country: user.country,
       };
 
       const chatsRef = collection(firestore, "chats");
@@ -72,7 +80,7 @@ const UserDetailPage = () => {
         where("participantsId", "array-contains", loggedUser.id)
       );
       const querySnapshot = await getDocs(q);
-  
+
       let existingChatId = null;
 
       for (const doc of querySnapshot.docs) {
@@ -80,25 +88,25 @@ const UserDetailPage = () => {
         if (chatData.participantsId.includes(user.id)) {
           existingChatId = doc.id;
         }
-      };
+      }
 
       if (existingChatId) {
         navigate(`/chats/${existingChatId}`);
       } else {
-        navigate(`/chats/new`, { 
-          state: { 
+        navigate(`/chats/new`, {
+          state: {
             otherUser: userInfo,
-            loggedUser: loggedUser
-          } 
+            loggedUser: loggedUser,
+          },
         });
       }
     } catch (error) {
       console.error("Error adding document: ", error);
     }
   };
-  
-  if (!user || !loggedUser){
-    return <Spinner/>;
+
+  if (!user || !loggedUser) {
+    return <Spinner />;
   }
 
   const options = [t("actions.report")];
@@ -134,7 +142,7 @@ const UserDetailPage = () => {
     <S.Wrapper>
       <S.ContentWrapper>
         <Topbar
-          title={user.nickname}
+          title={t("pageTitles.userDetail")}
           left={"back"}
           right="dot"
           rightonClick={handleDotClick}
