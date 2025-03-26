@@ -28,13 +28,12 @@ const ModalContainer = styled.div`
 
 // 컨텐츠 래퍼 스타일
 const ContentWrapper = styled.div`
-  padding: 30px 40px;
+  padding: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center; // 텍스트 자체를 가운데 정렬
   width: 100%;
-  
 `;
 
 // 안내 문구 텍스트 스타일
@@ -57,13 +56,24 @@ const ButtonContainer = styled.div`
   gap: ${(props) => (props.isSingleButton ? "0" : "12px")};
 `;
 
-const StyledInput = styled.input`
+const StyledTextArea = styled.textarea`
   width: 46vw;
-  height: 130px;
+  min-height: 100px;
   margin-bottom: 12px;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-sizing: border-box;
+  padding: 10px;
+  overflow-y: auto;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.5;
+  resize: none;
+
+  &:focus {
+    outline: none;
+    border-color: #ccc;
+  }
 `;
 
 // Modal 컴포넌트
@@ -74,7 +84,6 @@ const Modal = ({
   confirmText = "확인",
   cancelText = "취소",
   onConfirm,
-  onCancel,
   isSingleButton = false,
   showTextInput = false,
 }) => {
@@ -86,15 +95,23 @@ const Modal = ({
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ContentWrapper>
           <GuideText showTextInput={showTextInput}>{guideText}</GuideText>
-          {showTextInput && <StyledInput type="text" value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)} />}
+          {showTextInput && (
+            <StyledTextArea
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              rows="1"
+            />
+          )}
 
           <ButtonContainer isSingleButton={isSingleButton}>
-            <ShortButton type={ButtonType.GREEN} onClick={()=>onConfirm(inputValue)}>
+            <ShortButton
+              type={ButtonType.GREEN}
+              onClick={() => onConfirm(inputValue)}
+            >
               {confirmText}
             </ShortButton>
             {!isSingleButton && (
-              <ShortButton type={ButtonType.SHORT_GREY} onClick={onCancel}>
+              <ShortButton type={ButtonType.SHORT_GREY} onClick={onClose}>
                 {cancelText}
               </ShortButton>
             )}
