@@ -4,7 +4,11 @@ import { LongButton, ButtonType } from "../components/common/LongButton";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { auth } from "../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  setPersistence,
+  browserLocalPersistence,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import Modal from "../components/common/Modal";
 import { useTranslation } from "react-i18next";
 import logo from "../assets/logo.svg";
@@ -51,6 +55,8 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
+      await setPersistence(auth, browserLocalPersistence);
+
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
