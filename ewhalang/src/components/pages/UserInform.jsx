@@ -63,21 +63,7 @@ const UserInform = ({ isEdit, onSave }) => {
 
   const onClickX = async () => {
     if (!isEdit) {
-      const user = auth.currentUser;
-
-      if (user) {
-        try {
-          await deleteUser(user);
-          console.log("사용자가 삭제되었습니다.");
-          navigate("/login");
-          // 이전 페이지로 이동
-        } catch (error) {
-          console.error("사용자 삭제 중 오류 발생:", error);
-        }
-      } else {
-        navigate("/login");
-        console.log("로그인된 사용자가 없습니다.");
-      }
+      navigate("/");
     } else {
       navigate("/mypage");
     }
@@ -297,21 +283,26 @@ const UserInform = ({ isEdit, onSave }) => {
       maxSizeMB: 0.35, // 최대 파일 크기를 759kb로 설정
       maxWidthOrHeight: 1920, // 최대 높이
       useWebWorker: true,
+      preserveAspectRatio: true,
     };
     setShowOptions(false);
 
-    // 이미지 압축
-    const compressedFile = await imageCompression(file, options);
+    try {
+      // 이미지 압축
+      const compressedFile = await imageCompression(file, options);
 
-    if (compressedFile) {
-      // 선택된 파일을 프로필 이미지로 설정
-      const reader = new FileReader();
-      //   파일 읽은 후 실행될 함수
-      reader.onloadend = () => {
-        setProfileImg(reader.result); // 이미지 URL을 상태로 설정
-      };
-      reader.readAsDataURL(compressedFile);
-    } else return;
+      if (compressedFile) {
+        // 선택된 파일을 프로필 이미지로 설정
+        const reader = new FileReader();
+        //   파일 읽은 후 실행될 함수
+        reader.onloadend = () => {
+          setProfileImg(reader.result); // 이미지 URL을 상태로 설정
+        };
+        reader.readAsDataURL(compressedFile);
+      }
+    } catch (error) {
+      console.error("이미지 압축 중 오류 발생:", error);
+    }
   };
 
   /////////////////////////////////////////////////////////////
