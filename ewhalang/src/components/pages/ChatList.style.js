@@ -1,5 +1,5 @@
 // ChatList.style.js
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const ListContainer = styled.div`
   overflow-y: auto;
@@ -74,4 +74,25 @@ export const UnreadCount = styled.div`
   align-items: center;
   font-size: 14px;
   margin-top: 10px;
+`;
+
+export const MsgWrp = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 85px);
+  padding-top: 45px;
+`;
+
+export const MessageBox = styled.div`
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--grey1);
 `;
