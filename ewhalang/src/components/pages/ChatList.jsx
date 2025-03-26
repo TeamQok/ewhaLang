@@ -6,11 +6,13 @@ import * as S from "./ChatList.style";
 import { useNavigate } from "react-router-dom";
 import { setUnreadCount } from "../common/UnreadCountManager";
 import Spinner from "../common/Spinner";
+import { useTranslation } from "react-i18next";
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -73,15 +75,23 @@ const ChatList = () => {
   }
 
   return (
-    <S.ListContainer>
-      {chatList.map((chat) => (
-        <ChatBox
-          key={chat.channelId}
-          chat={chat}
-          loggedInUserId={currentUser.uid}
-        />
-      ))}
-    </S.ListContainer>
+    <>
+      {chatList.length === 0 ? (
+        <S.MsgWrp>
+          <S.MessageBox>{t("messages.startChat")}</S.MessageBox>
+        </S.MsgWrp>
+      ) : (
+        <S.ListContainer>
+          {chatList.map((chat) => (
+            <ChatBox
+              key={chat.channelId}
+              chat={chat}
+              loggedInUserId={currentUser.uid}
+            />
+          ))}
+        </S.ListContainer>
+      )}
+    </>
   );
 };
 
