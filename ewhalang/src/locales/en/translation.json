@@ -129,7 +129,7 @@
     "leaveChat": "Leave Chat"
   },
   "messages": {
-    "reportReason": "Please write the reason for reporting.",
+    "reportReason": "Please write the reason for reporting. Reported user may be restricted from using the service depending on the accumulated reports.",
     "reportConfirm": "Report has been submitted.",
     "notFound": "Chat not found.",
     "leaveChatConfirm": "If you leave the chat room, the chat list and conversation content will be deleted and cannot be recovered. Are you sure you want to leave the chat room?",
@@ -140,6 +140,7 @@
   "pageTitles": {
     "mypage": "My Page",
     "userList": "Find EwhaLang Friend",
+    "userDetail": "User Detail",
     "filter": "Filters",
     "chatting": "Chats",
     "verify": "Student Verification"
@@ -150,7 +151,8 @@
     "confirm": "Confirm",
     "none": "None",
     "edit": "Edit",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "close": "Close"
   },
   "placeholder": {
     "searchCountry": "Search for a country",

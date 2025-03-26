@@ -1,6 +1,6 @@
 import * as S from "./ChattingPage.style";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Div100vh from 'react-div-100vh';
+import Div100vh from "react-div-100vh";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   collection,
@@ -65,14 +65,13 @@ const ChattingPage = () => {
           setOtherUserId(newOtherUserId);
 
           if (newOtherUserId === RESIGNED_USER.id) {
-            setOtherUser({ ...RESIGNED_USER, nickname: t('user.unknown') });
+            setOtherUser({ ...RESIGNED_USER, nickname: t("user.unknown") });
             setIsResignedUser(true);
           } else {
             const otherUserInfo = data.participantsInfo[newOtherUserId];
             setOtherUser(otherUserInfo);
             setIsResignedUser(false);
           }
-
         } else {
           console.error("No such chat document!");
           setChatData(null);
@@ -108,37 +107,39 @@ const ChattingPage = () => {
   useEffect(() => {
     if (chatId && currentUser && !isNewChat && chatData) {
       const messagesRef = collection(firestore, `chats/${chatId}/messages`);
-      const q = query(messagesRef, orderBy('timestamp', 'asc'));
-  
+      const q = query(messagesRef, orderBy("timestamp", "asc"));
+
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         const deletedDate = chatData.deletedDate[currentUser.id];
         const newMessages = snapshot.docs
-          .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter(msg => !deletedDate || new Date(msg.timestamp) > new Date(deletedDate));
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          .filter(
+            (msg) =>
+              !deletedDate || new Date(msg.timestamp) > new Date(deletedDate)
+          );
 
         setMessages(newMessages);
-  
+
         // 읽지 않은 메시지 처리
         const batch = writeBatch(firestore);
-        newMessages.forEach(msg => {
+        newMessages.forEach((msg) => {
           if (msg.senderId !== currentUser.id && !msg.isRead) {
             batch.update(doc(messagesRef, msg.id), { isRead: true });
           }
         });
         await batch.commit();
-  
+
         // 채팅 페이지에 들어왔을 때 unreadCount 초기화
         await updateDoc(doc(firestore, "chats", chatId), {
-          [`unreadCounts.${currentUser.id}`]: 0
+          [`unreadCounts.${currentUser.id}`]: 0,
         });
-  
+
         setTimeout(scrollToBottom, 0);
       });
 
       return () => unsubscribe();
     }
   }, [chatId, currentUser, isNewChat, chatData]);
-
 
   useEffect(() => {
     fetchChatData();
@@ -189,8 +190,7 @@ const ChattingPage = () => {
   }, [navigate]);
 
   useEffect(() => {
-
-    if (chatId === 'new') {
+    if (chatId === "new") {
       setIsNewChat(true);
       const { otherUser: newOtherUser, loggedUser } = location.state;
       setOtherUser(newOtherUser);
@@ -333,9 +333,12 @@ const ChattingPage = () => {
       <S.ContentWrapper>
         <S.MessageListContainer className="message-list-container">
           {!isNewChat && (
-
-            <MessageList messages={messages} currentUserId={currentUser.id} userProfileImage={otherUser.profileImg} chatData={chatData}/>
-
+            <MessageList
+              messages={messages}
+              currentUserId={currentUser.id}
+              userProfileImage={otherUser.profileImg}
+              chatData={chatData}
+            />
           )}
         </S.MessageListContainer>
       </S.ContentWrapper>
@@ -368,12 +371,15 @@ const ChattingPage = () => {
         isOpen={isReportModalOpen}
         guideText={t("messages.reportReason")}
         confirmText={t("actions.submitReport")}
+        cancelText={t("common.close")}
         onConfirm={() => {
           setIsReportModalOpen(false);
           setIsReportConfirmOpen(true);
         }}
-        isSingleButton={true}
         showTextInput={true}
+        onClose={() => {
+          setIsReportModalOpen(false);
+        }}
       />
       <Modal
         isOpen={isReportConfirmOpen}
@@ -394,7 +400,7 @@ const ChattingPage = () => {
           setIsChatOutModalOpen(false);
           setIsChatOutConfirmOpen(true);
         }}
-        onCancel={() => {
+        onClose={() => {
           setIsChatOutModalOpen(false);
         }}
         isSingleButton={false}
