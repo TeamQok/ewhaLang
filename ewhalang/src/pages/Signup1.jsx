@@ -186,7 +186,7 @@ const Signup1 = () => {
           onClose={() => {
             setIsModalOpen(false);
           }}
-          guideText="이미 존재하는 이메일입니다."
+          guideText={t("signup1.이미 가입된 계정이 있습니다.")}
           confirmText="확인"
           onConfirm={() => {
             setIsModalOpen(false);
