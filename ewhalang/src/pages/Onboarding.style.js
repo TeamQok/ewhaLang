@@ -3,6 +3,11 @@ import styled from "styled-components";
 export const Wrapper = styled.div`
   padding-left: 24px;
   padding-right: 24px;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 export const Container = styled.div`
@@ -13,7 +18,6 @@ export const Container = styled.div`
 
 export const Title = styled.div`
   color: var(--Black, #000);
-  margin-top: 88px;
 
   /* Big Title_24_SB */
   font-family: var(--korean);
