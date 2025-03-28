@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import arrowDown from "../../assets/arrowDown.svg";
 
@@ -85,14 +85,19 @@ const DropDown = ({
   onSelect,
   placeholder = "Select an option",
   evalue,
+  isOpen,
+  setIsOpen,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(evalue);
   useEffect(() => {
     setSelectedOption(evalue);
   }, [evalue]);
 
-  const toggling = () => setIsOpen(!isOpen);
+  const toggling = () => {
+    if (setIsOpen) {
+      setIsOpen((prev) => !prev); // 부모에서 상태 관리하는 경우
+    }
+  };
 
   const onOptionClicked = (value) => () => {
     setSelectedOption(value);

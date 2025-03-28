@@ -93,6 +93,28 @@ const UserInform = ({ isEdit, language }) => {
       navigate("/mypage");
     }
   };
+  // 드롭다운용
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isDropDownOpen2, setIsDropDownOpen2] = useState(false);
+  const [isDropDownOpen3, setIsDropDownOpen3] = useState(false);
+  const [isDropDownOpen4, setIsDropDownOpen4] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropDownOpen(false); // 바깥 클릭 시 닫힘
+        setIsDropDownOpen2(false);
+        setIsDropDownOpen3(false);
+        setIsDropDownOpen4(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // 입력 state
   const [name, setName] = useState("");
@@ -527,6 +549,7 @@ const UserInform = ({ isEdit, language }) => {
               placeholder={t("signup2.이름을입력해주세요")}
               onChange={inputName}
               value={name}
+              maxLength={30}
             />
             <div style={{ marginBottom: "16px" }} />
           </>
@@ -535,7 +558,7 @@ const UserInform = ({ isEdit, language }) => {
         <S.NicknameWrapper>
           <S.Title>{t("signup2.닉네임")}</S.Title>
           <S.NicknameContainer>
-            <S.Input onChange={inputNickname} value={nickname} />
+            <S.Input onChange={inputNickname} value={nickname} maxLength={10} />
             <S.Button onClick={onClickNicknameCheck}>
               {t("signup2.중복 확인")}
             </S.Button>
@@ -544,35 +567,44 @@ const UserInform = ({ isEdit, language }) => {
         </S.NicknameWrapper>
 
         <S.InputTitle>{t("signup2.국적")}</S.InputTitle>
+
         <DropDown
           isLong={true}
           placeholder={t("signup2.국적을 선택해주세요")}
+          isOpen={isDropDownOpen3}
+          setIsOpen={setIsDropDownOpen3}
           options={Object.keys(t("nationality", { returnObjects: true })).map(
             (key) => t(`nationality.${key}`)
           )}
           onSelect={onSelectCountry}
           evalue={isEdit ? t(`nationality.${country}`) : null}
         />
+
         <div style={{ marginBottom: "16px" }} />
 
         <S.InputTitle>{t("signup2.성별")}</S.InputTitle>
-        <DropDown
-          isLong={true}
-          placeholder={t("signup2.성별을 선택해주세요.")}
-          options={Object.keys(t("gender", { returnObjects: true })).map(
-            (key) => t(`gender.${key}`)
-          )}
-          onSelect={(selectedOption) => {
-            console.log(`Selected: ${selectedOption}`);
+        <div ref={dropdownRef}>
+          <DropDown
+            isLong={true}
+            isOpen={isDropDownOpen4}
+            setIsOpen={setIsDropDownOpen4}
+            placeholder={t("signup2.성별을 선택해주세요.")}
+            options={Object.keys(t("gender", { returnObjects: true })).map(
+              (key) => t(`gender.${key}`)
+            )}
+            onSelect={(selectedOption) => {
+              console.log(`Selected: ${selectedOption}`);
 
-            const genderKey = Object.keys(
-              t("gender", { returnObjects: true })
-            ).find((key) => t(`gender.${key}`) === selectedOption);
+              const genderKey = Object.keys(
+                t("gender", { returnObjects: true })
+              ).find((key) => t(`gender.${key}`) === selectedOption);
 
-            setGender(genderKey);
-          }}
-          evalue={isEdit ? gender : null}
-        />
+              setGender(genderKey);
+            }}
+            evalue={isEdit ? gender : null}
+          />
+        </div>
+
         <div style={{ marginBottom: "16px" }} />
 
         <InputBox
@@ -594,11 +626,14 @@ const UserInform = ({ isEdit, language }) => {
         <div style={{ marginBottom: "16px" }} />
 
         <S.InputTitle>{t("signup2.사용 가능 언어")}</S.InputTitle>
+
         {languages.map((languageObj, index) => (
-          <S.LangContainer key={index}>
+          <S.LangContainer key={index} ref={dropdownRef}>
             <DropDown
               isLong={false}
               placeholder={t("level.언어 선택")}
+              isOpen={isDropDownOpen}
+              setIsOpen={setIsDropDownOpen}
               options={filteredOptions.map((option) => option.label)} //번역된 이름이 들어감
               onSelect={(selectedOption) => {
                 // 선택된 번역된 언어 이름에 해당하는 키 값을 찾음
@@ -620,9 +655,12 @@ const UserInform = ({ isEdit, language }) => {
                   : ""
               }
             />
+
             <DropDown
               isLong={false}
               placeholder={t("level.언어 숙련도 선택")}
+              isOpen={isDropDownOpen2}
+              setIsOpen={setIsDropDownOpen2}
               options={[
                 "기초(Basic)",
                 "중급 (Intermediate)",
@@ -649,6 +687,9 @@ const UserInform = ({ isEdit, language }) => {
         >
           {t("signup2.사용 가능 언어 리셋")}
         </LongButton>
+        <S.InfoBirth err={birtherr}>
+          {t("signup2.* 사용가능 언어를 하나 이상 입력해주세요.")}
+        </S.InfoBirth>
         <div style={{ marginBottom: "16px" }} />
 
         <InputBox
