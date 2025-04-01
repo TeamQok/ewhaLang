@@ -26,15 +26,16 @@ const Signup1 = () => {
   const [eye, setEye] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    guideText: "",
-    confirmText: "확인",
-  });
+
+  const [modalContent, setModalContent] = useState({guideText: "", confirmText: "확인"});
+
 
   const { t, i18n } = useTranslation();
 
   const goNext = () => {
+
     navigate("/signup2", { state: { email, pw } });
+
   };
   console.log("현재 설정된 언어 로그인1:", i18n.language);
 
@@ -99,6 +100,7 @@ const Signup1 = () => {
     setIsModalOpen(true);
   };
 
+
   return (
     <>
       <Topbar
@@ -147,13 +149,14 @@ const Signup1 = () => {
             type={ButtonType.GREEN}
             onClick={async (e) => {
               e.preventDefault();
-              if (pw !== conPw) {
-                openModal("비밀번호가 일치하지 않습니다.");
-              } else {
+              if(pw !== conPw){
+                openModal("비밀번호가 일치하지 않습니다.")
+              }else{
                 const isDuplicate = await checkEmailDuplicate(email);
-                if (isDuplicate) {
+                if(isDuplicate){
                   openModal("이미 존재하는 이메일입니다.");
-                } else {
+                }else{
+
                   goNext();
                 }
               }

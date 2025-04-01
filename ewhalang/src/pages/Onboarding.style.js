@@ -4,7 +4,6 @@ export const Wrapper = styled.div`
   padding-left: 24px;
   padding-right: 24px;
   height: 100vh;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
