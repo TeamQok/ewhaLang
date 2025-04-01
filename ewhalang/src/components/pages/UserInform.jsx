@@ -69,19 +69,41 @@ const UserInform = ({ isEdit, onSave }) => {
     }
   };
   // 드롭다운용
-  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const [isDropDownOpen2, setIsDropDownOpen2] = useState(false);
+
   const [isDropDownOpen3, setIsDropDownOpen3] = useState(false);
   const [isDropDownOpen4, setIsDropDownOpen4] = useState(false);
   const dropdownRef = useRef(null);
+  const genderRef = useRef(null);
+  const nationalRef = useRef(null);
+
+  // 배열로 드롭다운 관리
+  const [isDropDownOpen, setIsDropDownOpen] = useState([]); // 드롭다운 상태를 배열로 관리
+  const [isDropDownOpen2, setIsDropDownOpen2] = useState([]); // 드롭다운 상태를 배열로 관리
+  const dropdownRefs = useRef([]); // useRef를 배열로 관리
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropDownOpen(false); // 바깥 클릭 시 닫힘
-        setIsDropDownOpen2(false);
-        setIsDropDownOpen3(false);
+      // if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      //   setIsDropDownOpen(false); // 바깥 클릭 시 닫힘
+      //   setIsDropDownOpen2(false);
+      // }
+
+      dropdownRefs.current.forEach((ref, index) => {
+        if (ref && !ref.contains(event.target)) {
+          setIsDropDownOpen((prev) =>
+            prev.map((state, i) => (i === index ? false : state))
+          );
+
+          setIsDropDownOpen2((prev) =>
+            prev.map((state, i) => (i === index ? false : state))
+          );
+        }
+      });
+      if (genderRef.current && !genderRef.current.contains(event.target)) {
         setIsDropDownOpen4(false);
+      }
+      if (nationalRef.current && !nationalRef.current.contains(event.target)) {
+        setIsDropDownOpen3(false);
       }
     };
 
@@ -90,6 +112,17 @@ const UserInform = ({ isEdit, onSave }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const toggleDropDown = (index) => {
+    setIsDropDownOpen((prev) =>
+      prev.map((state, i) => (i === index ? !state : state))
+    );
+  };
+  const toggleDropDown2 = (index) => {
+    setIsDropDownOpen2((prev) =>
+      prev.map((state, i) => (i === index ? !state : state))
+    );
+  };
 
   // 입력 state
   const [name, setName] = useState("");
@@ -104,6 +137,7 @@ const UserInform = ({ isEdit, onSave }) => {
 
   // 성별 검사 err
   const [birtherr, setBirtherr] = useState(true);
+  const [langErr, setlangErr] = useState(true);
   const inputName = (e) => {
     setName(e.target.value);
   };
@@ -145,6 +179,9 @@ const UserInform = ({ isEdit, onSave }) => {
   // 언어 추가하기 버튼 클릭 시
   const addLanguage = () => {
     setLanguages((prev) => [...prev, { language: "", proficiency: "" }]);
+    // 새로 추가된 드롭다운의 상태를 false로 설정
+    setIsDropDownOpen((prev) => [...prev, false]);
+    setIsDropDownOpen2((prev) => [...prev, false]);
   };
 
   // 특정 언어 및 숙련도 업데이트
@@ -543,23 +580,23 @@ const UserInform = ({ isEdit, onSave }) => {
         </S.NicknameWrapper>
 
         <S.InputTitle>{t("signup2.국적")}</S.InputTitle>
-
-        <DropDown
-          isLong={true}
-          placeholder={t("signup2.국적을 선택해주세요")}
-          isOpen={isDropDownOpen3}
-          setIsOpen={setIsDropDownOpen3}
-          options={Object.keys(t("nationality", { returnObjects: true })).map(
-            (key) => t(`nationality.${key}`)
-          )}
-          onSelect={onSelectCountry}
-          evalue={isEdit ? t(`nationality.${country}`) : null}
-        />
-
+        <div ref={nationalRef}>
+          <DropDown
+            isLong={true}
+            placeholder={t("signup2.국적을 선택해주세요")}
+            isOpen={isDropDownOpen3}
+            setIsOpen={setIsDropDownOpen3}
+            options={Object.keys(t("nationality", { returnObjects: true })).map(
+              (key) => t(`nationality.${key}`)
+            )}
+            onSelect={onSelectCountry}
+            evalue={isEdit ? t(`nationality.${country}`) : null}
+          />
+        </div>
         <div style={{ marginBottom: "16px" }} />
 
         <S.InputTitle>{t("signup2.성별")}</S.InputTitle>
-        <div ref={dropdownRef}>
+        <div ref={genderRef}>
           <DropDown
             isLong={true}
             isOpen={isDropDownOpen4}
@@ -604,12 +641,15 @@ const UserInform = ({ isEdit, onSave }) => {
         <S.InputTitle>{t("signup2.사용 가능 언어")}</S.InputTitle>
 
         {languages.map((languageObj, index) => (
-          <S.LangContainer key={index} ref={dropdownRef}>
+          <S.LangContainer
+            key={index}
+            ref={(el) => (dropdownRefs.current[index] = el)}
+          >
             <DropDown
               isLong={false}
               placeholder={t("level.언어 선택")}
-              isOpen={isDropDownOpen}
-              setIsOpen={setIsDropDownOpen}
+              isOpen={isDropDownOpen[index]}
+              setIsOpen={() => toggleDropDown(index)}
               options={filteredOptions.map((option) => option.label)} //번역된 이름이 들어감
               onSelect={(selectedOption) => {
                 // 선택된 번역된 언어 이름에 해당하는 키 값을 찾음
@@ -635,8 +675,8 @@ const UserInform = ({ isEdit, onSave }) => {
             <DropDown
               isLong={false}
               placeholder={t("level.언어 숙련도 선택")}
-              isOpen={isDropDownOpen2}
-              setIsOpen={setIsDropDownOpen2}
+              isOpen={isDropDownOpen2[index]}
+              setIsOpen={() => toggleDropDown2(index)}
               options={[
                 "기초(Basic)",
                 "중급 (Intermediate)",
@@ -663,7 +703,7 @@ const UserInform = ({ isEdit, onSave }) => {
         >
           {t("signup2.사용 가능 언어 리셋")}
         </LongButton>
-        <S.InfoBirth err={birtherr}>
+        <S.InfoBirth err={langErr}>
           {t("signup2.* 사용가능 언어를 하나 이상 입력해주세요.")}
         </S.InfoBirth>
         <div style={{ marginBottom: "16px" }} />
