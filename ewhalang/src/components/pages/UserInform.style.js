@@ -31,6 +31,7 @@ export const Container = styled.div`
   align-items: center;
   padding-top: 20px;
   padding-bottom: 20px;
+  background-color: white;
 `;
 
 export const Camera = styled.div`

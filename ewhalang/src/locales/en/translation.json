@@ -56,7 +56,8 @@
     "pwOk": "Confirm Password",
     "pwOkp": "Please re-enter the password you entered.",
     "pwOkmessage": "* The password is correct.",
-    "next": "Next"
+    "next": "Next",
+    "이미 가입된 계정이 있습니다.": "This account has already been registered."
   },
 
   "user": {
@@ -159,7 +160,6 @@
     "unknownUser": "You cannot send a message to an unknown user"
   },
   "gender": {
-    "전체": "All",
     "여성": "Female",
     "남성": "Male",
     "알리고 싶지 않음": "Prefer not to say"
@@ -186,6 +186,7 @@
     "사용 가능 언어": "Available Languages",
     "사용 가능 언어 추가하기": "Add Available Language",
     "사용 가능 언어 리셋": "Reset Available Languages",
+    "* 사용가능 언어를 하나 이상 입력해주세요.": "Please enter at least one Available Language.",
     "취미 및 관심사": "Hobbies and Interests",
     "자기소개": "Self-Introduction",
     "저장하기": "Save",

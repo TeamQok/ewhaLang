@@ -26,12 +26,16 @@ const Signup1 = () => {
   const [eye, setEye] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [modalContent, setModalContent] = useState({guideText: "", confirmText: "확인"});
+
 
   const { t, i18n } = useTranslation();
 
   const goNext = () => {
-    navigate("/signup2", {state:{email, pw}});
+
+    navigate("/signup2", { state: { email, pw } });
+
   };
   console.log("현재 설정된 언어 로그인1:", i18n.language);
 
@@ -92,9 +96,10 @@ const Signup1 = () => {
   };
 
   const openModal = (guideText) => {
-    setModalContent({guideText, confirmText:"확인"});
+    setModalContent({ guideText, confirmText: "확인" });
     setIsModalOpen(true);
-  }
+  };
+
 
   return (
     <>
@@ -151,6 +156,7 @@ const Signup1 = () => {
                 if(isDuplicate){
                   openModal("이미 존재하는 이메일입니다.");
                 }else{
+
                   goNext();
                 }
               }
@@ -171,7 +177,7 @@ const Signup1 = () => {
           onClose={() => {
             setIsModalOpen(false);
           }}
-          guideText="이미 존재하는 이메일입니다."
+          guideText={t("signup1.이미 가입된 계정이 있습니다.")}
           confirmText="확인"
           onConfirm={() => {
             setIsModalOpen(false);
