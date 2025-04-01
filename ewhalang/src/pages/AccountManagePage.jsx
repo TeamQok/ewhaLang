@@ -4,7 +4,7 @@ import Modal from "../components/common/Modal";
 import BottomBar from "../components/layout/BottomBar";
 import Topbar from "../components/layout/Topbar";
 import * as S from "./AccountManagePage.style";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   getAuth,
   reauthenticateWithCredential,
@@ -34,6 +34,7 @@ const AccountManagePage = () => {
   const [isModalOpen3, setIsModalOpen3] = useState(false);
   const [isModalOpen4, setIsModalOpen4] = useState(false);
   const [dropdown, setDropdown] = useState(false);
+  const dropdownRefs = useRef();
   const [btn, setBtn] = useState(false);
   // 조건에 따라 ButtonType을 설정합니다.
   const buttonType = btn ? ButtonType.GREEN : ButtonType.LONG_GREY_BLACK;
@@ -226,6 +227,24 @@ const AccountManagePage = () => {
     setEye2(!eye2);
   };
 
+  // /////////////////////////////////////////////////////////////////
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRefs.current &&
+        !dropdownRefs.current.contains(event.target)
+      ) {
+        setDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <Topbar
@@ -236,6 +255,7 @@ const AccountManagePage = () => {
       />
       {dropdown ? (
         <S.Box
+          ref={dropdownRefs}
           onClick={() => {
             setIsModalOpen2(true);
             setDropdown(!dropdown);
