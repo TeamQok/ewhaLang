@@ -213,3 +213,18 @@ export const ImgOption2 = styled.div`
   font-weight: 600;
   line-height: 24px; /* 171.429% */
 `;
+
+export const ConsentWrapper = styled.div`
+  margin-top: 24px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 6px;
+`;
+
+export const ConsentText = styled.span`
+  color: #0077cc;
+  cursor: pointer;
+  text-decoration: underline;
+`;

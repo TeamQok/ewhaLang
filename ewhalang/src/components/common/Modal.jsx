@@ -39,14 +39,23 @@ const ContentWrapper = styled.div`
 // 안내 문구 텍스트 스타일
 const GuideText = styled.div`
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: ${(props) => (props.showTextInput ? "12px" : "28px")};
   overflow-wrap: break-word;
   word-break: keep-all;
   white-space: normal;
   width: 100%;
   max-width: 60vw;
-  line-height: 1.5;
+  line-height: 1.6;
+  text-align: left;
+
+  & > p {
+    margin-bottom: 12px;
+  }
+
+  & > p:first-child {
+    font-weight: 600; /* 첫 줄은 제목 느낌 */
+  }
 `;
 
 // 버튼 컨테이너 스타일
@@ -94,7 +103,11 @@ const Modal = ({
     <ModalBackground onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ContentWrapper>
-          <GuideText showTextInput={showTextInput}>{guideText}</GuideText>
+          <GuideText showTextInput={showTextInput}>
+            {guideText.split("\\n").map((line, index) => (
+              <p key={index}>{line.trim()}</p>
+            ))}
+          </GuideText>
           {showTextInput && (
             <StyledTextArea
               value={inputValue}

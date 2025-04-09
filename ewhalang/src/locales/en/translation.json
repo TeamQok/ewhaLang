@@ -195,7 +195,11 @@
     "회원정보 수정이 완료되었습니다!": "Profile update completed!",
     "사용할 수 있는 닉네임입니다.": "The nickname is available.",
     "중복된 닉네임입니다.": "The nickname is already taken.",
-    "확인": "Ok"
+    "확인": "Ok",
+    "agreeText": "I agree to the collection and use of my personal information.",
+    "showTerms": "View Details",
+    "requireConsent": "Please agree to the collection and use of your personal information.",
+    "terms": "[Consent to Collection and Use of Personal Information]\\n\\n1. Collected Items: Name, school email, major, birthdate, nationality, gender, interests, etc.\\n2. Purpose of Collection: For language exchange matching and school verification\\n3. Retention Period: Until account deletion or service termination\\n4. Your personal information will not be shared externally and will only be used within the service for matching purposes."
   },
   "language": {
     "아랍어": "Arabic",

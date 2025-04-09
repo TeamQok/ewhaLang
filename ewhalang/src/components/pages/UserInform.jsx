@@ -42,6 +42,10 @@ const UserInform = ({ isEdit, onSave }) => {
   const [isModalOpen4, setIsModalOpen4] = useState(false);
   const [isModalOpen5, setIsModalOpen5] = useState(false);
   const [isModalOpen6, setIsModalOpen6] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
+  const [showConsentError, setShowConsentError] = useState(false);
+
   const navigate = useNavigate();
 
   // 카메라 옵션용
@@ -238,6 +242,11 @@ const UserInform = ({ isEdit, onSave }) => {
       // 닉네임 중복 검사했는지 확인
       setIsModalOpen6(true);
       return; // 저장 작업 중단
+    }
+
+    if (!agreed) {
+      setShowConsentError(true);
+      return;
     }
 
     if (
@@ -719,6 +728,24 @@ const UserInform = ({ isEdit, onSave }) => {
         <S.Introduce onChange={inputIntroduction} value={introduction} />
         <div style={{ marginBottom: "25px" }} />
 
+        {!isEdit && (
+          <>
+            <S.ConsentWrapper>
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+              />
+              <span>
+                {t("signup2.agreeText")}{" "}
+                <S.ConsentText onClick={() => setShowTerms(true)}>
+                  ({t("signup2.showTerms")})
+                </S.ConsentText>
+              </span>
+            </S.ConsentWrapper>
+          </>
+        )}
+
         <LongButton
           type={ButtonType.GREEN}
           onClick={isEdit ? onClickEdit : onClickSignin}
@@ -814,6 +841,26 @@ const UserInform = ({ isEdit, onSave }) => {
         onCancel={() => {
           setIsModalOpen6(false);
         }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+
+      <Modal
+        isOpen={showTerms}
+        onClose={() => setShowTerms(false)}
+        guideText={t("signup2.terms")}
+        confirmText="확인"
+        onConfirm={() => setShowTerms(false)}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+
+      <Modal
+        isOpen={showConsentError}
+        onClose={() => setShowConsentError(false)}
+        guideText={t("signup2.requireConsent")}
+        confirmText="확인"
+        onConfirm={() => setShowConsentError(false)}
         isSingleButton={true}
         showTextInput={false}
       />
