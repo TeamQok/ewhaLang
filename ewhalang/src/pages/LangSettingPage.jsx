@@ -4,7 +4,7 @@ import Modal from "../components/common/Modal";
 import BottomBar from "../components/layout/BottomBar";
 import Topbar from "../components/layout/Topbar";
 import * as S from "./LangSettingPage.style";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useTranslation } from "react-i18next";
@@ -16,6 +16,22 @@ const LangSettingPage = () => {
 
   const firestore = getFirestore();
   const auth = getAuth();
+
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropDownOpen(false); // 바깥 클릭 시 닫힘
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const updateUsingLang = async (newLang) => {
     try {
@@ -64,6 +80,8 @@ const LangSettingPage = () => {
           }}
           isLong={true}
           placeholder={t("langSetting.언어를 재설정해 주세요.")}
+          isOpen={isDropDownOpen}
+          setIsOpen={setIsDropDownOpen}
         />
 
         <div style={{ height: "24px" }} />

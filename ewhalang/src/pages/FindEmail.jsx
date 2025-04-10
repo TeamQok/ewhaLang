@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Topbar from "../components/layout/Topbar";
 import * as S from "./FindEmail.style";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputBox from "../components/common/InputBox";
 import DropDown from "../components/common/DropDown";
 import { LongButton, ButtonType } from "../components/common/LongButton";
@@ -12,6 +12,8 @@ import { useTranslation } from "react-i18next";
 
 const FindEmail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const [name, setName] = useState("");
   const [country, setCountry] = useState("");
@@ -19,6 +21,19 @@ const FindEmail = () => {
   const [Semail, setSEmail] = useState("");
 
   const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropDownOpen(false); // 바깥 클릭 시 닫힘
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const onChangeName = (e) => {
     setName(e.target.value);
@@ -83,6 +98,8 @@ const FindEmail = () => {
       <S.Title>{t("findEmail.country")}</S.Title>
       <DropDown
         isLong={true}
+        isOpen={isDropDownOpen}
+        setIsOpen={setIsDropDownOpen}
         placeholder={t("signup2.국적을 선택해주세요")}
         options={Object.keys(t("nationality", { returnObjects: true })).map(
           (key) => t(`nationality.${key}`)
