@@ -1,35 +1,37 @@
-
-import React from 'react';
-import styled from 'styled-components';
-import closeIcon from '../../assets/closeIcon.svg';
-import { useTranslation } from 'react-i18next';
-
+import React from "react";
+import styled from "styled-components";
+import closeIcon from "../../assets/closeIcon.svg";
+import { useTranslation } from "react-i18next";
 
 const Popup = ({ isOpen, onClose, title, children, fullScreen }) => {
   const { t } = useTranslation();
 
   return (
-    <PopupWrapper isOpen={isOpen} isFilterPopup={title===t("pageTitles.filter")}>
-      <PopupContent isOpen={isOpen} fullScreen={fullScreen}>
+    <PopupWrapper
+      isOpen={isOpen}
+      isFilterPopup={title === t("pageTitles.filter")}
+      onClick={onClose}
+    >
+      <PopupContent
+        isOpen={isOpen}
+        fullScreen={fullScreen}
+        onClick={(e) => e.stopPropagation()}
+      >
         <PopupHeader>
           <Title>{title}</Title>
           <CloseButton onClick={onClose}>
             <img src={closeIcon} alt="Close" />
           </CloseButton>
         </PopupHeader>
-  
-        <PopupBody>
-        {children}
-        </PopupBody>
-  
+
+        <PopupBody>{children}</PopupBody>
       </PopupContent>
     </PopupWrapper>
   );
-}
+};
 
 const PopupWrapper = styled.div`
-
-  display: ${props => props.isOpen ? 'block' : 'none'};
+  display: ${(props) => (props.isOpen ? "block" : "none")};
 
   position: fixed;
   top: 0;
@@ -39,7 +41,6 @@ const PopupWrapper = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
 
   z-index: ${(props) => (props.isFilterPopup ? 1000 : 1001)};
-
 `;
 
 const PopupContent = styled.div`
@@ -51,12 +52,13 @@ const PopupContent = styled.div`
   z-index: 1;
   padding: 20px;
 
-  border-radius: ${props => props.fullScreen ? '0' : '20px 20px 0 0'};
-  max-height: ${props => props.fullScreen ? '100%' : '90%'};
-  height: ${props => props.fullScreen ? '100vh' : ''};
+  border-radius: ${(props) => (props.fullScreen ? "0" : "20px 20px 0 0")};
+  max-height: ${(props) => (props.fullScreen ? "100%" : "90%")};
+  height: ${(props) => (props.fullScreen ? "100vh" : "")};
   display: flex;
   flex-direction: column;
-  transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(100%)'};
+  transform: ${(props) =>
+    props.isOpen ? "translateY(0)" : "translateY(100%)"};
   transition: transform 0.3s ease-out;
 `;
 
