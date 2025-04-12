@@ -61,7 +61,7 @@ const LangSettingPage = () => {
     <>
       <Topbar title={t("langSetting.언어 설정하기")} left={"back"} />
 
-      <S.Wrapper>
+      <S.Wrapper ref={dropdownRef}>
         <S.InputTitle>{t("langSetting.언어")}</S.InputTitle>
         <DropDown
           options={[

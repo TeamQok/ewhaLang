@@ -95,21 +95,22 @@ const FindEmail = () => {
       />
       <div style={{ marginBottom: "16px" }} />
 
-      <S.Title>{t("findEmail.country")}</S.Title>
-      <DropDown
-        isLong={true}
-        isOpen={isDropDownOpen}
-        setIsOpen={setIsDropDownOpen}
-        placeholder={t("signup2.국적을 선택해주세요")}
-        options={Object.keys(t("nationality", { returnObjects: true })).map(
-          (key) => t(`nationality.${key}`)
-        )}
-        onSelect={(selectedOption) => {
-          console.log(`Selected: ${selectedOption}`);
-          setCountry(selectedOption);
-        }}
-      />
-
+      <div ref={dropdownRef}>
+        <S.Title>{t("findEmail.country")}</S.Title>
+        <DropDown
+          isLong={true}
+          isOpen={isDropDownOpen}
+          setIsOpen={setIsDropDownOpen}
+          placeholder={t("signup2.국적을 선택해주세요")}
+          options={Object.keys(t("nationality", { returnObjects: true })).map(
+            (key) => t(`nationality.${key}`)
+          )}
+          onSelect={(selectedOption) => {
+            console.log(`Selected: ${selectedOption}`);
+            setCountry(selectedOption);
+          }}
+        />
+      </div>
       <div style={{ marginBottom: "16px" }} />
 
       <InputBox
