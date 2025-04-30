@@ -20,29 +20,27 @@ const Signup1 = () => {
   const [emailValid, setEmailValid] = useState(false);
   const [pw, setPw] = useState("");
   const [conPw, setConPw] = useState("");
-  const [authpw, setAuthpw] = useState(false);
+  // const [authpw, setAuthpw] = useState(false);
   const [err, setErr] = useState("");
 
   const [eye, setEye] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [modalContent, setModalContent] = useState({guideText: "", confirmText: "확인"});
-
+  const [modalContent, setModalContent] = useState({
+    guideText: "",
+    confirmText: "확인",
+  });
 
   const { t, i18n } = useTranslation();
 
   const goNext = () => {
-
     navigate("/signup2", { state: { email, pw } });
-
   };
-  console.log("현재 설정된 언어 로그인1:", i18n.language);
 
-  const confirmPw = (e) => {
-    setConPw(e.target.value);
-    pw === e.target.value ? setAuthpw(!authpw) : setAuthpw(false);
-  };
+  const passwordsMatch = pw === conPw;
+  const isPwFilled = pw !== "" && conPw !== "";
+  const isNextActive = isPwFilled && passwordsMatch && !err && emailValid;
 
   const handleEmail = (e) => {
     const newEmail = e.target.value;
@@ -56,6 +54,9 @@ const Signup1 = () => {
 
   const onClickEye = () => {
     setEye(!eye);
+  };
+  const handleConPw = (e) => {
+    setConPw(e.target.value);
   };
 
   const validateEmailDomain = (email, expectedDomain1, expectedDomain2) => {
@@ -100,7 +101,6 @@ const Signup1 = () => {
     setIsModalOpen(true);
   };
 
-
   return (
     <>
       <Topbar
@@ -137,26 +137,27 @@ const Signup1 = () => {
           title={t("signup1.pwOk")}
           placeholder={t("signup1.pwOkp")}
           value={conPw}
-          onChange={confirmPw}
+          onChange={handleConPw}
           type="password"
         />
-        {authpw && !err ? <S.Info>{t("signup1.pwOkmessage")}</S.Info> : <></>}
+        {passwordsMatch && !err ? (
+          <S.Info>{t("signup1.pwOkmessage")}</S.Info>
+        ) : null}
       </S.Wrapper>
 
       <S.Container>
-        {authpw && !err && emailValid ? (
+        {isNextActive ? (
           <LongButton
             type={ButtonType.GREEN}
             onClick={async (e) => {
               e.preventDefault();
-              if(pw !== conPw){
-                openModal("비밀번호가 일치하지 않습니다.")
-              }else{
+              if (pw !== conPw) {
+                openModal("비밀번호가 일치하지 않습니다.");
+              } else {
                 const isDuplicate = await checkEmailDuplicate(email);
-                if(isDuplicate){
+                if (isDuplicate) {
                   openModal("이미 존재하는 이메일입니다.");
-                }else{
-
+                } else {
                   goNext();
                 }
               }
