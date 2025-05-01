@@ -91,7 +91,7 @@ const UserInform = ({ isEdit, onSave }) => {
       //   setIsDropDownOpen(false); // 바깥 클릭 시 닫힘
       //   setIsDropDownOpen2(false);
       // }
-
+      console.log(isDropDownOpen);
       dropdownRefs.current.forEach((ref, index) => {
         if (ref && !ref.contains(event.target)) {
           setIsDropDownOpen((prev) =>
@@ -138,6 +138,14 @@ const UserInform = ({ isEdit, onSave }) => {
   const [languages, setLanguages] = useState([]);
   const [hobby, setHobby] = useState("");
   const [introduction, setIntroduction] = useState("");
+
+  // edit 상태일때 lang 개수만큼 배열 초기화
+  useEffect(() => {
+    if (languages.length > 0) {
+      setIsDropDownOpen(Array(languages.length).fill(false));
+      setIsDropDownOpen2(Array(languages.length).fill(false));
+    }
+  }, [languages]);
 
   // 성별 검사 err
   const [birtherr, setBirtherr] = useState(true);
