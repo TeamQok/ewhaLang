@@ -135,7 +135,8 @@
     "notFound": "Chat not found.",
     "leaveChatConfirm": "If you leave the chat room, the chat list and conversation content will be deleted and cannot be recovered. Are you sure you want to leave the chat room?",
     "leaveChatComplete": "You have left the chat room.",
-    "resignedUserInform": "You cannot chat with a resigned user. Do you want to live the chat room?"
+    "resignedUserInform": "You cannot chat with a resigned user. Do you want to live the chat room?",
+    "userLeftNotification": "The other user has left the chat."
   },
 
   "pageTitles": {

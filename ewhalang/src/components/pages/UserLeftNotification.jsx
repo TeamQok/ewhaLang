@@ -1,5 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const NotificationWrapper = styled.div`
   text-align: center;
@@ -8,10 +9,14 @@ const NotificationWrapper = styled.div`
   font-size: 0.9em;
 `;
 
-const UserLeftNotification = () => (
-  <NotificationWrapper>
-    상대방이 채팅방을 나갔습니다.
-  </NotificationWrapper>
-);
+const UserLeftNotification = () => {
+  const { t } = useTranslation();
+
+  return (
+    <NotificationWrapper>
+      {t("messages.userLeftNotification")}
+    </NotificationWrapper>
+  );
+};
 
 export default UserLeftNotification;
