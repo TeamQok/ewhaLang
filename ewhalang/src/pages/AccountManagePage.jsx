@@ -362,9 +362,15 @@ const AccountManagePage = () => {
           onClose={() => setIsModalOpen3(false)}
           guideText={t("rePw.회원 탈퇴가 완료되었습니다.")}
           confirmText={t("rePw.확인")}
-          onConfirm={() => {
+          onConfirm={async () => {
             setIsModalOpen3(false);
-            navigate("/onboarding");
+            try {
+              await auth.signOut();
+            } catch (error) {
+              console.error("Error signing out:", error);
+            } finally {
+              navigate("/onboarding");
+            }
           }}
           isSingleButton={true}
           showTextInput={false}

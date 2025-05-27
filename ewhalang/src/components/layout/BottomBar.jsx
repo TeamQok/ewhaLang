@@ -138,45 +138,28 @@ const BottomBar = ({ isOnFriend, isOnChat, isOnMypage }) => {
     <>
       <Wrapper>
         <Item onClick={goFriends}>
-          {friend || isOnFriend ? (
-            <ImgWrp>
-              <img src={userGreen} />
-              <Text>{t("bottomBar.친구목록")}</Text>
-            </ImgWrp>
-          ) : (
-            <ImgWrp>
-              <img src={userGray} />
-              <Text2>{t("bottomBar.친구목록")}</Text2>
-            </ImgWrp>
-          )}
+          <ImgWrp>
+            <img src={friend || isOnFriend ? userGreen : userGray} />
+            <Text $active={friend || isOnFriend}>
+              {t("bottomBar.친구목록")}
+            </Text>
+          </ImgWrp>
         </Item>
 
         <Item onClick={goChat}>
-          {chat || isOnChat ? (
-            <ImgWrp>
-              <img src={chatGreen} />
-              <Text>{t("bottomBar.채팅목록")}</Text>
-            </ImgWrp>
-          ) : (
-            <ImgWrp>
-              <img src={chatGray} />
-              <Text2>{t("bottomBar.채팅목록")}</Text2>
-            </ImgWrp>
-          )}
+          <ImgWrp>
+            <img src={chat || isOnChat ? chatGreen : chatGray} />
+            <Text $active={chat || isOnChat}>{t("bottomBar.채팅목록")}</Text>
+          </ImgWrp>
           {unreadCount > 0 && <UnreadBadge>{unreadCount}</UnreadBadge>}
         </Item>
         <Item onClick={goMypage}>
-          {mypage || isOnMypage ? (
-            <ImgWrp>
-              <img src={mypageGreen} />
-              <Text>{t("bottomBar.마이페이지")}</Text>
-            </ImgWrp>
-          ) : (
-            <ImgWrp>
-              <img src={mypageGray} />
-              <Text2>{t("bottomBar.마이페이지")}</Text2>
-            </ImgWrp>
-          )}
+          <ImgWrp>
+            <img src={mypage || isOnMypage ? mypageGreen : mypageGray} />
+            <Text $active={mypage || isOnMypage}>
+              {t("bottomBar.마이페이지")}
+            </Text>
+          </ImgWrp>
         </Item>
       </Wrapper>
     </>
@@ -224,19 +207,8 @@ const ImgWrp = styled.div`
 
 const Text = styled.div`
   text-align: center;
-  color: var(--Sub-1, #33936d);
-
-  font-family: var(--korean);
-  font-size: 0.7rem;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-`;
-
-const Text2 = styled.div`
-  text-align: center;
-  color: var(--Grey-1, #7f7f7f);
-
+  color: ${(props) =>
+    props.$active ? "var(--Sub-1, #33936d)" : "var(--Grey-1, #7f7f7f)"};
   font-family: var(--korean);
   font-size: 0.7rem;
   font-style: normal;

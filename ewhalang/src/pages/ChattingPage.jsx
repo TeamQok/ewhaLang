@@ -49,6 +49,7 @@ const ChattingPage = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const messageContainerRef = useRef(null);
   const inputAreaRef = useRef(null);
 
   const fetchChatData = async () => {
@@ -85,24 +86,12 @@ const ChattingPage = () => {
     }
   };
 
-  const scrollToBottom = useCallback(() => {
-    requestAnimationFrame(() => {
-      const messageContainer = document.querySelector(
-        ".message-list-container"
-      );
-
-      if (messageContainer) {
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!loading && messages.length > 0) {
-      const timer = setTimeout(scrollToBottom, 100);
-      return () => clearTimeout(timer);
+  const scrollToBottom = () => {
+    const container = messageContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
     }
-  }, [loading]);
+  };
 
   useEffect(() => {
     if (chatId && currentUser && !isNewChat && chatData) {
@@ -153,9 +142,7 @@ const ChattingPage = () => {
     };
 
     if (isInputFocused) {
-      document.addEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
+      document.addEventListener("touchmove", handleTouchMove);
     }
 
     return () => {
@@ -330,27 +317,20 @@ const ChattingPage = () => {
           rightonClick={handleDotClick}
         />
       </S.TopbarWrapper>
-      <S.ContentWrapper>
-        <S.MessageListContainer className="message-list-container">
-          {!isNewChat && (
-            <MessageList
-              messages={messages}
-              currentUserId={currentUser.id}
-              userProfileImage={otherUser.profileImg}
-              chatData={chatData}
-            />
-          )}
-        </S.MessageListContainer>
-      </S.ContentWrapper>
+      <S.MessageListContainer
+        className="message-list-container"
+        ref={messageContainerRef}
+      >
+        {!isNewChat && (
+          <MessageList
+            messages={messages}
+            currentUserId={currentUser.id}
+            userProfileImage={otherUser.profileImg}
+            chatData={chatData}
+          />
+        )}
+      </S.MessageListContainer>
       <S.InputAreaContainer>
-        <InputArea
-          ref={inputAreaRef}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          onSendMessage={handleSendMessage}
-          disabled={isResignedUser}
-          placeholder={isResignedUser ? t("placeholder.unknownUser") : null}
-        />
         <InputArea
           ref={inputAreaRef}
           onFocus={handleInputFocus}
