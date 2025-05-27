@@ -45,7 +45,8 @@ const Signup1 = () => {
   const handleEmail = (e) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
-    validateEmailDomain(newEmail, expectedDomain1, expectedDomain2);
+    //이메일 도메인 전체 허용
+    // validateEmailDomain(newEmail, expectedDomain1, expectedDomain2);
   };
 
   const goLogin = () => {
