@@ -3,7 +3,7 @@
 * {
   margin: 0;
   padding: 0;
-  overflow-x: 0;
+  overflow-x: visible;
   font-family: "Pretendard", sans-serif;
   box-sizing: border-box;
 }
@@ -15,6 +15,13 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
 ::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera*/
 }

@@ -1,0 +1,879 @@
+import { app } from "../../firebase";
+import Topbar from "../layout/Topbar";
+import * as S from "./UserInform.style";
+import profile from "../../assets/profile.svg";
+import InputBox from "../common/InputBox";
+import DropDown from "../common/DropDown";
+import { LongButton, ButtonType } from "../common/LongButton";
+import { useState, useRef, useEffect } from "react";
+import Modal from "../common/Modal";
+import camera from "../../assets/camera.svg";
+import {
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  writeBatch,
+} from "firebase/firestore";
+import { firestore, auth, storage } from "../../firebase";
+import { useNavigate } from "react-router-dom";
+import { deleteUser, getAuth } from "firebase/auth";
+import BottomBar from "../layout/BottomBar";
+import imageCompression from "browser-image-compression";
+import { useTranslation } from "react-i18next";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import i18n from "i18next";
+
+const proficiencyOrder = {
+  "원어민 (Native)": 4,
+  "상급 (Advanced)": 3,
+  "중급 (Intermediate)": 2,
+  "기초(Basic)": 1,
+};
+
+const UserInform = ({ isEdit, onSave }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const [isModalOpen3, setIsModalOpen3] = useState(false);
+  const [isModalOpen4, setIsModalOpen4] = useState(false);
+  const [isModalOpen5, setIsModalOpen5] = useState(false);
+  const [isModalOpen6, setIsModalOpen6] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
+  const [showConsentError, setShowConsentError] = useState(false);
+
+  const navigate = useNavigate();
+
+  // 카메라 옵션용
+  const [showOptions, setShowOptions] = useState(false);
+  const optionsRef = useRef(null); // 옵션 영역을 참조하기 위한 ref 생성
+
+  // 이미지 업로드용
+  const [profileImg, setProfileImg] = useState(profile); // 프로필 이미지를 저장할 상태
+  const fileInputRef = useRef(null); // 파일 입력 요소에 대한 참조
+
+  // 닉네임 중복 검사 확인용
+  const [nickCheck, setNickCheck] = useState(false);
+
+  const { t, i18n } = useTranslation();
+
+  const goNext = () => {
+    navigate("/login");
+  };
+
+  const onClickX = async () => {
+    if (!isEdit) {
+      navigate("/");
+    } else {
+      navigate("/mypage");
+    }
+  };
+  // 드롭다운용
+
+  const [isDropDownOpen3, setIsDropDownOpen3] = useState(false);
+  const [isDropDownOpen4, setIsDropDownOpen4] = useState(false);
+  const dropdownRef = useRef(null);
+  const genderRef = useRef(null);
+  const nationalRef = useRef(null);
+
+  // 배열로 드롭다운 관리
+  const [isDropDownOpen, setIsDropDownOpen] = useState([]); // 드롭다운 상태를 배열로 관리
+  const [isDropDownOpen2, setIsDropDownOpen2] = useState([]); // 드롭다운 상태를 배열로 관리
+  const dropdownRefs = useRef([]); // useRef를 배열로 관리
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      //   setIsDropDownOpen(false); // 바깥 클릭 시 닫힘
+      //   setIsDropDownOpen2(false);
+      // }
+      console.log(isDropDownOpen);
+      dropdownRefs.current.forEach((ref, index) => {
+        if (ref && !ref.contains(event.target)) {
+          setIsDropDownOpen((prev) =>
+            prev.map((state, i) => (i === index ? false : state))
+          );
+
+          setIsDropDownOpen2((prev) =>
+            prev.map((state, i) => (i === index ? false : state))
+          );
+        }
+      });
+      if (genderRef.current && !genderRef.current.contains(event.target)) {
+        setIsDropDownOpen4(false);
+      }
+      if (nationalRef.current && !nationalRef.current.contains(event.target)) {
+        setIsDropDownOpen3(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const toggleDropDown = (index) => {
+    setIsDropDownOpen((prev) =>
+      prev.map((state, i) => (i === index ? !state : state))
+    );
+  };
+  const toggleDropDown2 = (index) => {
+    setIsDropDownOpen2((prev) =>
+      prev.map((state, i) => (i === index ? !state : state))
+    );
+  };
+
+  // 입력 state
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [country, setCountry] = useState("");
+  const [gender, setGender] = useState("");
+  const [birthdate, setBirthdate] = useState("");
+  const [major, setMajor] = useState("");
+  const [languages, setLanguages] = useState([]);
+  const [hobby, setHobby] = useState("");
+  const [introduction, setIntroduction] = useState("");
+
+  // edit 상태일때 lang 개수만큼 배열 초기화
+  useEffect(() => {
+    if (languages.length > 0) {
+      setIsDropDownOpen(Array(languages.length).fill(false));
+      setIsDropDownOpen2(Array(languages.length).fill(false));
+    }
+  }, [languages]);
+
+  // 성별 검사 err
+  const [birtherr, setBirtherr] = useState(true);
+  const [langErr, setlangErr] = useState(true);
+  const inputName = (e) => {
+    setName(e.target.value);
+  };
+  const inputNickname = (e) => {
+    setNickname(e.target.value);
+    setNickCheck(false);
+  };
+
+  const inputBirthdate = (e) => {
+    setBirthdate(e.target.value);
+    if (e.target.value.length != 8 || isNaN(Number(e.target.value))) {
+      setBirtherr(true);
+    } else {
+      setBirtherr(false);
+    }
+  };
+
+  const inputMajor = (e) => {
+    setMajor(e.target.value);
+  };
+  const inputHobby = (e) => {
+    setHobby(e.target.value);
+  };
+
+  const inputIntroduction = (e) => {
+    setIntroduction(e.target.value);
+  };
+
+  const onSelectCountry = (selectedOption) => {
+    // 선택된 옵션의 키(한국어 국가명)를 찾아 저장
+
+    const countryKey = Object.keys(
+      t("nationality", { returnObjects: true })
+    ).find((key) => t(`nationality.${key}`) === selectedOption);
+
+    setCountry(countryKey);
+  };
+
+  // 언어 추가하기 버튼 클릭 시
+  const addLanguage = () => {
+    setLanguages((prev) => [...prev, { language: "", proficiency: "" }]);
+    // 새로 추가된 드롭다운의 상태를 false로 설정
+    setIsDropDownOpen((prev) => [...prev, false]);
+    setIsDropDownOpen2((prev) => [...prev, false]);
+  };
+
+  // 특정 언어 및 숙련도 업데이트
+  const updateLanguage = (index, type, value) => {
+    setLanguages((prev) => {
+      const updatedLanguages = [...prev];
+      // 선택된 옵션의 키(한국어 언어명)를 찾아 저장
+
+      const languageKey = Object.keys(
+        t("language", { returnObjects: true })
+      ).find((key) => t(`language.${key}`) === value);
+
+      updatedLanguages[index][type] = value;
+      return updatedLanguages;
+    });
+  };
+
+  // 언어와 숙련도를 내림차순으로 정렬하는 함수
+  const sortLanguagesByProficiency = (languages) => {
+    return languages.sort((a, b) => {
+      return proficiencyOrder[b.proficiency] - proficiencyOrder[a.proficiency];
+    });
+  };
+
+  // 이미 선택된 언어를 가져옴
+  const selectedLanguages = languages.map((langObj) => langObj.language);
+
+  // 모든 언어의 한국어 키와 시스템 언어 번역된 이름을 가져옴
+  const allLanguages = Object.keys(t("language", { returnObjects: true })).map(
+    (key) => ({
+      key, // 한국어 키 (예: "Korean")
+      label: t(`language.${key}`), // 시스템 언어로 번역된 값 (예: "English" 또는 "영어")
+    })
+  );
+
+  // 선택된 언어를 제외한 옵션 필터링
+  const filteredOptions = allLanguages.filter(
+    (option) => !selectedLanguages.includes(option.key) // 선택된 언어는 제외
+  );
+
+  // 회원가입 시
+  // 저장하기 버튼 눌렀을 때
+  const onClickSignin = async () => {
+    // 해당 항목들이 입력 되어있어야 넘어갈 수 있음
+
+    // 모든 languages 배열의 각 항목이 유효한지 확인
+    const isLanguagesValid =
+      languages.length > 0 &&
+      languages.every(
+        (languageObj) => languageObj.language && languageObj.proficiency
+      );
+
+    if (!nickCheck) {
+      // 닉네임 중복 검사했는지 확인
+      setIsModalOpen6(true);
+      return; // 저장 작업 중단
+    }
+
+    if (!agreed) {
+      setShowConsentError(true);
+      return;
+    }
+
+    if (
+      name &&
+      nickname &&
+      country &&
+      gender &&
+      major &&
+      isLanguagesValid &&
+      !birtherr
+    ) {
+      const sortedLanguages = sortLanguagesByProficiency(languages);
+      const usingLanguage = localStorage.getItem("usingLanguage");
+      // 1. 프로필 이미지를 업로드하고 URL 받아오기
+
+      const userData = {
+        profileImg,
+        name,
+        nickname,
+        country,
+        birthdate,
+        gender,
+        major,
+        languages: sortedLanguages,
+        hobby,
+        introduction,
+        usingLanguage,
+        verificationStatus: "unverified",
+        lastConnectDate: new Date().toISOString(), // 현재 시간 저장
+      };
+
+      onSave(userData);
+
+      setIsModalOpen(true);
+    } else {
+      setIsModalOpen2(true);
+    }
+  };
+
+  /////////////////////////////////////////////////////
+
+  // 사진 선택 옵션
+  const openOption = () => {
+    setShowOptions(!showOptions);
+  };
+
+  // 옵션 영역 외부 클릭을 감지하기 위한 useEffect
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // 클릭된 요소가 옵션 영역이 아닐 때 옵션을 닫음
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setShowOptions(false);
+      }
+    }
+
+    // 마우스 클릭 이벤트 리스너 추가
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [optionsRef]);
+
+  //기본 이미지 선택
+  const defaultImg = () => {
+    setProfileImg(null);
+    setShowOptions(false);
+  };
+
+  //프로필 이미지 선택(탐색기 열기)
+  const openFileDialog = () => {
+    fileInputRef.current.click();
+  };
+
+  // 파일 선택 시 호출되는 함수
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    const options = {
+      maxSizeMB: 0.35, // 최대 파일 크기를 759kb로 설정
+      maxWidthOrHeight: 1920, // 최대 높이
+      useWebWorker: true,
+      preserveAspectRatio: true,
+    };
+    setShowOptions(false);
+
+    try {
+      // 이미지 압축
+      const compressedFile = await imageCompression(file, options);
+
+      if (compressedFile) {
+        // 선택된 파일을 프로필 이미지로 설정
+        const reader = new FileReader();
+        //   파일 읽은 후 실행될 함수
+        reader.onloadend = () => {
+          setProfileImg(reader.result); // 이미지 URL을 상태로 설정
+        };
+        reader.readAsDataURL(compressedFile);
+      }
+    } catch (error) {
+      console.error("이미지 압축 중 오류 발생:", error);
+    }
+  };
+
+  /////////////////////////////////////////////////////////////
+
+  //  수정 함수
+  // 수정하기 페이지 마운트 시점에서 기존 정보 불러오기
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const docRef = doc(firestore, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists() && isEdit === true) {
+          const userData = docSnap.data();
+          setProfileImg(userData?.profileImg);
+          setBirthdate(userData?.birthdate);
+          setBirtherr(false);
+          setCountry(userData?.country);
+          setGender(userData?.gender);
+          setNickname(userData?.nickname);
+          setNickCheck(true);
+          setMajor(userData?.major);
+          setHobby(userData?.hobby);
+          setIntroduction(userData?.introduction);
+          setLanguages(userData?.languages);
+          console.log("User data:", userData);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile: ", error);
+      }
+    };
+
+    getUserData();
+  }, []);
+
+  //   수정사항 업데이트
+  const updateUser = async (updatedData) => {
+    try {
+      const docRef = doc(firestore, "users", user.uid);
+      await updateDoc(docRef, updatedData);
+
+      // 프로필 이미지, 닉네임, 국가 중 하나라도 변경되었다면 채팅 문서도 업데이트
+      if (
+        updatedData.profileImg ||
+        updatedData.nickname ||
+        updatedData.country
+      ) {
+        await updateChatsWithNewUserInfo(user.uid, updatedData);
+      }
+
+      // 'update' 메서드를 사용하여 문서 필드 업데이트
+      setIsModalOpen3(true);
+      navigate("/mypage");
+
+      console.log("User document successfully updated!");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //채팅 문서 속 유저 정보 업데이트
+  const updateChatsWithNewUserInfo = async (userId, updatedData) => {
+    try {
+      const chatsRef = collection(firestore, "chats");
+
+      const q = query(
+        chatsRef,
+        where(`participantsId`, "array-contains", userId)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const batch = writeBatch(firestore);
+
+      querySnapshot.forEach((doc) => {
+        const chatData = doc.data();
+
+        if (chatData.participantsInfo && chatData.participantsInfo[userId]) {
+          const updatedParticipantInfo = {
+            ...chatData.participantsInfo[userId],
+            ...(updatedData.profileImg && {
+              profileImg: updatedData.profileImg,
+            }),
+
+            ...(updatedData.nickname && { nickname: updatedData.nickname }),
+            ...(updatedData.country && { country: updatedData.country }),
+          };
+
+          const updatedParticipantsInfo = {
+            ...chatData.participantsInfo,
+
+            [userId]: updatedParticipantInfo,
+          };
+
+          batch.update(doc.ref, { participantsInfo: updatedParticipantsInfo });
+        }
+      });
+
+      await batch.commit();
+      console.log("Chat documents successfully updated with new user info!");
+    } catch (error) {
+      console.error("Error updating chat documents: ", error);
+    }
+  };
+
+  // 저장하기 버튼 눌렀을 떄 (edit)
+  const onClickEdit = async () => {
+    // 모든 languages 배열의 각 항목이 유효한지 확인
+    const isLanguagesValid =
+      languages.length > 0 &&
+      languages.every(
+        (languageObj) => languageObj.language && languageObj.proficiency
+      );
+
+    // 각 필드에 대한 유효성 검사
+    if (
+      !nickname || // 닉네임이 있는지 확인
+      !country || // 국가가 있는지 확인
+      birtherr || // 생년월일이 있는지 확인
+      !gender || // 성별이 있는지 확인
+      !major || // 전공이 있는지 확인
+      !isLanguagesValid
+    ) {
+      setIsModalOpen2(true);
+      return; // 저장 작업 중단
+    }
+    if (!nickCheck) {
+      // 닉네임 중복 검사했는지 확인
+      setIsModalOpen6(true);
+      return; // 저장 작업 중단
+    }
+    const sortedLanguages = sortLanguagesByProficiency(languages);
+    const updatedData = {
+      profileImg,
+      nickname,
+      country,
+      birthdate,
+      gender,
+      major,
+      languages: sortedLanguages, // 정렬된 언어 배열
+      hobby,
+      introduction,
+    };
+    await updateUser(updatedData);
+  };
+
+  //////////////////////////////////////////////////////////////
+  // 닉네임 중복 검사 함수
+  const checkNicknameDuplicate = async (nicknamearg) => {
+    try {
+      // 'users' 컬렉션에 있는 닉네임과 일치하는 문서 찾기
+      const usersRef = collection(firestore, "users");
+      const q = query(usersRef, where("nickname", "==", nicknamearg));
+      const querySnapshot = await getDocs(q);
+
+      // 중복 검사 결과
+      if (!querySnapshot.empty && nickname) {
+        setIsModalOpen5(true);
+        setNickCheck(false);
+      } else {
+        setIsModalOpen4(true);
+        setNickCheck(true);
+      }
+    } catch (error) {
+      console.error("Error checking nickname: ", error);
+      throw error; // 오류 처리
+    }
+  };
+
+  const onClickNicknameCheck = () => {
+    checkNicknameDuplicate(nickname);
+  };
+
+  return (
+    <>
+      <Topbar
+        title={isEdit ? t("signup2.수정하기") : t("signup2.title")}
+        right={"x"}
+        left={"back"}
+        rightonClick={onClickX}
+        leftOnClick={isEdit ? undefined : onClickX}
+      />
+      <S.Container>
+        <S.ProfileWrapper>
+          <S.ProfileImg src={profileImg ? profileImg : profile} />
+          <S.Camera onClick={openOption}>
+            <img src={camera} />
+          </S.Camera>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+          {showOptions ? (
+            <>
+              <S.ImgOptionWrp ref={optionsRef}>
+                <S.ImgOption onClick={defaultImg}>기본 이미지</S.ImgOption>
+                <S.ImgOption2 onClick={openFileDialog}>
+                  사진 불러오기
+                </S.ImgOption2>
+              </S.ImgOptionWrp>
+            </>
+          ) : (
+            <></>
+          )}
+        </S.ProfileWrapper>
+      </S.Container>
+      <S.Wrapper>
+        {isEdit ? (
+          <></>
+        ) : (
+          <>
+            <InputBox
+              title={t("signup2.이름")}
+              placeholder={t("signup2.이름을입력해주세요")}
+              onChange={inputName}
+              value={name}
+              maxLength={30}
+            />
+            <div style={{ marginBottom: "16px" }} />
+          </>
+        )}
+
+        <S.NicknameWrapper>
+          <S.Title>{t("signup2.닉네임")}</S.Title>
+          <S.NicknameContainer>
+            <S.Input onChange={inputNickname} value={nickname} maxLength={10} />
+            <S.Button onClick={onClickNicknameCheck}>
+              {t("signup2.중복 확인")}
+            </S.Button>
+            <div style={{ marginBottom: "16px" }} />
+          </S.NicknameContainer>
+        </S.NicknameWrapper>
+
+        <S.InputTitle>{t("signup2.국적")}</S.InputTitle>
+        <div ref={nationalRef}>
+          <DropDown
+            isLong={true}
+            placeholder={t("signup2.국적을 선택해주세요")}
+            isOpen={isDropDownOpen3}
+            setIsOpen={setIsDropDownOpen3}
+            options={Object.keys(t("nationality", { returnObjects: true })).map(
+              (key) => t(`nationality.${key}`)
+            )}
+            onSelect={onSelectCountry}
+            evalue={isEdit ? t(`nationality.${country}`) : null}
+          />
+        </div>
+        <div style={{ marginBottom: "16px" }} />
+
+        <S.InputTitle>{t("signup2.성별")}</S.InputTitle>
+        <div ref={genderRef}>
+          <DropDown
+            isLong={true}
+            isOpen={isDropDownOpen4}
+            setIsOpen={setIsDropDownOpen4}
+            placeholder={t("signup2.성별을 선택해주세요.")}
+            options={Object.keys(t("gender", { returnObjects: true })).map(
+              (key) => t(`gender.${key}`)
+            )}
+            onSelect={(selectedOption) => {
+              console.log(`Selected: ${selectedOption}`);
+
+              const genderKey = Object.keys(
+                t("gender", { returnObjects: true })
+              ).find((key) => t(`gender.${key}`) === selectedOption);
+
+              setGender(genderKey);
+            }}
+            evalue={isEdit ? gender : null}
+          />
+        </div>
+
+        <div style={{ marginBottom: "16px" }} />
+
+        <InputBox
+          title={t("signup2.생년월일")}
+          placeholder={t("signup2.생년월일을 입력해주세요.")}
+          onChange={inputBirthdate}
+          value={isEdit ? birthdate : null}
+        />
+        <S.InfoBirth err={birtherr}>
+          {t("signup2.* YYYYMMDD로 입력해주세요.")}
+        </S.InfoBirth>
+
+        <InputBox
+          title={t("signup2.전공")}
+          placeholder={t("signup2.전공을 입력해주세요.")}
+          onChange={inputMajor}
+          value={isEdit ? major : null}
+        />
+        <div style={{ marginBottom: "16px" }} />
+
+        <S.InputTitle>{t("signup2.사용 가능 언어")}</S.InputTitle>
+
+        {languages.map((languageObj, index) => (
+          <S.LangContainer
+            key={index}
+            ref={(el) => (dropdownRefs.current[index] = el)}
+          >
+            <DropDown
+              isLong={false}
+              placeholder={t("level.언어 선택")}
+              isOpen={isDropDownOpen[index]}
+              setIsOpen={() => toggleDropDown(index)}
+              options={filteredOptions.map((option) => option.label)} //번역된 이름이 들어감
+              onSelect={(selectedOption) => {
+                // 선택된 번역된 언어 이름에 해당하는 키 값을 찾음
+                const selectedLanguageKey = allLanguages.find(
+                  (option) => option.label === selectedOption
+                )?.key;
+
+                console.log(`Selected language key: ${selectedLanguageKey}`);
+                updateLanguage(index, "language", selectedLanguageKey);
+              }}
+              value={
+                languageObj.language
+                  ? t(`language.${languageObj.language}`)
+                  : ""
+              }
+              evalue={
+                languageObj.language
+                  ? t(`language.${languageObj.language}`)
+                  : ""
+              }
+            />
+
+            <DropDown
+              isLong={false}
+              placeholder={t("level.언어 숙련도 선택")}
+              isOpen={isDropDownOpen2[index]}
+              setIsOpen={() => toggleDropDown2(index)}
+              options={[
+                "기초(Basic)",
+                "중급 (Intermediate)",
+                "상급 (Advanced)",
+                "원어민 (Native)",
+              ]}
+              onSelect={(selectedOption) => {
+                console.log(`Selected: ${selectedOption}`);
+                updateLanguage(index, "proficiency", selectedOption);
+              }}
+              value={languageObj.proficiency}
+              evalue={languageObj.proficiency}
+            />
+          </S.LangContainer>
+        ))}
+
+        <LongButton type={ButtonType.PALE_GREEN} onClick={addLanguage}>
+          {t("signup2.사용 가능 언어 추가하기")}
+        </LongButton>
+        <div style={{ marginBottom: "16px" }} />
+        <LongButton
+          type={ButtonType.PALE_GREEN}
+          onClick={() => setLanguages([])}
+        >
+          {t("signup2.사용 가능 언어 리셋")}
+        </LongButton>
+        <S.InfoBirth err={langErr}>
+          {t("signup2.* 사용가능 언어를 하나 이상 입력해주세요.")}
+        </S.InfoBirth>
+        <div style={{ marginBottom: "16px" }} />
+
+        <InputBox
+          title={t("signup2.취미 및 관심사")}
+          onChange={inputHobby}
+          value={hobby}
+        />
+        <div style={{ marginBottom: "16px" }} />
+
+        <S.InputTitle>{t("signup2.자기소개")}</S.InputTitle>
+        <S.Introduce onChange={inputIntroduction} value={introduction} />
+        <div style={{ marginBottom: "25px" }} />
+
+        {!isEdit && (
+          <>
+            <S.ConsentWrapper>
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+              />
+              <span>
+                {t("signup2.agreeText")}{" "}
+                <S.ConsentText onClick={() => setShowTerms(true)}>
+                  ({t("signup2.showTerms")})
+                </S.ConsentText>
+              </span>
+            </S.ConsentWrapper>
+          </>
+        )}
+
+        <LongButton
+          type={ButtonType.GREEN}
+          onClick={isEdit ? onClickEdit : onClickSignin}
+        >
+          {t("signup2.저장하기")}
+        </LongButton>
+        <div style={{ marginBottom: "44px" }} />
+      </S.Wrapper>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          goNext();
+        }}
+        guideText={t("signup2.회원가입이 완료되었습니다!")}
+        confirmText={t("signup2.확인")}
+        onConfirm={() => {
+          setIsModalOpen(false);
+          goNext();
+        }}
+        onCancel={() => {
+          setIsModalOpen(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+      <Modal
+        isOpen={isModalOpen2}
+        onClose={() => {
+          setIsModalOpen2(false);
+        }}
+        guideText={t("signup2.입력 항목을 모두 채워주세요!")}
+        confirmText={t("signup2.확인")}
+        onConfirm={() => {
+          setIsModalOpen2(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+      <Modal
+        isOpen={isModalOpen3}
+        onClose={() => setIsModalOpen3(false)}
+        guideText={t("signup2.회원정보 수정이 완료되었습니다!")}
+        confirmText={t("signup2.확인")}
+        onConfirm={() => {
+          setIsModalOpen3(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen3(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+      <Modal
+        isOpen={isModalOpen4}
+        onClose={() => setIsModalOpen4(false)}
+        guideText={t("signup2.사용할 수 있는 닉네임입니다.")}
+        confirmText={t("signup2.확인")}
+        onConfirm={() => {
+          setIsModalOpen4(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen4(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+      <Modal
+        isOpen={isModalOpen5}
+        onClose={() => setIsModalOpen5(false)}
+        guideText={t("signup2.중복된 닉네임입니다.")}
+        confirmText={t("signup2.확인")}
+        onConfirm={() => {
+          setIsModalOpen5(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen5(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+      <Modal
+        isOpen={isModalOpen6}
+        onClose={() => setIsModalOpen6(false)}
+        guideText={"닉네임 중복을 확인해주세요."}
+        confirmText={t("signup2.확인")}
+        onConfirm={() => {
+          setIsModalOpen6(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen6(false);
+        }}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+
+      <Modal
+        isOpen={showTerms}
+        onClose={() => setShowTerms(false)}
+        guideText={t("signup2.terms")}
+        confirmText="확인"
+        onConfirm={() => setShowTerms(false)}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+
+      <Modal
+        isOpen={showConsentError}
+        onClose={() => setShowConsentError(false)}
+        guideText={t("signup2.requireConsent")}
+        confirmText="확인"
+        onConfirm={() => setShowConsentError(false)}
+        isSingleButton={true}
+        showTextInput={false}
+      />
+    </>
+  );
+};
+
+export default UserInform;

@@ -1,26 +1,65 @@
 import * as S from "./Onboarding.style";
-import logo from "../assets/x-logo.svg";
+import logo from "../assets/logo.svg";
 import { LongButton, ButtonType } from "../components/common/LongButton";
 import { useNavigate } from "react-router-dom";
+import DropDownOnboarding from "../components/common/DropDownOnboarding";
+import { useEffect, useState } from "react";
+import Modal from "../components/common/Modal";
+import { useTranslation } from "react-i18next";
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const [lang, setLang] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    const selectedLanguage = localStorage.getItem("usingLanguage") || "en";
+    if (selectedLanguage) {
+      i18n.changeLanguage(selectedLanguage).then(() => {
+        // 언어 변경이 완료된 후에 setLang 호출
+        setLang(selectedLanguage);
+      });
+    } else {
+      i18n.on("initialized", () => {
+        i18n.changeLanguage(selectedLanguage).then(() => {
+          setLang(selectedLanguage);
+        });
+      });
+    }
+  }, [i18n]);
 
   const goSignin = () => {
-    navigate("/signin");
+    if (lang) {
+      navigate("/signup1");
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   const goLogin = () => {
     navigate("/login");
   };
 
+  const handleLanguageChange = (selectedOption) => {
+    const selectedLangCode = selectedOption === t("onboarding.ko") ? "ko" : "en";
+    localStorage.setItem("usingLanguage", selectedLangCode);
+    i18n.changeLanguage(selectedLangCode);
+  };
+
   return (
     <>
       <S.Wrapper>
         <S.Title>
-          여기에 카피라이팅, 슬로건 등{<br />} 넣으면 좋을 것 같아요
+          {t("onboarding.언어로 연결되는")}
+          <br />
+          <div style={{ height: "10px" }} />
+          <div style={{ paddingLeft: "20px" }}>
+            {t("onboarding.이화의 다채로운 세계")}
+          </div>
         </S.Title>
-        <S.Name>이화랑</S.Name>
+        <S.Name>{t("onboarding.title")}</S.Name>
         <S.Container>
           <img
             alt="이미지로고"
@@ -28,18 +67,39 @@ const Onboarding = () => {
             style={{ width: "200px", marginBottom: "97px" }}
           />
           <S.Setting>
-            <div>초기 언어설정</div>
+            <S.SettingLang>{t("onboarding.langSetting")}</S.SettingLang>
             {/* 나중에 드롭다운 연결 */}
-            <div>한국어</div>
+            <DropDownOnboarding
+              isLong={false}
+              placeholder={t("onboarding.option")}
+              options={[t("onboarding.ko"), t("onboarding.en")]}
+              onSelect={handleLanguageChange}
+            />
           </S.Setting>
           <LongButton type={ButtonType.WHITE} onClick={goSignin}>
-            새로운 계정 만들기
+            {t("onboarding.signup")}
           </LongButton>
           <div style={{ marginBottom: "8px" }}></div>
           <LongButton type={ButtonType.GREEN} onClick={goLogin}>
-            로그인하러 가기
+            {t("onboarding.login")}
           </LongButton>
         </S.Container>
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
+          guideText={t("onboarding.modal")}
+          confirmText={t("onboarding.modalOk")}
+          onConfirm={() => {
+            setIsModalOpen(false);
+          }}
+          onCancel={() => {
+            setIsModalOpen(false);
+          }}
+          isSingleButton={true}
+          showTextInput={false}
+        />
       </S.Wrapper>
     </>
   );

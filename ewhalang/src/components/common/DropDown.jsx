@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import arrowDown from '../../assets/arrowDown.svg';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import arrowDown from "../../assets/arrowDown.svg";
 
 const DropDownContainer = styled.div`
-  width: ${props => props.isLong ? '345px' : '168px'};
+  width: ${(props) => (props.isLong ? "100%" : "48%")};
   position: relative;
 `;
 
 const DropDownHeader = styled.div`
   height: 40px;
   padding: 10px;
-  border: 1px solid var(--grey4);
+  border: 1px solid var(--grey3);
   background-color: white;
   border-radius: 12px;
   font-size: 14px;
-  color: ${props => props.isPlaceholder ? 'var(--grey3)' : 'var(--black)'};
+  color: ${(props) => (props.isPlaceholder ? "var(--grey3)" : "var(--black)")};
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -33,9 +33,10 @@ const DropDownListContainer = styled.div`
   position: absolute;
   width: 100%;
   z-index: 100;
-  border: 1px solid var(--grey4);
+  border: 1px solid var(--grey3);
   border-radius: 12px;
   background-color: white;
+  max-height: 400px;
   overflow-y: auto;
 `;
 
@@ -74,17 +75,31 @@ const ListItemText = styled.span`
 `;
 
 const ArrowIcon = styled.img`
-    width: 12px;
-    height: 12px;
-`
+  width: 12px;
+  height: 12px;
+`;
 
-const DropDown = ({ options, isLong = false, onSelect, placeholder = "Select an option" }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
+const DropDown = ({
+  options,
+  isLong = false,
+  onSelect,
+  placeholder = "Select an option",
+  evalue,
+  isOpen,
+  setIsOpen,
+}) => {
+  const [selectedOption, setSelectedOption] = useState(evalue);
+  useEffect(() => {
+    setSelectedOption(evalue);
+  }, [evalue]);
 
-  const toggling = () => setIsOpen(!isOpen);
+  const toggling = () => {
+    if (setIsOpen) {
+      setIsOpen((prev) => !prev); // 부모에서 상태 관리하는 경우
+    }
+  };
 
-  const onOptionClicked = value => () => {
+  const onOptionClicked = (value) => () => {
     setSelectedOption(value);
     setIsOpen(false);
     onSelect(value);
@@ -94,12 +109,12 @@ const DropDown = ({ options, isLong = false, onSelect, placeholder = "Select an 
     <DropDownContainer isLong={isLong}>
       <DropDownHeader onClick={toggling} isPlaceholder={!selectedOption}>
         <HeaderText>{selectedOption || placeholder}</HeaderText>
-        <ArrowIcon src={arrowDown} alt="arrow down"/>
-        </DropDownHeader>
+        <ArrowIcon src={arrowDown} alt="arrow down" />
+      </DropDownHeader>
       {isOpen && (
         <DropDownListContainer>
           <DropDownList>
-            {options.map(option => (
+            {options.map((option) => (
               <ListItem onClick={onOptionClicked(option)} key={option}>
                 <ListItemText>{option}</ListItemText>
               </ListItem>

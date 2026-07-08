@@ -3,16 +3,24 @@ import goback from "../../assets/goback.svg";
 import dots from "../../assets/dots.svg";
 import setting from "../../assets/setting.svg";
 import x from "../../assets/x.svg";
+import { useNavigate } from "react-router-dom";
 
 // props로 back, dot, setting 넣어주면 됨
 // 아무것도 안 넣으면 암 것도 없음
 
-const Topbar = ({ title, left, right, rightonClick, leftonClick }) => {
+const Topbar = ({ title, left, right, rightonClick, leftOnClick }) => {
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    if (leftOnClick) {
+      leftOnClick();
+    } else navigate(-1); // 브라우저 히스토리에서 한 단계 뒤로 이동
+  };
   return (
     <>
       <Wrapper>
         {left == "back" ? (
-          <Left onClick={leftonClick}>
+          <Left onClick={handleGoBack}>
             <img src={goback} alt="뒤로가기" />
           </Left>
         ) : (
@@ -55,7 +63,7 @@ const Title = styled.div`
   font-style: normal;
   font-weight: 700;
   line-height: 24px;
-  width: 161px;
+  width: 200px;
 `;
 
 const Wrapper = styled.div`
@@ -64,6 +72,15 @@ const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  box-sizing: border-box;
+  padding-left: 14px;
+  padding-right: 14px;
+  border-bottom: 1px solid var(--Grey-4, #e0e0e0);
+  width: 100%;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
 `;
 
 const Right = styled.div`

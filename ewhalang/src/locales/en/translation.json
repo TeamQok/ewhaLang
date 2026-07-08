@@ -1,0 +1,351 @@
+{
+  "onboarding": {
+    "title": "EwhaLang",
+    "solgan": "",
+    "langSetting": "Language",
+    "option": "option",
+    "ko": "Korean",
+    "en": "English",
+    "signup": "Create a new account",
+    "login": "Login",
+    "modal": "Please set the initial language!",
+    "modalOk": "OK",
+    "언어로 연결되는": "A vibrant world of Ewha, ",
+    "이화의 다채로운 세계": "connected through language"
+  },
+  "login": {
+    "email": "Email",
+    "pw": "Password",
+    "login": "Login",
+    "findEmail": "Find Email",
+    "findPw": "Find Password",
+    "signup": "Sign Up"
+  },
+
+  "findEmail": {
+    "title": "Find Account",
+    "findE": "Find Email",
+    "findP": "Find Password",
+    "content": "Find by Membership Information",
+    "content2": "Please enter the information registered with your membership",
+    "name": "Name",
+    "namep": "Please enter your name",
+    "country": "Nationality",
+    "countryp": "Please select your Nationality",
+    "birth": "Birth Date",
+    "birthp": "Please enter your date of birth",
+    "detail": "* Please enter it in YYYYMMDD format. (Example: 20010101)"
+  },
+  "findPassword": {
+    "content": "Find by Registered Email",
+    "content2": "After verification through the email you entered during registration, please register a new password.",
+    "email": "Email",
+    "emailp": "Please enter your email",
+    "link": "Request Link"
+  },
+  "signup1": {
+    "title": "Sign Up",
+    "email": "Email",
+    "emailp": "Please enter your email.",
+    "emailDetail": "* Please use your ewha email.",
+    "emailOk": "* This is a valid school email.",
+    "pw": "Password",
+    "pwp": "Please enter your password.",
+    "pwpD1": "* Combination of letters, numbers, and special characters",
+    "pwpD2": "* Minimum 6 characters and maximum 20",
+    "pwOk": "Confirm Password",
+    "pwOkp": "Please re-enter the password you entered.",
+    "pwOkmessage": "* The password is correct.",
+    "next": "Next",
+    "이미 가입된 계정이 있습니다.": "This account has already been registered."
+  },
+
+  "user": {
+    "unknown": "(Unknown User)"
+  },
+  "userInfo": {
+    "gender": "Gender",
+    "birth": "Birth Date",
+    "major": "Major",
+    "languages": "Available Language",
+    "hobby": "Hobbies and interests",
+    "intro": "Self Introduction"
+  },
+  "mypage": {
+    "logout": "Logout",
+    "logoutConfirm": "Are you sure you want to log out?",
+    "logoutCompleted": "Logout completed."
+  },
+  "userList": {
+    "langLevel": "Language Level",
+    "basic": "Basic",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "native": "Native"
+  },
+
+  "filters": {
+    "filter": "Filter",
+    "lang": "Language",
+    "country": "Nationality",
+    "gender": "Gender",
+    "female": "Female",
+    "male": "Male",
+    "birthdate": "Birth Date",
+    "reset": "Reset",
+    "select": "Selected",
+    "apply": "Apply Filter",
+    "all": "All",
+    "andMore": "{{item}} and {{count}} more"
+  },
+  "verification": {
+    "title": "Student Verification",
+    "verified": {
+      "title": "Student verification completed.",
+      "description": "{{nickname}}, you have registered as a member of EwhaLang. Welcome!",
+      "button": "Find EwhaLang Friends"
+    },
+    "unverified": {
+      "description": "You need to complete student verification with your school email to find EwhaLang friends.",
+      "emailTitle": "Registered School Email",
+      "button": "Verify with Email"
+    },
+    "pending": {
+      "description": "A verification email has been sent. Please check your inbox.",
+      "button": "Pending Verification"
+    },
+    "modal": {
+      "message": "A verification link has been sent to your email. Please check your inbox!",
+      "confirm": "Confirm"
+    },
+    "error": {
+      "general": "Error: {{message}}"
+    }
+  },
+  "actions": {
+    "chat": "Chat",
+    "report": "Report",
+    "submitReport": "Submit Report",
+    "leaveChat": "Leave Chat"
+  },
+  "messages": {
+    "startChat": "Start a new chat!",
+    "reportReason": "Please write the reason for reporting. Reported user may be restricted from using the service depending on the accumulated reports.",
+    "reportConfirm": "Report has been submitted.",
+    "notFound": "Chat not found.",
+    "leaveChatConfirm": "If you leave the chat room, the chat list and conversation content will be deleted and cannot be recovered. Are you sure you want to leave the chat room?",
+    "leaveChatComplete": "You have left the chat room.",
+    "resignedUserInform": "You cannot chat with a resigned user. Do you want to live the chat room?",
+    "userLeftNotification": "The other user has left the chat."
+  },
+
+  "pageTitles": {
+    "mypage": "My Page",
+    "userList": "Find EwhaLang Friend",
+    "userDetail": "User Detail",
+    "filter": "Filters",
+    "chatting": "Chats",
+    "verify": "Student Verification"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "none": "None",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "close": "Close"
+  },
+  "placeholder": {
+    "searchCountry": "Search for a country",
+    "unknownUser": "You cannot send a message to an unknown user"
+  },
+  "gender": {
+    "여성": "Female",
+    "남성": "Male",
+    "알리고 싶지 않음": "Prefer not to say"
+  },
+  "signup2": {
+    "title": "Sign Up",
+    "수정하기": "Edit Profile",
+    "이름": "Name",
+    "이름을입력해주세요": "Please enter your name.",
+    "닉네임": "Nickname",
+    "중복 확인": "Check Duplication",
+    "국적": "Nationality",
+    "국적을 선택해주세요": "Please select your nationality.",
+    "성별": "Gender",
+    "성별을 선택해주세요.": "Please select your gender.",
+    "여성": "Female",
+    "남성": "Male",
+    "알리고 싶지 않음": "Prefer not to say",
+    "생년월일": "Birth Date",
+    "생년월일을 입력해주세요.": "Please enter your date of birth.",
+    "* YYYYMMDD로 입력해주세요.": "* Please enter in YYYYMMDD format. (Example: 20010101)",
+    "전공": "Major",
+    "전공을 입력해주세요.": "Please enter your major.",
+    "사용 가능 언어": "Available Languages",
+    "사용 가능 언어 추가하기": "Add Available Language",
+    "사용 가능 언어 리셋": "Reset Available Languages",
+    "* 사용가능 언어를 하나 이상 입력해주세요.": "Please enter at least one Available Language.",
+    "취미 및 관심사": "Hobbies and Interests",
+    "자기소개": "Self-Introduction",
+    "저장하기": "Save",
+    "회원가입이 완료되었습니다!": "Sign-up completed!",
+    "입력 항목을 모두 채워주세요!": "Please fill in all the required fields!",
+    "회원정보 수정이 완료되었습니다!": "Profile update completed!",
+    "사용할 수 있는 닉네임입니다.": "The nickname is available.",
+    "중복된 닉네임입니다.": "The nickname is already taken.",
+    "확인": "Ok",
+    "agreeText": "I agree to the collection and use of my personal information.",
+    "showTerms": "View Details",
+    "requireConsent": "Please agree to the collection and use of your personal information.",
+    "terms": "[Consent to Collection and Use of Personal Information]\\n\\n1. Collected Items: Name, school email, major, birthdate, nationality, gender, interests, etc.\\n2. Purpose of Collection: For language exchange matching and school verification\\n3. Retention Period: Until account deletion or service termination\\n4. Your personal information will not be shared externally and will only be used within the service for matching purposes."
+  },
+  "language": {
+    "아랍어": "Arabic",
+    "벵골어": "Bengali",
+    "중국어": "Chinese",
+    "체코어": "Czech",
+    "덴마크어": "Danish",
+    "네덜란드어": "Dutch",
+    "영어": "English",
+    "필리핀어(타갈로그어)": "Filipino (Tagalog)",
+    "핀란드어": "Finnish",
+    "프랑스어": "French",
+    "독일어": "German",
+    "그리스어": "Greek",
+    "히브리어": "Hebrew",
+    "힌디어": "Hindi",
+    "헝가리어": "Hungarian",
+    "아이슬란드어": "Icelandic",
+    "인도네시아어": "Indonesian",
+    "이탈리아어": "Italian",
+    "일본어": "Japanese",
+    "카자흐어": "Kazakh",
+    "크메르어": "Khmer",
+    "한국어": "Korean",
+    "라트비아어": "Latvian",
+    "말레이어": "Malay",
+    "노르웨이어": "Norwegian",
+    "폴란드어": "Polish",
+    "포르투갈어": "Portuguese",
+    "루마니아어": "Romanian",
+    "러시아어": "Russian",
+    "스페인어": "Spanish",
+    "스웨덴어": "Swedish",
+    "태국어": "Thai",
+    "터키어": "Turkish",
+    "우르두어": "Urdu",
+    "베트남어": "Vietnamese"
+  },
+  "nationality": {
+    "호주 🇦🇺": "Australia 🇦🇺",
+    "오스트리아 🇦🇹": "Austria 🇦🇹",
+    "방글라데시 🇧🇩": "Bangladesh 🇧🇩",
+    "벨기에 🇧🇪": "Belgium 🇧🇪",
+    "브라질 🇧🇷": "Brazil 🇧🇷",
+    "브루나이 🇧🇳": "Brunei 🇧🇳",
+    "캄보디아 🇰🇭": "Cambodia 🇰🇭",
+    "캐나다 🇨🇦": "Canada 🇨🇦",
+    "중국 🇨🇳": "China 🇨🇳",
+    "덴마크 🇩🇰": "Denmark 🇩🇰",
+    "핀란드 🇫🇮": "Finland 🇫🇮",
+    "프랑스 🇫🇷": "France 🇫🇷",
+    "독일 🇩🇪": "Germany 🇩🇪",
+    "과테말라 🇬🇹": "Guatemala 🇬🇹",
+    "홍콩 🇭🇰": "Hong Kong 🇭🇰",
+    "아이슬란드 🇮🇸": "Iceland 🇮🇸",
+    "인도 🇮🇳": "India 🇮🇳",
+    "인도네시아 🇮🇩": "Indonesia 🇮🇩",
+    "아일랜드 🇮🇪": "Ireland 🇮🇪",
+    "이탈리아 🇮🇹": "Italy 🇮🇹",
+    "자메이카 🇯🇲": "Jamaica 🇯🇲",
+    "일본 🇯🇵": "Japan 🇯🇵",
+    "카자흐스탄 🇰🇿": "Kazakhstan 🇰🇿",
+    "라투아니아 🇱🇹": "Lithuania 🇱🇹",
+    "말레이시아 🇲🇾": "Malaysia 🇲🇾",
+    "멕시코 🇲🇽": "Mexico 🇲🇽",
+    "네덜란드 🇳🇱": "Netherlands 🇳🇱",
+    "뉴질랜드 🇳🇿": "New Zealand 🇳🇿",
+    "노르웨이 🇳🇴": "Norway 🇳🇴",
+    "파키스탄 🇵🇰": "Pakistan 🇵🇰",
+    "파라과이 🇵🇾": "Paraguay 🇵🇾",
+    "필리핀 🇵🇭": "Philippines 🇵🇭",
+    "폴란드 🇵🇱": "Poland 🇵🇱",
+    "루마니아 🇷🇴": "Romania 🇷🇴",
+    "러시아 🇷🇺": "Russia 🇷🇺",
+    "사우디아라비아 🇸🇦": "Saudi Arabia 🇸🇦",
+    "싱가포르 🇸🇬": "Singapore 🇸🇬",
+    "대한민국 🇰🇷": "South Korea 🇰🇷",
+    "스페인 🇪🇸": "Spain 🇪🇸",
+    "수단 🇸🇩": "Sudan 🇸🇩",
+    "스웨덴 🇸🇪": "Sweden 🇸🇪",
+    "스위스 🇨🇭": "Switzerland 🇨🇭",
+    "대만 🇹🇼": "Taiwan 🇹🇼",
+    "태국 🇹🇭": "Thailand 🇹🇭",
+    "아랍에미리트 🇦🇪": "United Arab Emirates 🇦🇪",
+    "영국 🇬🇧": "United Kingdom 🇬🇧",
+    "미국 🇺🇸": "United States 🇺🇸",
+    "베트남 🇻🇳": "Vietnam 🇻🇳"
+  },
+  "level": {
+    "언어 선택": "Language",
+    "언어 숙련도 선택": "Language level",
+    "기초(Basic)": "Basic",
+    "중급 (Intermediate)": "Intermediate",
+    "상급 (Advanced)": "Advanced",
+    "원어민 (Native)": "Native"
+  },
+  "setting": {
+    "설정": "Setting",
+    "언어 설정": "Language Settings",
+    "언어 설정하기": "Set Language",
+    "계정 관리": "Account Management",
+    "계정 관리하기": "Manage Account",
+    "기타": "Other",
+    "개발자에게 피드백 보내기": "Send Feedback to Developer"
+  },
+  "langSetting": {
+    "언어 설정하기": "Set Language",
+    "언어": "Language",
+    "언어를 재설정해 주세요.": "Please reset the language.",
+    "변경 완료": "Save",
+    "언어 변경이 완료되었습니다.": "Language change is complete",
+    "확인": "Ok"
+  },
+  "feedback": {
+    "피드백 보내기": "Send Feedback",
+    "To. 개발자...": "To. Developer...",
+    "개발자에게 피드백을 주세요.": "Please give feedback to the developer.",
+    "전송 하기": "Send",
+    "피드백 감사합니다.": "Thank you for your feedback! We will strive to improve and come back better.",
+    "확인": "Ok"
+  },
+  "rePw": {
+    "계정 관리하기": "Manage Account",
+    "회원 탈퇴하기": "Delete Account",
+    "이름": "Name",
+    "이메일": "Email",
+    "변경 불가한 항목입니다.": "This item cannot be changed.",
+    "기존 비밀번호 입력": "Current Password",
+    "새 비밀번호 입력": "New Password",
+    "pwpD1": "* Combination of letters, numbers, and special characters",
+    "pwpD2": "* Minimum 6 characters and maximum 20",
+    "새 비밀번호 확인": "Confirm New Password",
+    "수정 완료": "Update",
+    "* 알맞은 비밀번호입니다.": "* The password is correct.",
+    "비밀번호 변경이 완료되었습니다.": "Password change has been completed.",
+    "기존 비밀번호가 일치하지 않습니다.": "The current password does not match.",
+    "정말 탈퇴 히시겠습니까?": "Are you sure you want to delete your account?",
+    "회원 탈퇴가 완료되었습니다.": "Account deletion has been completed.",
+    "아니오": "No",
+    "확인": "Ok",
+    "예": "Yes"
+  },
+  "bottomBar": {
+    "친구목록": "Friends",
+    "채팅목록": "Chat List",
+    "마이페이지": "Mypage"
+  }
+}
